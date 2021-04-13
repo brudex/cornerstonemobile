@@ -11,6 +11,7 @@ class RegisterState extends State<Register> {
 
   // Initially password is obscure
   bool _obscureText = true;
+   bool _obscureText2 = true;
   String _password;
    String _confirmpassword;
   String _email;
@@ -46,13 +47,20 @@ String _currentSelectedValue;
   bool isSamePassword() {
     if ((_confirmpassword == _password) ) {
       return true;
+    }else{
+      return false;
     }
-    return (_password?.length > 6);
   }
 
   void _toggle() {
     setState(() {
       _obscureText = !_obscureText;
+    });
+  }
+
+  void _toggle2() {
+    setState(() {
+      _obscureText2 = !_obscureText2;
     });
   }
 
@@ -196,7 +204,7 @@ String _currentSelectedValue;
                       child: TextField(
                         focusNode: _confirmpwFocus,
                         controller: _confirmpwController,
-                        obscureText: _obscureText,
+                        obscureText: _obscureText2,
                         textInputAction: TextInputAction.done,
                         onSubmitted: (input) {
                           _confirmpwFocus.unfocus();
@@ -212,12 +220,12 @@ String _currentSelectedValue;
                               : "Passwords do not match",
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _obscureText
+                              _obscureText2
                                   ? Icons.visibility_off
                                   : Icons.visibility,
                               color: Colors.blue,
                             ),
-                            onPressed: _toggle,
+                            onPressed: _toggle2,
                           ),
                         ),
                       ),
