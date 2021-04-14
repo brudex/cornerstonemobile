@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cornerstone/index.dart';
 import 'package:flutter/material.dart';
 
 import 'onboardingScreen.dart';
@@ -30,7 +31,7 @@ class SplashScreenState extends State<SplashScreen> {
   void navigationPageWel() {
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (context) => OnboardingScreen()),
+      MaterialPageRoute(builder: (context) => Index()),
       (Route<dynamic> route) => false,
     );
   }

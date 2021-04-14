@@ -10,6 +10,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     precacheImage(AssetImage('images/logo 1.png'), context);
+    precacheImage(AssetImage('images/stripe.png'), context);
+    precacheImage(AssetImage('images/paypal.png'), context);
+
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,

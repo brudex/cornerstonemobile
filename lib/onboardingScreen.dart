@@ -46,6 +46,7 @@ class OnboardingScreen extends StatelessWidget {
                   ),
                 ),
                 width: 320,
+                // ignore: deprecated_member_use
                 child: FlatButton(
                   child: Text('Register',
                       style: TextStyle(fontSize: 20, color: Colors.white)),
