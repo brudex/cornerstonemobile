@@ -27,6 +27,7 @@ class LoginState extends State<Login> {
     if ((_password == null) || (_password.length == 0)) {
       return true;
     }
+    // ignore: null_aware_before_operator
     return (_password?.length > 6);
   }
 

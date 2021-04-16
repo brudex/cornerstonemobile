@@ -12,6 +12,7 @@ class DonationState extends State<Donation> {
 
   // Initially password is obscure
 
+  // ignore: unused_field
   String _amount;
   String _currentPaymentMethod;
   String _currentDonationType;
@@ -31,6 +32,7 @@ class DonationState extends State<Donation> {
     //Donation here
   }
 
+  // ignore: unused_element
   void _validate() {
     setState(() {
       _amount = _amountController.text;

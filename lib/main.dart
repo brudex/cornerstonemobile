@@ -12,7 +12,9 @@ class MyApp extends StatelessWidget {
     precacheImage(AssetImage('images/logo 1.png'), context);
     precacheImage(AssetImage('images/stripe.png'), context);
     precacheImage(AssetImage('images/paypal.png'), context);
-
+    precacheImage(AssetImage('images/easter.png'), context);
+    precacheImage(AssetImage('images/Background.png'), context);
+    precacheImage(AssetImage('images/events_unavailable.png'), context);
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,

@@ -11,6 +11,7 @@ class DonationHistoryState extends State<DonationHistory> {
 
   // Initially password is obscure
 
+  // ignore: unused_field
   String _search;
   
 
