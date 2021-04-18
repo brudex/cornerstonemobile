@@ -56,40 +56,43 @@ class EditProfileState extends State<EditProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Color.fromRGBO(242, 245, 247, 1),
+        title: Text(
+          'Edit Profile',
+          style: TextStyle(color: Colors.black),
+        ),
+        leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.black,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
+      ),
       body: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Container(
-            color: Color.fromRGBO(242, 245, 247, 1),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 30,
+          SizedBox(height: 25),
+          Stack(
+            children: [
+              Center(
+                child: Container(
+                  width: 90,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                        colorFilter:
+                            ColorFilter.mode(Colors.black12, BlendMode.darken),
+                        image: AssetImage('images/profile.png'),
+                        fit: BoxFit.cover),
+                  ),
+                  child: Icon(Icons.camera_alt_outlined, color: Colors.blue,),
                 ),
-                Row(
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(Icons.arrow_back),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                    Text(
-                      'Edit Profile',
-                      style: TextStyle(fontSize: 20),
-                    )
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Text(
-              'You are about to sow seed to the church. Enter details below to continue',
-              style: TextStyle(fontSize: 15.0, color: Colors.grey),
-              textAlign: TextAlign.left,
-            ),
+              ),
+            ],
           ),
           Padding(
             padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 16),

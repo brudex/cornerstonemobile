@@ -1,22 +1,23 @@
 import 'package:cornerstone/home/homepage_1.dart';
+import 'package:cornerstone/more_page.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:badges/badges.dart';
 
-class Home1 extends StatefulWidget {
-  Home1({Key key}) : super(key: key);
+class More extends StatefulWidget {
+  More({Key key}) : super(key: key);
 
   @override
-  _Home1State createState() => _Home1State();
+  _MoreState createState() => _MoreState();
 }
 
-class _Home1State extends State<Home1> {
+class _MoreState extends State<More> {
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static List<Widget> _widgetOptions = <Widget>[
-    HomePage1(),
+   MorePage(),
     Text(
       'Index 1: Business',
       style: optionStyle,
@@ -43,49 +44,15 @@ class _Home1State extends State<Home1> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Color.fromRGBO(242, 245, 247, 1),
-        title: Text(
-          'Christ Embassy',
-          style: TextStyle(color: Colors.black),
-        ),
-        leading: Image.asset(
-          'images/CE_logo.png',
-          scale: 2,
-        ),
+       
+        leading: Center(child: Text('More', style: TextStyle(color: Colors.black, fontSize: 20),)),
         actions: [
           Padding(
             padding: const EdgeInsets.only(top: 16.0, bottom: 16.0, right: 8),
-            child: Icon(
-              Icons.bookmark_border_sharp,
-              color: Colors.black,
-            ),
+            child: Text('Log Out', style: TextStyle(color: Colors.red),)
           ),
           
-          PopupMenuButton(
-            icon:  Badge(
-              badgeContent: Text(
-                '2',
-                style: TextStyle(color: Colors.white),
-              ),
-              badgeColor: Colors.blue,
-              child: Icon(
-                Icons.notifications_none_sharp,
-                color: Colors.black,
-              ),
-            ),
-            itemBuilder: (BuildContext context) {
-              return [
-                PopupMenuItem(
-                    child: InkWell(
-                        splashColor: Colors.grey, // splash color
-                        child: Text('• Payment of GHc 2,000.00 was successful'),),),
-                PopupMenuItem(
-                    child: InkWell(
-                        splashColor: Colors.grey, // splash color
-                        child: Text('• Password has been changed successfully'))),
-              
-              ];
-            },
-          ),
+          
         ],
       ),
       body: Center(

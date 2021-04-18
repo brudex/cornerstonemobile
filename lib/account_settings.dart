@@ -4,32 +4,25 @@ class AccountSettings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar:  AppBar(
+          elevation: 0,
+          backgroundColor: Color.fromRGBO(242, 245, 247, 1),
+          title: Text(
+            'Account Settings',
+            style: TextStyle(color: Colors.black),
+          ),
+          leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              }),
+        ),
       body: Column(
         children: [
-          Container(
-            color: Color.fromRGBO(242, 245, 247, 1),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 30,
-                ),
-                Row(
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(Icons.arrow_back),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                    Text(
-                      'Account Settings',
-                      style: TextStyle(fontSize: 20),
-                    )
-                  ],
-                ),
-              ],
-            ),
-          ),
+         
           ListTile(
             
 

@@ -147,7 +147,7 @@ String _currentSelectedValue;
                         onTap: _validate,
                         decoration: InputDecoration(
                           labelText: "Email",
-                          hintText: 'Enter your password',
+                          hintText: 'Enter your Email',
                           errorText:
                               isValidEmail() ? null : "Invalid Email Address",
                           suffixIcon: IconButton(
