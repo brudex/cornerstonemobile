@@ -58,7 +58,7 @@ class _SearchPageState extends State<SearchPage> {
                       },
                       onTap: () {},
                       decoration: InputDecoration(
-                        hintText: 'SearchPage History',
+                        hintText: 'Search Page History',
                         suffixIcon: IconButton(
                           icon: Icon(
                             Icons.search,

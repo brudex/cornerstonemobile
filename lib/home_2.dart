@@ -76,27 +76,27 @@ class _Home2State extends State<Home2> {
             backgroundColor: Colors.blue,
             icon: SvgPicture.asset(
                 "images/home.svg",
-              ), label: 'School',
+              ), label: 'Home',
           ),
           BottomNavigationBarItem(
                backgroundColor: Colors.blue,
             icon:  SvgPicture.asset(
                 "images/search.svg",
-              ), label: 'School',
+              ), label: 'Search',
           ),
           BottomNavigationBarItem(
                backgroundColor: Colors.blue,
             icon: SvgPicture.asset(
                 "images/deposit.svg",
               ),
-            label: 'School',
+            label: 'Donate',
           ),
              BottomNavigationBarItem(
                   backgroundColor: Colors.blue,
             icon:  SvgPicture.asset(
                 "images/grid_view.svg",
               ),
-            label: 'School',
+            label: 'App',
           ),
         ],
         currentIndex: _selectedIndex,

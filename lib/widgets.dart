@@ -144,12 +144,14 @@ class _ControlsOverlay extends StatelessWidget {
 class StyledButton extends StatelessWidget {
 
   final String title;
-
+ 
   const StyledButton({Key key, @required this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return  Container(
+      padding: EdgeInsets.symmetric(vertical: 15),
+      alignment: Alignment.center,
                   margin: EdgeInsets.only(top: 32, bottom: 5),
                   decoration: BoxDecoration(
                     //   color: Colors.blue,
@@ -164,11 +166,8 @@ class StyledButton extends StatelessWidget {
                     ),
                   ),
                   width: 320,
-                  child: FlatButton(
-                    child: Text(title,
-                        style: TextStyle(fontSize: 20, color: Colors.white)),
-                    onPressed: () {},
-                  ),
+                  child: Text(title,
+                      style: TextStyle(fontSize: 20, color: Colors.white)),
                 );
   }
 }

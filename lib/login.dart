@@ -1,3 +1,5 @@
+import 'package:cornerstone/dialogs.dart';
+import 'package:cornerstone/widgets.dart';
 import 'package:flutter/material.dart';
 
 class Login extends StatefulWidget {
@@ -13,7 +15,10 @@ class LoginState extends State<Login> {
   bool _obscureText = true;
   String _password;
   String _email;
-  
+
+  bool email_verify = true;
+  bool password_verify = true;
+
   bool isValidEmail() {
     if ((_email == null) || (_email.length == 0)) {
       return true;
@@ -46,6 +51,46 @@ class LoginState extends State<Login> {
 
   void performLogin() {
     //login here
+    if ((_emailController.text == null) || (_emailController.text == '')) {
+      setState(() {
+        email_verify = false;
+      });
+    }  if (RegExp(
+                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+            .hasMatch(_emailController.text) ==
+        false) {
+          setState(() {
+             email_verify = false;
+          });
+     
+    } else {
+      setState(() {
+        email_verify = true;
+      });
+      
+    }
+    if ((_pwController.text == null) || (_pwController.text  == '')) {
+     setState(() {
+         password_verify = false;
+     });
+    
+    }
+    else if  (_pwController.text?.length <= 6){
+      setState(() {
+         password_verify = false;
+      });
+
+     
+    }
+    else{
+       password_verify = true;
+    }
+
+    if(password_verify == true){
+      print('password = true');
+    }if(email_verify == true){
+      print('email = true');
+    }
   }
 
   @override
@@ -61,19 +106,16 @@ class LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-              child: SafeArea(
+        child: SafeArea(
           child: Stack(
             children: <Widget>[
               Image.asset('images/Background.png'),
-
-             
               SizedBox(
                 height: MediaQuery.of(context).size.height,
-                              child: Column(
+                child: Column(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    
                     Image.asset(
                       'images/logo 1.png',
                       scale: 2,
@@ -84,7 +126,8 @@ class LoginState extends State<Login> {
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
                             'Login',
-                            style: TextStyle(fontSize: 28.0, color: Colors.blue),
+                            style:
+                                TextStyle(fontSize: 28.0, color: Colors.blue),
                             textAlign: TextAlign.left,
                           ),
                         ),
@@ -96,7 +139,7 @@ class LoginState extends State<Login> {
                         color: Colors.transparent,
                         borderRadius: BorderRadius.circular(10.0),
                         child: TextField(
-                          focusNode: _emailFocus,
+                         // focusNode: _emailFocus,
                           controller: _emailController,
                           obscureText: false,
                           keyboardType:
@@ -110,9 +153,10 @@ class LoginState extends State<Login> {
                           onTap: _validate,
                           decoration: InputDecoration(
                             labelText: "Email",
-                            hintText: 'Enter your password',
-                            errorText:
-                                isValidEmail() ? null : "Invalid Email Address",
+                            hintText: 'Enter your Email',
+                            errorText: isValidEmail() && email_verify
+                                ? null
+                                : "Invalid Email Address",
                             suffixIcon: IconButton(
                               icon: Icon(
                                 Icons.mail_outline,
@@ -137,14 +181,15 @@ class LoginState extends State<Login> {
                           onSubmitted: (input) {
                             _pwFocus.unfocus();
                             _password = input;
-                            performLogin();
+                            // performLogin();
                           },
                           onTap: _validate,
                           decoration: InputDecoration(
                             labelText: "Password",
                             hintText: 'Enter your password',
-                            errorText:
-                                isValidPassword() ? null : "Password too short.",
+                            errorText: isValidPassword() && password_verify
+                                ? null
+                                : "Invalid Password",
                             suffixIcon: IconButton(
                               icon: Icon(
                                 _obscureText
@@ -158,7 +203,6 @@ class LoginState extends State<Login> {
                         ),
                       ),
                     ),
-                    
                     ButtonBar(
                       children: <Widget>[
                         Padding(
@@ -171,27 +215,28 @@ class LoginState extends State<Login> {
                       ],
                     ),
                     Container(
-                      margin: EdgeInsets.only(top: 32, bottom: 5),
-                      decoration: BoxDecoration(
-                        //   color: Colors.blue,
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(8),
-                        ),
-                        gradient: LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                          colors: [Color(0xff4fc3f7), Color(0xff01579b)],
-                        ),
-                      ),
-                      width: 320,
-                      // ignore: deprecated_member_use
-                      child: FlatButton(
-                        child: Text('Log in',
-                            style: TextStyle(fontSize: 20, color: Colors.white)),
-                        onPressed: () {},
-                      ),
-                    ),
+                margin: EdgeInsets.only(top: 32, bottom: 5),
+                decoration: BoxDecoration(
+                  //   color: Colors.blue,
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(8),
+                  ),
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [Color(0xff4fc3f7), Color(0xff01579b)],
+                  ),
+                ),
+                width: 320,
+                child: FlatButton(
+                  child: Text('Log in',
+                      style: TextStyle(fontSize: 20, color: Colors.white)),
+                  onPressed: () {
+                    performLogin();
+                  },
+                ),
+              ),
                   ],
                 ),
               ),

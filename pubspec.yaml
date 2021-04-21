@@ -28,6 +28,8 @@ dependencies:
   video_player: ^2.1.1
   badges: ^1.2.0
   flutter_calendar_carousel: ^2.0.1
+  dio: ^4.0.0
+  webview_flutter: ^2.0.4
   
 
   # The following adds the Cupertino Icons font to your application.
