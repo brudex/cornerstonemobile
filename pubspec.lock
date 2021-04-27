@@ -8,6 +8,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.5.0"
+  audioplayer:
+    dependency: "direct main"
+    description:
+      name: audioplayer
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.8.1"
   badges:
     dependency: "direct main"
     description:
@@ -33,6 +40,13 @@ packages:
     dependency: transitive
     description:
       name: charcode
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.0"
+  chewie_audio:
+    dependency: "direct main"
+    description:
+      name: chewie_audio
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.0"
@@ -314,13 +328,6 @@ packages:
     dependency: transitive
     description:
       name: shared_preferences_windows
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.0"
-  shimmer:
-    dependency: "direct main"
-    description:
-      name: shimmer
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"

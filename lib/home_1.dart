@@ -1,4 +1,6 @@
 import 'package:cornerstone/home/homepage_1.dart';
+import 'package:cornerstone/player_widget.dart';
+import 'package:cornerstone/search/search_page.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -17,14 +19,8 @@ class _Home1State extends State<Home1> {
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static List<Widget> _widgetOptions = <Widget>[
     HomePage1(),
-    Text(
-      'Index 1: Business',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 2: School',
-      style: optionStyle,
-    ),
+    SearchPage(),
+    AudioApp(),
     Text(
       'Index 3: Blah',
       style: optionStyle,
@@ -40,54 +36,7 @@ class _Home1State extends State<Home1> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Color.fromRGBO(242, 245, 247, 1),
-        title: Text(
-          'Christ Embassy',
-          style: TextStyle(color: Colors.black),
-        ),
-        leading: Image.asset(
-          'images/CE_logo.png',
-          scale: 2,
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0, bottom: 16.0, right: 8),
-            child: Icon(
-              Icons.bookmark_border_sharp,
-              color: Colors.black,
-            ),
-          ),
-          
-          PopupMenuButton(
-            icon:  Badge(
-              badgeContent: Text(
-                '2',
-                style: TextStyle(color: Colors.white),
-              ),
-              badgeColor: Colors.blue,
-              child: Icon(
-                Icons.notifications_none_sharp,
-                color: Colors.black,
-              ),
-            ),
-            itemBuilder: (BuildContext context) {
-              return [
-                PopupMenuItem(
-                    child: InkWell(
-                        splashColor: Colors.grey, // splash color
-                        child: Text('• Payment of GHc 2,000.00 was successful'),),),
-                PopupMenuItem(
-                    child: InkWell(
-                        splashColor: Colors.grey, // splash color
-                        child: Text('• Password has been changed successfully'))),
-              
-              ];
-            },
-          ),
-        ],
-      ),
+      
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),

@@ -33,7 +33,9 @@ dependencies:
   http:
   shared_preferences: ^2.0.5
   youtube_player_flutter: ^8.0.0
-  shimmer: ^2.0.0
+  audioplayer: ^0.8.1
+  chewie_audio:
+
   
 
   # The following adds the Cupertino Icons font to your application.
