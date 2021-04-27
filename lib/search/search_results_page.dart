@@ -7,7 +7,9 @@ class SearchResultsPage extends StatefulWidget {
 }
 
 class _SearchResultsPageState extends State<SearchResultsPage> {
+  // ignore: non_constant_identifier_names
   TextEditingController _SearchResultsPageController;
+  // ignore: non_constant_identifier_names
   FocusNode _SearchResultsPageFocus;
 
   // Initially password is obscure

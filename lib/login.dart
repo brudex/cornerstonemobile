@@ -1,6 +1,12 @@
 import 'package:cornerstone/dialogs.dart';
-import 'package:cornerstone/widgets.dart';
+import 'package:cornerstone/forgot_password.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
+
+import 'home_1.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -16,7 +22,9 @@ class LoginState extends State<Login> {
   String _password;
   String _email;
 
+  // ignore: non_constant_identifier_names
   bool email_verify = true;
+  // ignore: non_constant_identifier_names
   bool password_verify = true;
 
   bool isValidEmail() {
@@ -33,7 +41,7 @@ class LoginState extends State<Login> {
       return true;
     }
     // ignore: null_aware_before_operator
-    return (_password?.length > 6);
+    return (_password?.length > 2);
   }
 
   void _toggle() {
@@ -75,7 +83,8 @@ class LoginState extends State<Login> {
      });
     
     }
-    else if  (_pwController.text?.length <= 6){
+    // ignore: null_aware_before_operator
+    else if  (_pwController.text?.length <= 2){
       setState(() {
          password_verify = false;
       });
@@ -86,11 +95,51 @@ class LoginState extends State<Login> {
        password_verify = true;
     }
 
-    if(password_verify == true){
-      print('password = true');
-    }if(email_verify == true){
-      print('email = true');
+    if(password_verify == true && email_verify == true){
+   
+        showLoading(context);
+           print('password = true');
+        print('email = true');
+        login();
     }
+  }
+
+  Future login() async {
+    var url = "http://157.230.150.194:3000/api/users/login";
+
+    var data = {
+      "email": "${_emailController.text}",
+      "password": "${_pwController.text}",
+    };
+
+    var response = await http.post(Uri.parse(url), body: data);
+    var message = jsonDecode(response.body);
+    print(message);
+    print(message['message']);
+    print(message['status_code']);
+    print(message['reason']);
+
+    if (message['status_code'] == "00") {
+      Navigator.pop(context);
+
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('token', message['token']);
+
+       Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => Home1()),
+          (Route<dynamic> route) => false,
+        );
+
+
+    }
+    else{
+       Navigator.pop(context);
+
+      failedAlertDialog(context, message['message'], message['reason']);
+    }
+    
   }
 
   @override
@@ -204,16 +253,25 @@ class LoginState extends State<Login> {
                       ),
                     ),
                     ButtonBar(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(right: 16.0),
-                          child: Text(
-                            'Forgot Password ?',
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        )
-                      ],
-                    ),
+                        children: <Widget>[
+                          InkWell(onTap: (){
+                            Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ForgotPassword(),
+                      ),
+                    );
+                          },
+                                                      child: Padding(
+                              padding: const EdgeInsets.only(right: 16.0),
+                              child: Text(
+                                'Forgot Password ?',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                     Container(
                 margin: EdgeInsets.only(top: 32, bottom: 5),
                 decoration: BoxDecoration(
@@ -229,6 +287,7 @@ class LoginState extends State<Login> {
                   ),
                 ),
                 width: 320,
+                // ignore: deprecated_member_use
                 child: FlatButton(
                   child: Text('Log in',
                       style: TextStyle(fontSize: 20, color: Colors.white)),

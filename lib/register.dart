@@ -1,4 +1,8 @@
+import 'package:cornerstone/dialogs.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
 
 class Register extends StatefulWidget {
   @override
@@ -9,8 +13,9 @@ class RegisterState extends State<Register> {
   TextEditingController _emailController,
       _pwController,
       _confirmpwController,
-      _fullNameController;
-  FocusNode _emailFocus, _pwFocus, _confirmpwFocus, _fullNameFocus;
+      _fNameController,
+      _lNameController;
+  FocusNode _emailFocus, _pwFocus, _confirmpwFocus, _fNameFocus, _lNameFocus;
 
   // Initially password is obscure
   bool _obscureText = true;
@@ -18,23 +23,41 @@ class RegisterState extends State<Register> {
   String _password;
   String _confirmpassword;
   String _email;
-  String _fullName;
+  String _fName;
+  String _lName;
 
+  // ignore: non_constant_identifier_names
   bool church_verify = true;
+  // ignore: non_constant_identifier_names
   bool email_verify = true;
+  // ignore: non_constant_identifier_names
   bool password_verify = true;
+  // ignore: non_constant_identifier_names
   bool confirmPassword_verify = true;
-  bool fullName_verify = true;
+  // ignore: non_constant_identifier_names
+  bool fName_verify = true;
+  // ignore: non_constant_identifier_names
+  bool lName_verify = true;
 
   String _currentSelectedValue;
+  int _currentSelectedId;
 
-  var _churches = [
-    "Christ Embassy",
-    "The Church of Pentecost",
-    "Church of Christ",
-    "ICGC"
-  ];
+  bool churches_list_ready = false;
 
+  var notReady = ["Loading ...."];
+  var _churches = [];
+  var _churches_id = [];
+
+
+
+  Map<String, int> map = {
+    "Roman": 1,
+    "Presbyterian Church of Ghana": 2,
+    "Christ Embassy": 3,
+    "The Church of Pentecost": 4,
+    "Church of Christ": 5,
+    "ICGC": 6
+  };
   bool isValidEmail() {
     if ((_email == null) || (_email.length == 0)) {
       return true;
@@ -48,6 +71,7 @@ class RegisterState extends State<Register> {
     if ((_password == null) || (_password.length == 0)) {
       return true;
     }
+    // ignore: null_aware_before_operator
     return (_password?.length > 6);
   }
 
@@ -59,8 +83,16 @@ class RegisterState extends State<Register> {
     }
   }
 
-  bool isValidFullName() {
-    if ((_fullName == null) || (_fullName.length == 0)) {
+  bool isValidFirstName() {
+    if ((_fName == null) || (_fName.length == 0) || (_fName != null)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  bool isValidLastName() {
+    if ((_lName == null) || (_lName.length == 0) || (_fName != null)) {
       return true;
     } else {
       return false;
@@ -84,7 +116,8 @@ class RegisterState extends State<Register> {
       _email = _emailController.text;
       _password = _pwController.text;
       _confirmpassword = _confirmpwController.text;
-      _fullName = _fullNameController.text;
+      _fName = _fNameController.text;
+      _lName = _lNameController.text;
     });
   }
 
@@ -111,6 +144,7 @@ class RegisterState extends State<Register> {
       setState(() {
         password_verify = false;
       });
+      // ignore: null_aware_before_operator
     } else if (_pwController.text?.length <= 6) {
       setState(() {
         password_verify = false;
@@ -121,15 +155,26 @@ class RegisterState extends State<Register> {
       });
     }
 
-    if (_fullNameController.text == '') {
+    if (_fNameController.text == '') {
       setState(() {
-        fullName_verify = false;
+        fName_verify = false;
       });
-    } else if (_fullNameController.text != '') {
+    } else {
       setState(() {
-        fullName_verify = true;
+        fName_verify = true;
       });
     }
+
+    if (_lNameController.text == '') {
+      setState(() {
+        lName_verify = false;
+      });
+    } else {
+      setState(() {
+        lName_verify = true;
+      });
+    }
+
     if (_confirmpwController.text != _pwController.text) {
       setState(() {
         confirmPassword_verify = false;
@@ -139,30 +184,62 @@ class RegisterState extends State<Register> {
         confirmPassword_verify = true;
       });
     }
-    if(_currentSelectedValue == null){
+    if (_currentSelectedValue == null) {
       setState(() {
         church_verify = false;
       });
-    }
-    else{
-       setState(() {
+    } else {
+      setState(() {
         church_verify = true;
       });
     }
-    
 
-    if (password_verify == true) {
-      print('password = true');
+    if (password_verify == true &&
+        email_verify == true &&
+        confirmPassword_verify == true &&
+        fName_verify == true &&
+        lName_verify == true &&
+        church_verify == true) {
+      
+      print('All is true');
+      for (int i = 0; i < _churches.length; i++) {
+        if (_currentSelectedValue == _churches[i]) {
+           _currentSelectedId = _churches_id[i]['id'];
+         // _currentSelectedId = int.parse(_churches_id[i]);
+        }
+      }
+      showLoading(context);
+       register();
+      // print(map[_currentSelectedValue].toInt());
     }
-    if (email_verify == true) {
-      print('email = true');
-    }
-    if (confirmPassword_verify == true) {
-      print('confirm = true');
-    }
-    if (fullName_verify == true) {
-      print('Full name = true');
-      print(_currentSelectedValue);
+  }
+
+  Future register() async {
+    var url = "http://157.230.150.194:3000/api/users/register";
+
+    var data = {
+      "firstName": "${_fNameController.text}",
+      "lastName": "${_lNameController.text}",
+      "email": "${_emailController.text}",
+      "password": "${_pwController.text}",
+      "churchId": "$_currentSelectedId",
+    };
+
+    var response = await http.post(Uri.parse(url), body: data);
+    var message = jsonDecode(response.body);
+    print(message);
+    print(message['message']);
+    print(message['status_code']);
+    print(message['reason']);
+
+    if (message['status_code'] == "00") {
+      Navigator.pop(context);
+
+      successAlertDialog(context, message['message'], 'Log In to Continue');
+    } else {
+      Navigator.pop(context);
+
+      failedAlertDialog(context, message['message'], message['reason']);
     }
   }
 
@@ -171,13 +248,56 @@ class RegisterState extends State<Register> {
     _emailController = TextEditingController();
     _pwController = TextEditingController();
     _confirmpwController = TextEditingController();
-    _fullNameController = TextEditingController();
+    _fNameController = TextEditingController();
+    _lNameController = TextEditingController();
 
     _emailFocus = FocusNode();
     _pwFocus = FocusNode();
     _confirmpwFocus = FocusNode();
-    _fullNameFocus = FocusNode();
+    _fNameFocus = FocusNode();
+    _lNameFocus = FocusNode();
     super.initState();
+
+    fetch();
+  }
+
+  Future fetch() async {
+    final response =
+        await http.get(Uri.parse('http://157.230.150.194:3000/api/churches'));
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      print(jsonDecode(response.body));
+      var message = jsonDecode(response.body);
+
+      print(message[1]);
+      List churches_list = [];
+      List churches_id = [];
+
+      for (var item in message) {
+        churches_list.add(item['name']);
+      }
+
+      for (var item in message) {
+        churches_id.add(item);
+      }
+
+      print(churches_list);
+      setState(() {
+        _churches = churches_list;
+        _churches_id = churches_id;
+      });
+
+      churches_list_ready = true;
+      print('done');
+
+      //return Album.fromJson(jsonDecode(response.body));
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
   }
 
   @override
@@ -333,31 +453,47 @@ class RegisterState extends State<Register> {
                       color: Colors.transparent,
                       borderRadius: BorderRadius.circular(10.0),
                       child: TextField(
-                        focusNode: _fullNameFocus,
-                        controller: _fullNameController,
-                        obscureText: _obscureText,
+                        focusNode: _fNameFocus,
+                        controller: _fNameController,
                         textInputAction: TextInputAction.done,
                         onSubmitted: (input) {
-                          _fullNameFocus.unfocus();
-                          _fullName = input;
+                          _fNameFocus.unfocus();
+                          _fName = input;
                           performRegister();
                         },
                         onTap: _validate,
                         decoration: InputDecoration(
-                          labelText: "Full Name",
-                          hintText: 'Enter your Full Name',
-                          errorText: isValidFullName() && fullName_verify
+                          labelText: "First Name",
+                          hintText: 'Enter your First Name',
+                          errorText: isValidFirstName() && fName_verify
                               ? null
                               : "Invalid Name",
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _obscureText
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
-                              color: Colors.blue,
-                            ),
-                            onPressed: _toggle,
-                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 16.0, right: 16, bottom: 16),
+                    child: Material(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: TextField(
+                        focusNode: _lNameFocus,
+                        controller: _lNameController,
+                        textInputAction: TextInputAction.done,
+                        onSubmitted: (input) {
+                          _lNameFocus.unfocus();
+                          _lName = input;
+                          performRegister();
+                        },
+                        onTap: _validate,
+                        decoration: InputDecoration(
+                          labelText: "Last Name",
+                          hintText: 'Enter your Last Name',
+                          errorText: isValidLastName() && lName_verify
+                              ? null
+                              : "Invalid Name",
                         ),
                       ),
                     ),
@@ -369,23 +505,28 @@ class RegisterState extends State<Register> {
                       builder: (FormFieldState<String> state) {
                         return InputDecorator(
                           decoration: InputDecoration(
-                            errorText: church_verify? null: "Please select a church",
+                            errorText:
+                                church_verify ? null : "Please select a church",
                             errorStyle: TextStyle(
                                 color: Colors.redAccent, fontSize: 16),
                             hintText: 'Please select church',
                           ),
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<String>(
-                              hint: Text('Select church'),
+                              hint: churches_list_ready == false
+                                  ? Text('Loading...')
+                                  : Text('Select church'),
                               value: _currentSelectedValue,
                               isDense: true,
-                              onChanged: (String newValue) {
-                                setState(() {
-                                  _currentSelectedValue = newValue;
-                                  state.didChange(newValue);
-                                });
-                              },
-                              items: _churches.map((String value) {
+                              onChanged: churches_list_ready == false
+                                  ? null
+                                  : (String newValue) {
+                                      setState(() {
+                                        _currentSelectedValue = newValue;
+                                        state.didChange(newValue);
+                                      });
+                                    },
+                              items: _churches.map((dynamic value) {
                                 return DropdownMenuItem<String>(
                                   child: Text(value),
                                   value: value,
@@ -414,6 +555,7 @@ class RegisterState extends State<Register> {
                   ),
                 ),
                 width: 320,
+                // ignore: deprecated_member_use
                 child: FlatButton(
                   child: Text('Register',
                       style: TextStyle(fontSize: 20, color: Colors.white)),

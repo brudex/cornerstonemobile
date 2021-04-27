@@ -1,9 +1,9 @@
-import 'package:cornerstone/home/homepage_1.dart';
+
 import 'package:cornerstone/more_page.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:badges/badges.dart';
+
 
 class More extends StatefulWidget {
   More({Key key}) : super(key: key);

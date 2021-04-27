@@ -1,9 +1,8 @@
-import 'package:cornerstone/home/homepage_1.dart';
-import 'package:cornerstone/home/homepage_2.dart';
+
 import 'package:cornerstone/search/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:badges/badges.dart';
+
 
 class Search extends StatefulWidget {
   Search({Key key}) : super(key: key);

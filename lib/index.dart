@@ -16,14 +16,14 @@ import 'package:cornerstone/donations/donation_success_screen.dart';
 import 'package:cornerstone/search_results_screen.dart';
 import 'package:cornerstone/search_screen.dart';
 import 'package:cornerstone/terms.dart';
-import 'package:cornerstone/video.dart';
+
 import 'package:flutter/material.dart';
 
 import 'appointment.dart';
 
 import 'donations/donation.dart';
 import 'home_2.dart';
-import 'image_picker.dart';
+
 import 'list_empty_screen.dart';
 import 'list_screen.dart';
 

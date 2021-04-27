@@ -63,6 +63,7 @@ class _ControlsOverlay extends StatelessWidget {
   const _ControlsOverlay({Key key, @required this.controller})
       : super(key: key);
 
+  // ignore: unused_field
   static const _examplePlaybackRates = [
     0.25,
     0.5,

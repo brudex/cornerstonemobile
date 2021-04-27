@@ -1,4 +1,5 @@
-
+import 'package:cornerstone/home_1.dart';
+import 'package:cornerstone/onboardingScreen.dart';
 import 'package:flutter/material.dart';
 
 showLoading(BuildContext context) {
@@ -16,7 +17,7 @@ showLoading(BuildContext context) {
     ),
   );
   showDialog(
-    barrierDismissible: true,
+    barrierDismissible: false,
     context: context,
     builder: (BuildContext context) {
       return alert;
@@ -131,24 +132,27 @@ afterTransAlertDialog(BuildContext context, title, result) {
   );
 }
 
+
+ */
 failedAlertDialog(BuildContext context, title, result) {
+  // ignore: deprecated_member_use
   Widget okButton = FlatButton(
     onPressed: () {
       Navigator.of(context).pop();
     },
     child: Text(
       'OK',
-      style: TextStyle(color: darkBlue),
+      style: TextStyle(color: Colors.blue),
     ),
   );
   AlertDialog alert = AlertDialog(
     title: Text(
       '$title',
-      style: TextStyle(color: darkBlue),
+      style: TextStyle(color: Colors.blue),
     ),
     content: Text(
       '$result',
-      style: TextStyle(color: darkBlue),
+      style: TextStyle(color: Colors.blue),
     ),
     actions: [okButton],
   );
@@ -161,4 +165,49 @@ failedAlertDialog(BuildContext context, title, result) {
     },
   );
 }
- */
+
+successAlertDialog(BuildContext context, title, result) {
+  // ignore: deprecated_member_use
+  Widget okButton = FlatButton(
+    onPressed: () {
+      if (result == 'login successful') {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => Home1()),
+          (Route<dynamic> route) => false,
+        );
+      }
+      else if(title == 'Registration successful')
+      {
+         Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => OnboardingScreen()),
+          (Route<dynamic> route) => false,
+        );
+      }
+    },
+    child: Text(
+      'OK',
+      style: TextStyle(color: Colors.blue),
+    ),
+  );
+  AlertDialog alert = AlertDialog(
+    title: Text(
+      '$title',
+      style: TextStyle(color: Colors.blue),
+    ),
+    content: Text(
+      '$result',
+      style: TextStyle(color: Colors.blue),
+    ),
+    actions: [okButton],
+  );
+
+  showDialog(
+    barrierDismissible: true,
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
+}
