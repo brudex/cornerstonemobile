@@ -17,7 +17,6 @@ class HomePage1 extends StatefulWidget {
 }
 
 class _HomePage1State extends State<HomePage1> {
-  
   @override
   void initState() {
     super.initState();
@@ -28,6 +27,7 @@ class _HomePage1State extends State<HomePage1> {
   var devotionalQuote;
   bool ready = false;
   List _links = [];
+  List _audioLinks = [];
 
   Future fetchDevotion() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -36,6 +36,9 @@ class _HomePage1State extends State<HomePage1> {
     var token = "${prefs.getString('token')}";
     var youtubeUrls =
         "http://157.230.150.194:3000/api/churchcontent/video?limit=0&offset=0";
+
+    var audioUrls =
+        "http://157.230.150.194:3000/api/churchcontent/audio?limit=0&offset=0";
 
     final response = await http.get(
       Uri.parse(url),
@@ -46,32 +49,44 @@ class _HomePage1State extends State<HomePage1> {
       Uri.parse(youtubeUrls),
       headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
     );
+
+    final getaudioUrls = await http.get(
+      Uri.parse(audioUrls),
+      headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
+    );
     // final responseJson = jsonDecode(response.body);
     //print('$responseJson' + 'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre');
 
-    final responseJson2 = jsonDecode(getUrls.body);
+    final responseJson2 = jsonDecode(getaudioUrls.body);
     print('$responseJson2' + 'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre');
 
     var message = jsonDecode(response.body);
-    print(message['data']);
+    // print(message['data']);
     var value = message['data'];
-    print(value['id']);
+    // print(value['id']);
 
     var message2 = jsonDecode(getUrls.body);
-    print(message2['data']);
-    var value2 = message2['data'][1];
-    print(value2);
-    print(value2['contentData']);
-    List links = [];
 
+    var message3 = jsonDecode(getaudioUrls.body);
+    // print(message2['data']);
+    var value2 = message2['data'][1];
+    // print(value2);
+    // print(value2['contentData']);
+    List links = [];
+    List audioLinks = [];
     for (var item in message2['data']) {
       links.add(YoutubePlayer.convertUrlToId(item['contentData']));
     }
 
-    print(links);
+    for (var item in message3['data']) {
+      audioLinks.add(item['contentData']);
+    }
+
+    //print(links);
     if (this.mounted) {
       setState(() {
         _links = links;
+        _audioLinks = audioLinks;
         devotionalQuote = message['data']['devotionalContent'];
         ready = true;
       });
@@ -249,11 +264,37 @@ class _HomePage1State extends State<HomePage1> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right: 16.0),
-                    child: VideoTile(
-                        link:
-                            'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4'),
-                  )
+                    padding: const EdgeInsets.all(16.0),
+                    child: _audioLinks.length == 0
+                        ? Container(
+                            margin: EdgeInsets.only(top: 5),
+                            height: 200,
+                            width: double.infinity,
+                            child: Card(
+                              semanticContainer: true,
+                              // color: Colors.grey,
+                              elevation: 5.0,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  Icon(
+                                    Icons.error_outline_sharp,
+                                    size: 50,
+                                  ),
+                                  SizedBox(height: 20),
+                                  Text(
+                                    'No Audio\'s Available',
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                ],
+                              ),
+                            ),)
+                        : Column(
+                            children: [
+                              for (String i in _audioLinks) AudioTile(url: i),
+                            ],
+                          ),
+                  ),
                 ],
               ),
             ),
