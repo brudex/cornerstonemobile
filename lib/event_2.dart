@@ -1,8 +1,54 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'dart:io';
+import 'dart:async';
 
-class Event2 extends StatelessWidget {
+class EventSuccess extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
+  _EventSuccessState createState() => _EventSuccessState();
+}
+
+class _EventSuccessState extends State<EventSuccess> {
+
+   @override
+  void initState() {
+    super.initState();
+    fetchEvents();
+  }
+
+  Future fetchEvents() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    var url = "http://157.230.150.194:3000/api/events";
+    var token = "${prefs.getString('token')}";
+    
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
+    );
+
+   
+    final responseJson = jsonDecode(response.body);
+    print('$responseJson' +
+        'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 1 devotional');
+
+   
+
+
+    if (this.mounted) {
+      
+    }
+
+    //var value = jsonDecode(message['data']);
+    //print(value);
+  }
+
+
+  @override
+   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
@@ -145,3 +191,4 @@ class Event2 extends StatelessWidget {
     );
   }
 }
+

@@ -30,11 +30,13 @@ dependencies:
   flutter_calendar_carousel: ^2.0.1
   dio: ^4.0.0
   webview_flutter: ^2.0.4
-  http:
+  http: ^0.13.2
   shared_preferences: ^2.0.5
   youtube_player_flutter: ^8.0.0
   audioplayer: ^0.8.1
-  chewie_audio:
+  chewie_audio: ^1.2.0
+  url_launcher: ^5.4.11
+  geocoding: ^1.0.5
 
   
 

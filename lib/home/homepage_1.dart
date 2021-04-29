@@ -54,24 +54,26 @@ class _HomePage1State extends State<HomePage1> {
       Uri.parse(audioUrls),
       headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
     );
-    // final responseJson = jsonDecode(response.body);
-    //print('$responseJson' + 'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre');
+    final responseJson = jsonDecode(response.body);
+    print('$responseJson' +
+        'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 1 devotional');
 
     final responseJson2 = jsonDecode(getaudioUrls.body);
-    print('$responseJson2' + 'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre');
+    print('$responseJson2' +
+        'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 3 audio');
 
     var message = jsonDecode(response.body);
-    // print(message['data']);
-    var value = message['data'];
-    // print(value['id']);
+    //  print(message['data']);
+//var value = message['data'];
+    //   print(value['id']);
 
     var message2 = jsonDecode(getUrls.body);
-
+    print('$message2' + 'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 2 video');
     var message3 = jsonDecode(getaudioUrls.body);
-    // print(message2['data']);
-    var value2 = message2['data'][1];
+    //(message2['data']);
+    //var value2 = message2['data'][1];
     // print(value2);
-    // print(value2['contentData']);
+    //print(value2['contentData']);
     List links = [];
     List audioLinks = [];
     for (var item in message2['data']) {
@@ -82,12 +84,15 @@ class _HomePage1State extends State<HomePage1> {
       audioLinks.add(item['contentData']);
     }
 
-    //print(links);
+    print(links);
     if (this.mounted) {
       setState(() {
         _links = links;
         _audioLinks = audioLinks;
-        devotionalQuote = message['data']['devotionalContent'];
+        if (message['data'] != null) {
+          devotionalQuote = message['data']['devotionalContent'];
+        }
+
         ready = true;
       });
     }
@@ -183,27 +188,55 @@ class _HomePage1State extends State<HomePage1> {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Container(
-                        height: 150,
-                        width: double.infinity,
-                        padding:
-                            EdgeInsets.only(left: 25.0, right: 25, top: 20),
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        child: Text(
-                          "$devotionalQuote",
-                          style: TextStyle(
-                            fontSize: 19,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                  devotionalQuote == null
+                      ? Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Container(
+                            margin: EdgeInsets.only(top: 5),
+                            height: 200,
+                            width: double.infinity,
+                            child: Card(
+                              semanticContainer: true,
+                              // color: Colors.grey,
+                              elevation: 5.0,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  Icon(
+                                    Icons.error_outline_sharp,
+                                    size: 50,
+                                  ),
+                                  SizedBox(height: 20),
+                                  Text(
+                                    'No Quotes\'s Available',
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                          textAlign: TextAlign.center,
-                        )),
-                  ),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Container(
+                              height: 150,
+                              width: double.infinity,
+                              padding: EdgeInsets.only(
+                                  left: 25.0, right: 25, top: 20),
+                              decoration: BoxDecoration(
+                                color: Colors.black,
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: Text(
+                                "$devotionalQuote",
+                                style: TextStyle(
+                                  fontSize: 19,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                                textAlign: TextAlign.center,
+                              )),
+                        ),
                   Padding(
                     padding:
                         const EdgeInsets.only(left: 16.0, top: 16, right: 16),
@@ -221,31 +254,59 @@ class _HomePage1State extends State<HomePage1> {
                       ],
                     ),
                   ),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        for (String i in _links)
-                          Container(
-                            height: 190,
-                            width: 270,
-                            padding: const EdgeInsets.only(
-                                top: 20, bottom: 20, right: 4, left: 16),
-                            child: YoutubePlayer(
-                              controller: YoutubePlayerController(
-                                  flags: YoutubePlayerFlags(
-                                      autoPlay: false, mute: false),
-                                  initialVideoId: "$i"),
-                              showVideoProgressIndicator: true,
-                              progressIndicatorColor: Colors.blue,
-                              progressColors: ProgressBarColors(
-                                  playedColor: Colors.blue,
-                                  handleColor: Colors.blue),
+                  _links.length == 0
+                      ? Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Container(
+                            margin: EdgeInsets.only(top: 5),
+                            height: 200,
+                            width: double.infinity,
+                            child: Card(
+                              semanticContainer: true,
+                              // color: Colors.grey,
+                              elevation: 5.0,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  Icon(
+                                    Icons.error_outline_sharp,
+                                    size: 50,
+                                  ),
+                                  SizedBox(height: 20),
+                                  Text(
+                                    'No Video\'s Available',
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                      ],
-                    ),
-                  ),
+                        )
+                      : SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              for (String i in _links)
+                                Container(
+                                  height: 190,
+                                  width: 270,
+                                  padding: const EdgeInsets.only(
+                                      top: 20, bottom: 20, right: 4, left: 16),
+                                  child: YoutubePlayer(
+                                    controller: YoutubePlayerController(
+                                        flags: YoutubePlayerFlags(
+                                            autoPlay: false, mute: false),
+                                        initialVideoId: "$i"),
+                                    showVideoProgressIndicator: true,
+                                    progressIndicatorColor: Colors.blue,
+                                    progressColors: ProgressBarColors(
+                                        playedColor: Colors.blue,
+                                        handleColor: Colors.blue),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
                   Padding(
                     padding:
                         const EdgeInsets.only(left: 16.0, top: 16, right: 16),
@@ -288,7 +349,8 @@ class _HomePage1State extends State<HomePage1> {
                                   ),
                                 ],
                               ),
-                            ),)
+                            ),
+                          )
                         : Column(
                             children: [
                               for (String i in _audioLinks) AudioTile(url: i),

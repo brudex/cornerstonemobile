@@ -41,20 +41,7 @@ class _MoreState extends State<More> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Color.fromRGBO(242, 245, 247, 1),
-       
-        leading: Center(child: Text('More', style: TextStyle(color: Colors.black, fontSize: 20),)),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0, bottom: 16.0, right: 8),
-            child: Text('Log Out', style: TextStyle(color: Colors.red),)
-          ),
-          
-          
-        ],
-      ),
+
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),

@@ -141,7 +141,7 @@ class Index extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => Event2(),
+                      builder: (context) => EventSuccess(),
                     ),
                   );
                 },

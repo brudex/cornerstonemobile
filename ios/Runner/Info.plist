@@ -47,6 +47,12 @@
 	<key>NSMicrophoneUsageDescription</key>
 
 	<key>NSAppTransportSecurity</key>
+
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>https</string>
+		<string>http</string>
+	</array>
 <dict>
   <key>NSAllowsArbitraryLoads</key>
   <true/>

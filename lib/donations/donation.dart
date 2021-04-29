@@ -58,16 +58,7 @@ class DonationState extends State<Donation> {
             SizedBox(
               height: 15,
             ),
-            Row(
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.arrow_back),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                )
-              ],
-            ),
+            
             Row(
               children: [
                 Padding(

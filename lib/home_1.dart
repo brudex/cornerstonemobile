@@ -1,10 +1,13 @@
+import 'package:cornerstone/donations/donation.dart';
 import 'package:cornerstone/home/homepage_1.dart';
 import 'package:cornerstone/player_widget.dart';
 import 'package:cornerstone/search/search_page.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:badges/badges.dart';
+
+
+import 'more_page.dart';
 
 class Home1 extends StatefulWidget {
   Home1({Key key}) : super(key: key);
@@ -20,11 +23,8 @@ class _Home1State extends State<Home1> {
   static List<Widget> _widgetOptions = <Widget>[
     HomePage1(),
     SearchPage(),
-    AudioApp(),
-    Text(
-      'Index 3: Blah',
-      style: optionStyle,
-    ),
+    Donation(),
+   MorePage(),
   ];
 
   void _onItemTapped(int index) {
@@ -68,7 +68,7 @@ class _Home1State extends State<Home1> {
             icon: SvgPicture.asset(
               "images/grid_view.svg",
             ),
-            label: 'App',
+            label: 'More',
           ),
         ],
         currentIndex: _selectedIndex,

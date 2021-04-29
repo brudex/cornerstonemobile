@@ -53,7 +53,7 @@ class DonationHistoryState extends State<DonationHistory> {
                           Navigator.pop(context);
                         },
                       ),
-                      Text('Donation History', style: TextStyle(fontSize: 20),)
+                      Text('Donation History', style: TextStyle(fontSize: 20),),
                     ],
                   ),
                    Padding(
