@@ -20,6 +20,7 @@ class _SearchPageState extends State<SearchPage> {
   bool _loading = false;
   List results = [];
   List _contentData = [];
+  List audioUrls = [];
   bool found = false;
 
   // Initially password is obscure
@@ -52,12 +53,14 @@ class _SearchPageState extends State<SearchPage> {
     print((message)['data']);
     List dataTypes = [];
     List contentData = [];
+    audioUrls = [];
     for (var item in message['data']) {
       dataTypes.add(item['contentType']);
     }
     for (var item in message['data']) {
       contentData.add(item['contentData']);
     }
+    
     print(dataTypes);
     setState(() {
       if (dataTypes.length > 0) {
@@ -157,7 +160,7 @@ class _SearchPageState extends State<SearchPage> {
                           Tab(text: "All Results"),
                           Tab(text: "Sermons"),
                           Tab(text: "Devotions"),
-                          Tab(text: "Bible"),
+                          Tab(text: "Videos"),
                         ],
                       ),
                     ),
@@ -193,7 +196,7 @@ class _SearchPageState extends State<SearchPage> {
                                     ),
                                   ),
                                 ),
-                              ],
+                              ],  // https://www.youtube.com/watch?v=GEQGDJNPIbE
                             )
                           : SingleChildScrollView(
                               child: Column(
@@ -226,7 +229,7 @@ class _SearchPageState extends State<SearchPage> {
                                                                     mute:
                                                                         false),
                                                             initialVideoId:
-                                                                "${_contentData[i]}"),
+                                                               YoutubePlayer.convertUrlToId( "${_contentData[i]}")),
                                                     showVideoProgressIndicator:
                                                         true,
                                                     progressIndicatorColor:
@@ -294,7 +297,10 @@ class _SearchPageState extends State<SearchPage> {
                                       "http://157.230.150.194:3000/uploads/sermons/SermonAudio%20-%20Media%20Player_2.mp3",
                                 ),
                               )
-                            : SizedBox(),
+                            : SizedBox(
+                              height: 50,
+                              child: Text('Nothing here'),
+                            ),
                     ],
                   ),
                 )
@@ -332,14 +338,58 @@ class _SearchPageState extends State<SearchPage> {
                                   ),
                                 ),
                               )
-                            : SizedBox(),
+                            : SizedBox(
+                              height: 50,
+                              child: Text('Nothing here'),
+                            ),
                     ],
                   ),
                 )
               else if (ind == 3)
                 SingleChildScrollView(
-                  child: Text('3'),
-                ),
+                  child: Column(
+                    children: [
+                      for (var i = 0; i < results.length; i++)
+                        results[i] == 'video'
+                            ? Container(
+                                                  height: 190,
+                                                  width: 270,
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 20,
+                                                          bottom: 20,
+                                                          right: 4,
+                                                          left: 16),
+                                                  child: YoutubePlayer(
+                                                    controller:
+                                                        YoutubePlayerController(
+                                                            flags:
+                                                                YoutubePlayerFlags(
+                                                                    autoPlay:
+                                                                        false,
+                                                                    mute:
+                                                                        false),
+                                                            initialVideoId:
+                                                               YoutubePlayer.convertUrlToId( "${_contentData[i]}")),
+                                                    showVideoProgressIndicator:
+                                                        true,
+                                                    progressIndicatorColor:
+                                                        Colors.blue,
+                                                    progressColors:
+                                                        ProgressBarColors(
+                                                            playedColor:
+                                                                Colors.blue,
+                                                            handleColor:
+                                                                Colors.blue),
+                                                  ),
+                                                )
+                            : SizedBox(
+                              height: 50,
+                              child: Text('Nothing here'),
+                            ),
+                    ],
+                  ),
+                )
             ],
           ),
         ),

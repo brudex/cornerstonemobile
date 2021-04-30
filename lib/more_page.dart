@@ -1,6 +1,8 @@
+import 'package:cornerstone/appointment.dart';
 import 'package:cornerstone/contact_us.dart';
 import 'package:cornerstone/event_2.dart';
 import 'package:cornerstone/onboardingScreen.dart';
+import 'package:cornerstone/terms.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'account_settings.dart';
@@ -188,6 +190,14 @@ class _MorePageState extends State<MorePage> {
               Icons.calendar_today_outlined,
               color: Colors.blue,
             ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Appointment(),
+                ),
+              );
+            },
             title: Text('Book Appointment'),
           ),
           ListTile(
@@ -195,6 +205,14 @@ class _MorePageState extends State<MorePage> {
               'Terms & Condition',
               style: TextStyle(color: Colors.grey),
             ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Terms(),
+                ),
+              );
+            },
           ),
           ListTile(
             title: Text(

@@ -92,7 +92,7 @@ class RegisterState extends State<Register> {
   }
 
   bool isValidLastName() {
-    if ((_lName == null) || (_lName.length == 0) || (_fName != null)) {
+    if ((_lName == null) || (_lName.length == 0) || (_lName != null)) {
       return true;
     } else {
       return false;

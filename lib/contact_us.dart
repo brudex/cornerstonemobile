@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'dart:async';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:geocoding/geocoding.dart';
 
 class ContactUs extends StatefulWidget {
   @override
@@ -20,13 +21,14 @@ class _ContactUsState extends State<ContactUs> {
 
   bool ready = false;
 
-  var phone; 
+  var phone;
   var email;
   var website;
   var fbHandle;
   var igHandle;
   var twitterHandle;
-
+  var address;
+  var findUs;
 
   Future fetchDetails() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -42,18 +44,24 @@ class _ContactUsState extends State<ContactUs> {
     final responseJson = jsonDecode(response.body);
     print('$responseJson' +
         'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 1 devotional');
+    address = responseJson['address'];
+    print(responseJson['phone']);
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+        double.parse(address[0]), double.parse(address[1]));
+    print(placemarks[0].street);
 
-        print(responseJson['phone']);
-    print(responseJson['findus']);
+    print(responseJson['address']);
+
     if (this.mounted) {
       setState(() {
         ready = true;
-        phone =  responseJson['phone'];
+        phone = responseJson['phone'];
         email = responseJson['email'];
         website = responseJson['website'];
         fbHandle = responseJson['fbHandle'];
         igHandle = responseJson['IGHandle'];
         twitterHandle = responseJson['twitterHandle'];
+        findUs = placemarks[0].street;
       });
     }
 
@@ -140,7 +148,7 @@ class _ContactUsState extends State<ContactUs> {
                   ),
                 ),
                 ListTile(
-                  subtitle: Text('Levites Avenue'),
+                  subtitle: Text('$findUs'),
                   title: new Text(
                     'Find us',
                     style: new TextStyle(
