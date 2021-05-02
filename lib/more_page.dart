@@ -2,6 +2,7 @@ import 'package:cornerstone/appointment.dart';
 import 'package:cornerstone/contact_us.dart';
 import 'package:cornerstone/event_2.dart';
 import 'package:cornerstone/onboardingScreen.dart';
+import 'package:cornerstone/sermon_detail.dart';
 import 'package:cornerstone/terms.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,12 +37,7 @@ class _MorePageState extends State<MorePage> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Color.fromRGBO(242, 245, 247, 1),
-        leading: Center(
-          child: Text(
-            'More',
-            style: TextStyle(color: Colors.black, fontSize: 18),
-          ),
-        ),
+       
         actions: [
           Padding(
             padding: const EdgeInsets.only(top: 16.0, bottom: 16.0, right: 8),
@@ -215,6 +211,14 @@ class _MorePageState extends State<MorePage> {
             },
           ),
           ListTile(
+             onTap: () {
+          /*     Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SermonDetail(),
+                ),
+              ); */
+            },
             title: Text(
               'Privacy & Policy',
               style: TextStyle(color: Colors.grey),

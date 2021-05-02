@@ -1,4 +1,4 @@
-import 'package:cornerstone/widgets.dart';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -164,7 +164,7 @@ class _AppointmentState extends State<Appointment> {
   DateTime _currentDate2 = DateTime.now();
 
   DateTime _targetDateTime = DateTime.now();
-//  List<DateTime> _markedDate = [DateTime(2018, 9, 20), DateTime(2018, 10, 11)];
+  List<DateTime> _markedDate = [DateTime(2018, 9, 20), DateTime(2018, 10, 11)];
 
   @override
   Widget build(BuildContext context) {
@@ -172,7 +172,11 @@ class _AppointmentState extends State<Appointment> {
       weekdayTextStyle: TextStyle(color: Colors.black),
       onDayPressed: (date, events) {
         setState(() {
-          this.setState(() => _currentDate2 = date);
+          this.setState(() {
+            _currentDate2 = date;
+            _currentDate = date;
+            _targetDateTime = date;
+          });
           events.forEach((event) => print(event.title));
           var x = "$date";
           print(x.substring(0, x.length - 13));
@@ -421,9 +425,8 @@ class _AppointmentState extends State<Appointment> {
                       setState(() {
                         if (selectedTime == null) {
                           failedAlertDialog(context, 'Error',
-                              'Please select a Date and Time');
+                              'Please select a Time');
                         } else {
-                          
                           verify();
                         }
                       });

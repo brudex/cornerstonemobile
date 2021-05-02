@@ -1,12 +1,11 @@
-import 'package:cornerstone/dialogs.dart';
 import 'package:cornerstone/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
-
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class SearchPage extends StatefulWidget {
@@ -20,6 +19,7 @@ class _SearchPageState extends State<SearchPage> {
   bool _loading = false;
   List results = [];
   List _contentData = [];
+  List _youtubeUrls = [];
   List audioUrls = [];
   bool found = false;
 
@@ -53,18 +53,26 @@ class _SearchPageState extends State<SearchPage> {
     print((message)['data']);
     List dataTypes = [];
     List contentData = [];
+    List youtubeUrls = [];
     audioUrls = [];
     for (var item in message['data']) {
       dataTypes.add(item['contentType']);
+      if (item['contentType'] == "video") {
+        youtubeUrls.add(YoutubePlayer.convertUrlToId(item['contentData']));
+      }
     }
     for (var item in message['data']) {
       contentData.add(item['contentData']);
     }
-    
+
     print(dataTypes);
     setState(() {
       if (dataTypes.length > 0) {
         found = true;
+      }
+
+      if (youtubeUrls.length > 0) {
+        _youtubeUrls = youtubeUrls;
       }
 
       results = dataTypes;
@@ -196,7 +204,7 @@ class _SearchPageState extends State<SearchPage> {
                                     ),
                                   ),
                                 ),
-                              ],  // https://www.youtube.com/watch?v=GEQGDJNPIbE
+                              ], // https://www.youtube.com/watch?v=GEQGDJNPIbE
                             )
                           : SingleChildScrollView(
                               child: Column(
@@ -210,36 +218,38 @@ class _SearchPageState extends State<SearchPage> {
                                                   "http://157.230.150.194:3000/uploads/sermons/SermonAudio%20-%20Media%20Player_2.mp3",
                                             )
                                           : results[i] == 'video'
-                                              ? Container(
-                                                  height: 190,
-                                                  width: 270,
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 20,
-                                                          bottom: 20,
-                                                          right: 4,
-                                                          left: 16),
-                                                  child: YoutubePlayer(
-                                                    controller:
-                                                        YoutubePlayerController(
-                                                            flags:
-                                                                YoutubePlayerFlags(
-                                                                    autoPlay:
-                                                                        false,
-                                                                    mute:
-                                                                        false),
-                                                            initialVideoId:
-                                                               YoutubePlayer.convertUrlToId( "${_contentData[i]}")),
-                                                    showVideoProgressIndicator:
-                                                        true,
-                                                    progressIndicatorColor:
-                                                        Colors.blue,
-                                                    progressColors:
-                                                        ProgressBarColors(
-                                                            playedColor:
-                                                                Colors.blue,
-                                                            handleColor:
-                                                                Colors.blue),
+                                              ? InkWell(
+                                                  onTap: () {
+                                                    print('tapped');
+                                                    launch(
+                                                        "${_contentData[i]}"); //or any link you want
+                                                  },
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Center(
+                                                      child: Stack(
+                                                        children: [
+                                                          Container(
+                                                            height: 200,
+                                                            width: 430,
+                                                            child: Image.network(
+                                                                'https://img.youtube.com/vi/${_youtubeUrls[i]}/0.jpg'),
+                                                          ),
+                                                          Container(
+                                                            width: 430,
+                                                            height: 200,
+                                                            child: Icon(
+                                                              Icons.play_arrow,
+                                                              color:
+                                                                  Colors.white,
+                                                              size: 100,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
                                                   ),
                                                 )
                                               : Container(
@@ -297,10 +307,7 @@ class _SearchPageState extends State<SearchPage> {
                                       "http://157.230.150.194:3000/uploads/sermons/SermonAudio%20-%20Media%20Player_2.mp3",
                                 ),
                               )
-                            : SizedBox(
-                              height: 50,
-                              child: Text('Nothing here'),
-                            ),
+                            : SizedBox(),
                     ],
                   ),
                 )
@@ -338,10 +345,7 @@ class _SearchPageState extends State<SearchPage> {
                                   ),
                                 ),
                               )
-                            : SizedBox(
-                              height: 50,
-                              child: Text('Nothing here'),
-                            ),
+                            : SizedBox(),
                     ],
                   ),
                 )
@@ -351,42 +355,38 @@ class _SearchPageState extends State<SearchPage> {
                     children: [
                       for (var i = 0; i < results.length; i++)
                         results[i] == 'video'
-                            ? Container(
-                                                  height: 190,
-                                                  width: 270,
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 20,
-                                                          bottom: 20,
-                                                          right: 4,
-                                                          left: 16),
-                                                  child: YoutubePlayer(
-                                                    controller:
-                                                        YoutubePlayerController(
-                                                            flags:
-                                                                YoutubePlayerFlags(
-                                                                    autoPlay:
-                                                                        false,
-                                                                    mute:
-                                                                        false),
-                                                            initialVideoId:
-                                                               YoutubePlayer.convertUrlToId( "${_contentData[i]}")),
-                                                    showVideoProgressIndicator:
-                                                        true,
-                                                    progressIndicatorColor:
-                                                        Colors.blue,
-                                                    progressColors:
-                                                        ProgressBarColors(
-                                                            playedColor:
-                                                                Colors.blue,
-                                                            handleColor:
-                                                                Colors.blue),
-                                                  ),
-                                                )
-                            : SizedBox(
-                              height: 50,
-                              child: Text('Nothing here'),
-                            ),
+                            ? InkWell(
+                                onTap: () {
+                                  print('tapped');
+                                  launch(
+                                      "${_contentData[i]}"); //or any link you want
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Center(
+                                    child: Stack(
+                                      children: [
+                                        Container(
+                                          height: 200,
+                                          width: 430,
+                                          child: Image.network(
+                                              'https://img.youtube.com/vi/${_youtubeUrls[i]}/0.jpg'),
+                                        ),
+                                        Container(
+                                          width: 430,
+                                          height: 200,
+                                          child: Icon(
+                                            Icons.play_arrow,
+                                            color: Colors.white,
+                                            size: 100,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : SizedBox(),
                     ],
                   ),
                 )

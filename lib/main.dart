@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
     precacheImage(AssetImage('images/events_unavailable.png'), context);
 
     return MaterialApp(
+      
       debugShowCheckedModeBanner: false,
       title: 'Cornerstone',
 
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => SplashScreen(),
       },
+      
     );
   }
 }

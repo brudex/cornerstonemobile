@@ -17,6 +17,7 @@ class _EventSuccessState extends State<EventSuccess> {
     fetchEvents();
   }
 
+  var churchName;
   var title;
   var description;
   var venue;
@@ -30,6 +31,8 @@ class _EventSuccessState extends State<EventSuccess> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     var url = "http://157.230.150.194:3000/api/events";
+    var churchUrl = "http://157.230.150.194:3000/api/church";
+
     var token = "${prefs.getString('token')}";
 
     final response = await http.get(
@@ -37,15 +40,25 @@ class _EventSuccessState extends State<EventSuccess> {
       headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
     );
 
+    final churchResponse = await http.get(
+      Uri.parse(churchUrl),
+      headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
+    );
+
+    final churchResponseJson = jsonDecode(churchResponse.body);
+    print('$churchResponseJson' +
+        'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 1 devotional');
+
     final responseJson = jsonDecode(response.body);
     print('$responseJson' +
         'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 1 devotional');
 
     print(responseJson['data'].length);
 
+    print(churchResponseJson["name"]);
     if (this.mounted) {
       setState(() {
-        
+        churchName = churchResponseJson["name"];
         ready = true;
       });
     }
@@ -177,7 +190,7 @@ class _EventSuccessState extends State<EventSuccess> {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                'All of Christ Embassy’s events will appear here ',
+                                'All of $churchName\'s events will appear here ',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(color: Colors.grey),
                               ),

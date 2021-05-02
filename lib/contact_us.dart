@@ -169,8 +169,12 @@ class _ContactUsState extends State<ContactUs> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Image.asset(
-                      "images/facebook_logo.png",
+                    InkWell( onTap: (){
+                      launch(fbHandle);
+                    },
+                                          child: Image.asset(
+                        "images/facebook_logo.png",
+                      ),
                     ),
                     Image.asset(
                       "images/instagram_logo.png",

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:async';
 import 'package:badges/badges.dart';
-import 'package:cornerstone/video.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:cornerstone/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,10 +23,11 @@ class _HomePage1State extends State<HomePage1> {
     fetchDevotion();
   }
 
-  //var id = YoutubePlayer.convertUrlToId(url);
+  var churchName;
   var devotionalQuote;
   bool ready = false;
   List _links = [];
+  List _youtubeLinks = [];
   List _audioLinks = [];
 
   Future fetchDevotion() async {
@@ -39,6 +40,17 @@ class _HomePage1State extends State<HomePage1> {
 
     var audioUrls =
         "http://157.230.150.194:3000/api/churchcontent/audio?limit=0&offset=0";
+
+        var churchUrl = "http://157.230.150.194:3000/api/church";
+
+         final churchResponse = await http.get(
+      Uri.parse(churchUrl),
+      headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
+    );
+
+    final churchResponseJson = jsonDecode(churchResponse.body);
+    print('$churchResponseJson' +
+        'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 1 devotional');
 
     final response = await http.get(
       Uri.parse(url),
@@ -75,9 +87,14 @@ class _HomePage1State extends State<HomePage1> {
     // print(value2);
     //print(value2['contentData']);
     List links = [];
+    List youtubeLinks = [];
     List audioLinks = [];
     for (var item in message2['data']) {
       links.add(YoutubePlayer.convertUrlToId(item['contentData']));
+    }
+
+    for (var item in message2['data']) {
+      youtubeLinks.add(item['contentData']);
     }
 
     for (var item in message3['data']) {
@@ -87,12 +104,15 @@ class _HomePage1State extends State<HomePage1> {
     print(links);
     if (this.mounted) {
       setState(() {
+        churchName = churchResponseJson["name"];
         _links = links;
+        _youtubeLinks = youtubeLinks;
         _audioLinks = audioLinks;
         if (message['data'] != null) {
           devotionalQuote = message['data']['devotionalContent'];
         }
-
+      });
+      setState(() {
         ready = true;
       });
     }
@@ -101,33 +121,16 @@ class _HomePage1State extends State<HomePage1> {
     //print(value);
   }
 
-  createVideoList(int d) {
-    _links.forEach((element) {
-      return Container(
-        height: 190,
-        width: 270,
-        padding: const EdgeInsets.only(top: 20, bottom: 20, right: 4, left: 16),
-        child: YoutubePlayer(
-          controller: YoutubePlayerController(
-              flags: YoutubePlayerFlags(autoPlay: false, mute: false),
-              initialVideoId: _links[element]),
-          showVideoProgressIndicator: true,
-          progressIndicatorColor: Colors.blue,
-          progressColors: ProgressBarColors(
-              playedColor: Colors.blue, handleColor: Colors.blue),
-        ),
-      );
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return ready == false
+          ? Center(child: CircularProgressIndicator()): Scaffold(
+      
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Color.fromRGBO(242, 245, 247, 1),
         title: Text(
-          'Christ Embassy',
+          '$churchName',
           style: TextStyle(color: Colors.black),
         ),
         leading: Image.asset(
@@ -172,9 +175,8 @@ class _HomePage1State extends State<HomePage1> {
           ),
         ],
       ),
-      body: ready == false
-          ? Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
+      body: 
+           SingleChildScrollView(
               child: Column(
                 children: <Widget>[
                   Padding(
@@ -216,26 +218,28 @@ class _HomePage1State extends State<HomePage1> {
                             ),
                           ),
                         )
-                      : Padding(
+                      :  Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Container(
-                              height: 150,
-                              width: double.infinity,
-                              padding: EdgeInsets.only(
-                                  left: 25.0, right: 25, top: 20),
-                              decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              child: Text(
-                                "$devotionalQuote",
-                                style: TextStyle(
-                                  fontSize: 19,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                            margin: EdgeInsets.only(top: 5),
+                            height: 180,
+                            width: double.infinity,
+                            child: Card(
+                              color: Colors.black,
+                              semanticContainer: true,
+                              // color: Colors.grey,
+                              elevation: 5.0,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: SingleChildScrollView(
+                                                                  child: Text(
+                                    '$devotionalQuote',
+                                    style: TextStyle(color: Colors.white, fontSize: 18),
+                                  ),
                                 ),
-                                textAlign: TextAlign.center,
-                              )),
+                              ),
+                            ),
+                          ),
                         ),
                   Padding(
                     padding:
@@ -286,22 +290,32 @@ class _HomePage1State extends State<HomePage1> {
                           scrollDirection: Axis.horizontal,
                           child: Row(
                             children: [
-                              for (String i in _links)
-                                Container(
-                                  height: 190,
-                                  width: 270,
-                                  padding: const EdgeInsets.only(
-                                      top: 20, bottom: 20, right: 4, left: 16),
-                                  child: YoutubePlayer(
-                                    controller: YoutubePlayerController(
-                                        flags: YoutubePlayerFlags(
-                                            autoPlay: false, mute: false),
-                                        initialVideoId: "$i"),
-                                    showVideoProgressIndicator: true,
-                                    progressIndicatorColor: Colors.blue,
-                                    progressColors: ProgressBarColors(
-                                        playedColor: Colors.blue,
-                                        handleColor: Colors.blue),
+                              for (var i = 0; i < _links.length; i++)
+                                Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      print('tapped');
+                                      launch(
+                                          "${_youtubeLinks[i]}"); //or any link you want
+                                    },
+                                    child: Stack(children: [
+                                      Container(
+                                        height: 150,
+                                        width: 220,
+                                        child: Image.network(
+                                            'https://img.youtube.com/vi/${_links[i]}/0.jpg'),
+                                      ),
+                                      Container(
+                                        width: 220,
+                                        height: 150,
+                                        child: Icon(
+                                          Icons.play_arrow,
+                                          color: Colors.white,
+                                          size: 100,
+                                        ),
+                                      ),
+                                    ]),
                                   ),
                                 ),
                             ],

@@ -100,6 +100,7 @@ class EditProfileState extends State<EditProfile> {
               color: Colors.transparent,
               borderRadius: BorderRadius.circular(10.0),
               child: TextField(
+                readOnly: true,
                 focusNode: _emailFocus,
                 controller: _emailController,
                 obscureText: false,
@@ -121,35 +122,7 @@ class EditProfileState extends State<EditProfile> {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 16),
-            child: Material(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(10.0),
-              child: TextField(
-                focusNode: _passwordFocus,
-                controller: _passwordController,
-                obscureText: _obscureText,
-                textInputAction: TextInputAction.next,
-                onSubmitted: (input) {
-                  _password = input;
-                },
-                onTap: () {},
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscureText ? Icons.visibility_off : Icons.visibility,
-                      color: Colors.blue,
-                    ),
-                    onPressed: () {
-                      _toggle();
-                    },
-                  ),
-                ),
-              ),
-            ),
-          ),
+         
           Padding(
             padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 16),
             child: Material(

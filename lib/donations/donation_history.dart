@@ -113,7 +113,7 @@ class DonationHistoryState extends State<DonationHistory> {
                 height: 50,
               ),
             ListTile(
-                leading: Image.asset('images/stripe.png'),
+                leading: Image.asset('images/visa.png'),
 
                 title: Text(
                   'GHc 2,000.00',
@@ -131,7 +131,7 @@ class DonationHistoryState extends State<DonationHistory> {
                 ),
               ),
               ListTile(
-                leading: Image.asset('images/stripe.png'),
+                leading: Image.asset('images/visa.png'),
 
                 title: Text(
                   'GHc 2,000.00',
@@ -169,7 +169,7 @@ class DonationHistoryState extends State<DonationHistory> {
                 height: 50,
               ),
             ListTile(
-                leading: Image.asset('images/paypal.png'),
+                leading: Image.asset('images/visa.png'),
 
                 title: Text(
                   'GHc 2,000.00',
