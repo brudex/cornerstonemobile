@@ -1,4 +1,4 @@
-import 'package:cornerstone/widgets.dart';
+import 'package:cornerstone/ui/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 class EditProfile extends StatefulWidget {
@@ -8,10 +8,12 @@ class EditProfile extends StatefulWidget {
 
 class EditProfileState extends State<EditProfile> {
   TextEditingController _emailController, _passwordController, _fNameController;
+  // ignore: unused_field
   FocusNode _emailFocus, _passwordFocus;
 
   //
 
+  // ignore: unused_element
   void _toggle() {
     setState(() {
       _obscureText = !_obscureText;

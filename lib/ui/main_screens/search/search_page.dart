@@ -1,8 +1,8 @@
-import 'package:cornerstone/widgets.dart';
+import 'package:cornerstone/ui/main_screens/search/video_details.dart';
+import 'package:cornerstone/ui/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
@@ -221,8 +221,18 @@ class _SearchPageState extends State<SearchPage> {
                                               ? InkWell(
                                                   onTap: () {
                                                     print('tapped');
-                                                    launch(
-                                                        "${_contentData[i]}"); //or any link you want
+                                                     Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => VideoDetail(
+                                            backgroundImage:
+                                                'https://img.youtube.com/vi/${_youtubeUrls[i]}/0.jpg',
+                                                videoUrl: _contentData[i],
+                                          ),
+                                        ),
+                                      );
+                                                   /*  launch(
+                                                        "${_contentData[i]}"); */ //or any link you want
                                                   },
                                                   child: Padding(
                                                     padding:
@@ -255,30 +265,27 @@ class _SearchPageState extends State<SearchPage> {
                                               : Container(
                                                   margin:
                                                       EdgeInsets.only(top: 5),
-                                                  height: 200,
+                                                  height: 180,
                                                   width: double.infinity,
                                                   child: Card(
+                                                    color: Colors.black,
                                                     semanticContainer: true,
                                                     // color: Colors.grey,
                                                     elevation: 5.0,
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Icon(
-                                                          Icons
-                                                              .error_outline_sharp,
-                                                          size: 50,
-                                                        ),
-                                                        SizedBox(height: 20),
-                                                        Text(
-                                                          results[i],
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child:
+                                                          SingleChildScrollView(
+                                                        child: Text(
+                                                          _contentData[i],
                                                           style: TextStyle(
                                                               color:
-                                                                  Colors.black),
+                                                                  Colors.white,
+                                                              fontSize: 18),
                                                         ),
-                                                      ],
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -321,26 +328,23 @@ class _SearchPageState extends State<SearchPage> {
                                 padding: const EdgeInsets.all(16.0),
                                 child: Container(
                                   margin: EdgeInsets.only(top: 5),
-                                  height: 200,
+                                  height: 180,
                                   width: double.infinity,
                                   child: Card(
+                                    color: Colors.black,
                                     semanticContainer: true,
                                     // color: Colors.grey,
                                     elevation: 5.0,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.error_outline_sharp,
-                                          size: 50,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: SingleChildScrollView(
+                                        child: Text(
+                                          _contentData[i],
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18),
                                         ),
-                                        SizedBox(height: 20),
-                                        Text(
-                                          results[i],
-                                          style: TextStyle(color: Colors.black),
-                                        ),
-                                      ],
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -358,8 +362,19 @@ class _SearchPageState extends State<SearchPage> {
                             ? InkWell(
                                 onTap: () {
                                   print('tapped');
-                                  launch(
-                                      "${_contentData[i]}"); //or any link you want
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => VideoDetail(
+                                        backgroundImage:
+                                            'https://img.youtube.com/vi/${_youtubeUrls[i]}/0.jpg',
+
+                                          videoUrl: _contentData[i],
+                                      ),
+                                    ),
+                                  );
+                                  /*   launch(
+                                      "${_contentData[i]}"); */ //or any link you want
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),

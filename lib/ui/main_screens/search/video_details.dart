@@ -1,23 +1,29 @@
 import 'package:cornerstone/list/list_page.dart';
-import 'package:cornerstone/list_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class SermonDetail extends StatefulWidget {
+class VideoDetail extends StatefulWidget {
+  final String backgroundImage;
+  final String videoUrl;
+
+  const VideoDetail({Key key, @required this.backgroundImage, @required this.videoUrl})
+      : super(key: key);
   @override
-  _SermonDetailState createState() => _SermonDetailState();
+  _VideoDetailState createState() => _VideoDetailState();
 }
 
-class _SermonDetailState extends State<SermonDetail> {
+class _VideoDetailState extends State<VideoDetail> {
   @override
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Image.asset('images/backgroundSD.png'),
+        Image.network(widget.backgroundImage),
         Padding(
           padding: EdgeInsets.only(top: 30),
           child: ElevatedButton(
-            style: ElevatedButton.styleFrom(primary: Colors.transparent, shadowColor: Colors.transparent),
+            style: ElevatedButton.styleFrom(
+                primary: Colors.transparent, shadowColor: Colors.transparent),
             child: Icon(
               Icons.arrow_back,
               color: Colors.white,
@@ -110,7 +116,7 @@ class _SermonDetailState extends State<SermonDetail> {
                                         ],
                                       ),
                                       onPressed: () {
-                                        //  performLogin();
+                                        launch(widget.videoUrl);
                                       },
                                     ),
                                   ),
@@ -129,12 +135,13 @@ class _SermonDetailState extends State<SermonDetail> {
                                             ],
                                           ),
                                           onPressed: () {
-                                               Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ListPage(),
-                    ),
-                  );
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ListPage(),
+                                              ),
+                                            );
                                           },
                                         ),
                                         OutlinedButton(
@@ -182,17 +189,17 @@ class _SermonDetailState extends State<SermonDetail> {
                 )),
           ),
         ),
-        Positioned(
+        /*  Positioned(
             bottom: MediaQuery.of(context).size.height * 0.58,
             left: MediaQuery.of(context).size.width * 0.4,
             child: Container(
                 height: 100,
                 width: 70,
-                child: Image.asset(
-                  'images/small.png',
+                child: Image.network(
+                  widget.image,
                   height: 100,
                   width: 70,
-                )))
+                ))) */
       ],
     );
   }

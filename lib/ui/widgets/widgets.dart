@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie_audio/chewie_audio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
+
 
 class AudioTile extends StatefulWidget {
   final String url;
@@ -14,6 +13,7 @@ class AudioTile extends StatefulWidget {
 }
 
 class _AudioTileState extends State<AudioTile> {
+  // ignore: unused_field
   TargetPlatform _platform;
   VideoPlayerController _videoPlayerController1;
 

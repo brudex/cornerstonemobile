@@ -1,4 +1,4 @@
-import 'package:cornerstone/widgets.dart';
+import 'package:cornerstone/ui/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 class SearchResultsPage extends StatefulWidget {
@@ -14,9 +14,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
 
   // Initially password is obscure
 
-  // ignore: unused_field
-  String _SearchResultsPage;
-
+ 
   void performDonationHistory() {
     //DonationHistory here
   }
@@ -56,7 +54,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                       obscureText: false,
                       textInputAction: TextInputAction.next,
                       onSubmitted: (input) {
-                        _SearchResultsPage = input;
+                     
                       },
                       onTap: () {},
                       decoration: InputDecoration(

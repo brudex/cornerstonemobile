@@ -16,6 +16,7 @@ class AudioApp extends StatefulWidget {
 }
 
 class _AudioAppState extends State<AudioApp> {
+  // ignore: unused_field
   TargetPlatform _platform;
   VideoPlayerController _videoPlayerController1;
 

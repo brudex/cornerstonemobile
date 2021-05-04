@@ -1,15 +1,14 @@
-import 'package:cornerstone/appointment.dart';
-import 'package:cornerstone/contact_us.dart';
-import 'package:cornerstone/event_2.dart';
-import 'package:cornerstone/onboardingScreen.dart';
-import 'package:cornerstone/sermon_detail.dart';
-import 'package:cornerstone/terms.dart';
+import 'package:cornerstone/ui/main_screens/donations/donation_history.dart';
+import 'package:cornerstone/ui/main_screens/more/more_pages/appointment.dart';
+import 'package:cornerstone/ui/main_screens/more/more_pages/contact_us.dart';
+import 'package:cornerstone/ui/main_screens/more/more_pages/event_2.dart';
+import 'package:cornerstone/access_pages/onboardingScreen.dart';
+import 'package:cornerstone/ui/main_screens/more/more_pages/terms.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'account_settings.dart';
-import 'bible.dart';
-import 'donations/donation_history.dart';
-import 'edit_profile.dart';
+import 'more_pages/account_settings.dart';
+import 'more_pages/bible.dart';
+import 'more_pages/edit_profile.dart';
 
 class MorePage extends StatefulWidget {
   @override
@@ -41,6 +40,7 @@ class _MorePageState extends State<MorePage> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(top: 16.0, bottom: 16.0, right: 8),
+            // ignore: deprecated_member_use
             child: FlatButton(
               onPressed: () {
                 logout();
@@ -92,6 +92,7 @@ class _MorePageState extends State<MorePage> {
             padding: EdgeInsets.only(bottom: 20),
             color: Colors.white,
             child: Center(
+              // ignore: deprecated_member_use
               child: FlatButton(
                 onPressed: () {
                   Navigator.push(
@@ -212,7 +213,7 @@ class _MorePageState extends State<MorePage> {
           ),
           ListTile(
              onTap: () {
-          /*     Navigator.push(
+            /*   Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => SermonDetail(),

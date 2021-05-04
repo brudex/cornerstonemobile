@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'dart:async';
 import 'package:badges/badges.dart';
+import 'package:cornerstone/ui/widgets/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:cornerstone/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -17,6 +17,30 @@ class HomePage1 extends StatefulWidget {
 }
 
 class _HomePage1State extends State<HomePage1> {
+  Future<void> _askedToLead() async {
+    switch (await showDialog<HomePage1>(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            insetPadding: EdgeInsets.all(10),
+            title: const Text('Today\'s Devotion'),
+            children: <Widget>[
+              SimpleDialogOption(
+                // onPressed: () { Navigator.pop(context, Department.treasury); },
+                child: Text(
+                  '$devotionalQuote',
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+            ],
+          );
+        })) {
+      case null:
+        // dialog dismissed
+        break;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -41,9 +65,9 @@ class _HomePage1State extends State<HomePage1> {
     var audioUrls =
         "http://157.230.150.194:3000/api/churchcontent/audio?limit=0&offset=0";
 
-        var churchUrl = "http://157.230.150.194:3000/api/church";
+    var churchUrl = "http://157.230.150.194:3000/api/church";
 
-         final churchResponse = await http.get(
+    final churchResponse = await http.get(
       Uri.parse(churchUrl),
       headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
     );
@@ -124,59 +148,60 @@ class _HomePage1State extends State<HomePage1> {
   @override
   Widget build(BuildContext context) {
     return ready == false
-          ? Center(child: CircularProgressIndicator()): Scaffold(
-      
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Color.fromRGBO(242, 245, 247, 1),
-        title: Text(
-          '$churchName',
-          style: TextStyle(color: Colors.black),
-        ),
-        leading: Image.asset(
-          'images/CE_logo.png',
-          scale: 2,
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0, bottom: 16.0, right: 8),
-            child: Icon(
-              Icons.bookmark_border_sharp,
-              color: Colors.black,
-            ),
-          ),
-          PopupMenuButton(
-            icon: Badge(
-              badgeContent: Text(
-                '2',
-                style: TextStyle(color: Colors.white),
+        ? Center(child: CircularProgressIndicator())
+        : Scaffold(
+            appBar: AppBar(
+              elevation: 0,
+              backgroundColor: Color.fromRGBO(242, 245, 247, 1),
+              title: Text(
+                '$churchName',
+                style: TextStyle(color: Colors.black),
               ),
-              badgeColor: Colors.blue,
-              child: Icon(
-                Icons.notifications_none_sharp,
-                color: Colors.black,
+              leading: Image.asset(
+                'images/CE_logo.png',
+                scale: 2,
               ),
-            ),
-            itemBuilder: (BuildContext context) {
-              return [
-                PopupMenuItem(
-                  child: InkWell(
-                    splashColor: Colors.grey, // splash color
-                    child: Text('• Payment of GHc 2,000.00 was successful'),
+              actions: [
+                Padding(
+                  padding:
+                      const EdgeInsets.only(top: 16.0, bottom: 16.0, right: 8),
+                  child: Icon(
+                    Icons.bookmark_border_sharp,
+                    color: Colors.black,
                   ),
                 ),
-                PopupMenuItem(
-                    child: InkWell(
-                        splashColor: Colors.grey, // splash color
-                        child:
-                            Text('• Password has been changed successfully'))),
-              ];
-            },
-          ),
-        ],
-      ),
-      body: 
-           SingleChildScrollView(
+                PopupMenuButton(
+                  icon: Badge(
+                    badgeContent: Text(
+                      '2',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    badgeColor: Colors.blue,
+                    child: Icon(
+                      Icons.notifications_none_sharp,
+                      color: Colors.black,
+                    ),
+                  ),
+                  itemBuilder: (BuildContext context) {
+                    return [
+                      PopupMenuItem(
+                        child: InkWell(
+                          splashColor: Colors.grey, // splash color
+                          child:
+                              Text('• Payment of GHc 2,000.00 was successful'),
+                        ),
+                      ),
+                      PopupMenuItem(
+                          child: InkWell(
+                              splashColor: Colors.grey, // splash color
+                              child: Text(
+                                  '• Password has been changed successfully'))),
+                    ];
+                  },
+                ),
+              ],
+            ),
+            body: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
                   Padding(
@@ -218,23 +243,29 @@ class _HomePage1State extends State<HomePage1> {
                             ),
                           ),
                         )
-                      :  Padding(
+                      : Padding(
                           padding: const EdgeInsets.all(16.0),
-                          child: Container(
-                            margin: EdgeInsets.only(top: 5),
-                            height: 180,
-                            width: double.infinity,
-                            child: Card(
-                              color: Colors.black,
-                              semanticContainer: true,
-                              // color: Colors.grey,
-                              elevation: 5.0,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: SingleChildScrollView(
-                                                                  child: Text(
-                                    '$devotionalQuote',
-                                    style: TextStyle(color: Colors.white, fontSize: 18),
+                          child: InkWell(
+                            onTap: () {
+                              _askedToLead();
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(top: 5),
+                              height: 180,
+                              width: double.infinity,
+                              child: Card(
+                                color: Colors.black,
+                                semanticContainer: true,
+                                // color: Colors.grey,
+                                elevation: 5.0,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: SingleChildScrollView(
+                                    child: Text(
+                                      '$devotionalQuote',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 18),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -296,6 +327,7 @@ class _HomePage1State extends State<HomePage1> {
                                   child: InkWell(
                                     onTap: () {
                                       print('tapped');
+
                                       launch(
                                           "${_youtubeLinks[i]}"); //or any link you want
                                     },
@@ -374,6 +406,6 @@ class _HomePage1State extends State<HomePage1> {
                 ],
               ),
             ),
-    );
+          );
   }
 }

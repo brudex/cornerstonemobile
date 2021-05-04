@@ -1,5 +1,5 @@
-import 'package:cornerstone/home_1.dart';
-import 'package:cornerstone/onboardingScreen.dart';
+import 'package:cornerstone/ui/main_screens/home_1.dart';
+import 'package:cornerstone/access_pages/onboardingScreen.dart';
 import 'package:flutter/material.dart';
 
 showLoading(BuildContext context) {

@@ -1,12 +1,12 @@
-import 'package:cornerstone/dialogs.dart';
-import 'package:cornerstone/forgot_password.dart';
+import 'package:cornerstone/access_pages/forgot_password.dart';
+import 'package:cornerstone/ui/widgets/dialogs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 
-import 'home_1.dart';
+import '../ui/main_screens/home_1.dart';
 
 class Login extends StatefulWidget {
   @override

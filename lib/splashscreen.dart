@@ -1,7 +1,5 @@
 import 'dart:async';
-
-import 'package:cornerstone/index.dart';
-import 'package:cornerstone/onboardingScreen.dart';
+import 'package:cornerstone/access_pages/onboardingScreen.dart';
 import 'package:flutter/material.dart';
 
 

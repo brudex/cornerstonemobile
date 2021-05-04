@@ -1,4 +1,4 @@
-import 'package:cornerstone/dialogs.dart';
+import 'package:cornerstone/ui/widgets/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -42,10 +42,12 @@ class RegisterState extends State<Register> {
   String _currentSelectedValue;
   int _currentSelectedId;
 
+  // ignore: non_constant_identifier_names
   bool churches_list_ready = false;
 
   var notReady = ["Loading ...."];
   var _churches = [];
+  // ignore: non_constant_identifier_names
   var _churches_id = [];
 
 
@@ -272,7 +274,9 @@ class RegisterState extends State<Register> {
       var message = jsonDecode(response.body);
 
       print(message[1]);
+      // ignore: non_constant_identifier_names
       List churches_list = [];
+      // ignore: non_constant_identifier_names
       List churches_id = [];
 
       for (var item in message) {

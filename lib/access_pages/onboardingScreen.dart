@@ -1,5 +1,5 @@
-import 'package:cornerstone/login.dart';
-import 'package:cornerstone/register.dart';
+import 'package:cornerstone/access_pages/login.dart';
+import 'package:cornerstone/access_pages/register.dart';
 import 'package:flutter/material.dart';
 
 class OnboardingScreen extends StatelessWidget {

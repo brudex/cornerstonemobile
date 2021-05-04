@@ -1,28 +1,23 @@
-import 'package:cornerstone/account_settings.dart';
-import 'package:cornerstone/bible.dart';
-import 'package:cornerstone/contact_us.dart';
-import 'package:cornerstone/donations/donation_history.dart';
-import 'package:cornerstone/edit_profile.dart';
-import 'package:cornerstone/event_1.dart';
-import 'package:cornerstone/event_2.dart';
-import 'package:cornerstone/home/homepage_2.dart';
-import 'package:cornerstone/home_1.dart';
-import 'package:cornerstone/login.dart';
-import 'package:cornerstone/more.dart';
-import 'package:cornerstone/onboardingScreen.dart';
-import 'package:cornerstone/register.dart';
-import 'package:cornerstone/donations/donation_success_screen.dart';
-
-import 'package:cornerstone/search_results_screen.dart';
-import 'package:cornerstone/search_screen.dart';
-import 'package:cornerstone/terms.dart';
+import 'package:cornerstone/ui/main_screens/more/more_pages/account_settings.dart';
+import 'package:cornerstone/ui/main_screens/more/more_pages/bible.dart';
+import 'package:cornerstone/ui/main_screens/more/more_pages/contact_us.dart';
+import 'package:cornerstone/ui/main_screens/donations/donation_history.dart';
+import 'package:cornerstone/ui/main_screens/more/more_pages/edit_profile.dart';
+import 'package:cornerstone/ui/main_screens/more/more_pages/event_2.dart';
+import 'package:cornerstone/ui/main_screens/home/homepage_2.dart';
+import 'package:cornerstone/ui/main_screens/home_1.dart';
+import 'package:cornerstone/access_pages/login.dart';
+import 'package:cornerstone/access_pages/onboardingScreen.dart';
+import 'package:cornerstone/ui/main_screens/donations/donation_success_screen.dart';
+import 'package:cornerstone/access_pages/register.dart';
+import 'package:cornerstone/ui/main_screens/more/more_pages/terms.dart';
 
 import 'package:flutter/material.dart';
 
-import 'appointment.dart';
+import 'ui/main_screens/more/more_pages/appointment.dart';
 
-import 'donations/donation.dart';
-import 'home_2.dart';
+import 'ui/main_screens/donations/donation.dart';
+
 
 import 'list_empty_screen.dart';
 import 'list_screen.dart';
@@ -127,12 +122,12 @@ class Index extends StatelessWidget {
               ListTile(
                 title: Text("Event Screen"),
                 onTap: () {
-                  Navigator.push(
+                  /* Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => Event1(),
                     ),
-                  );
+                  ); */
                 },
               ),
               ListTile(
@@ -176,17 +171,7 @@ class Index extends StatelessWidget {
                   );
                 },
               ),
-               ListTile(
-                title: Text("More Screen"),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => More(),
-                    ),
-                  );
-                },
-              ),
+             
             ],
           ),
           ExpansionTile(
@@ -245,16 +230,6 @@ class Index extends StatelessWidget {
                 },
               ),
               ListTile(
-                title: Text("Home Screen 2"),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Home2(),
-                    ),
-                  );
-                },
-              ),ListTile(
                 title: Text("HomePage Screen"),
                 onTap: () {
                   Navigator.push(
@@ -309,37 +284,7 @@ class Index extends StatelessWidget {
            
             ],
           ),
-           ExpansionTile(
-            title: Text(
-              'Search',
-              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
-            ),
-            children: <Widget>[
-               ListTile(
-                title: Text("Search Screen"),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Search(),
-                    ),
-                  );
-                },
-              ),
-             ListTile(
-                title: Text("Search Results Screen"),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SearchResults(),
-                    ),
-                  );
-                },
-              ),
-           
-            ],
-          ),
+         
           ExpansionTile(
             title: Text(
               'Contact',

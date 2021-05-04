@@ -1,4 +1,5 @@
 
+import 'package:cornerstone/ui/widgets/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -8,9 +9,8 @@ import 'dart:async';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
     show CalendarCarousel;
 import 'package:flutter_calendar_carousel/classes/event.dart';
+// ignore: unused_import
 import 'package:intl/intl.dart' show DateFormat;
-
-import 'dialogs.dart';
 
 class Appointment extends StatefulWidget {
   final String title;
@@ -164,6 +164,7 @@ class _AppointmentState extends State<Appointment> {
   DateTime _currentDate2 = DateTime.now();
 
   DateTime _targetDateTime = DateTime.now();
+  // ignore: unused_field
   List<DateTime> _markedDate = [DateTime(2018, 9, 20), DateTime(2018, 10, 11)];
 
   @override

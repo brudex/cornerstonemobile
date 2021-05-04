@@ -1,4 +1,4 @@
-import 'package:cornerstone/widgets.dart';
+import 'package:cornerstone/ui/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 class DonationSuccess extends StatelessWidget {

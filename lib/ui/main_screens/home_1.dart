@@ -1,35 +1,31 @@
+import 'package:cornerstone/ui/main_screens/home/homepage_1.dart';
+import 'package:cornerstone/ui/main_screens/search/search_page.dart';
+import 'donations/donation.dart';
 
-import 'package:cornerstone/more_page.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 
-class More extends StatefulWidget {
-  More({Key key}) : super(key: key);
+import 'more/more_page.dart';
+
+class Home1 extends StatefulWidget {
+  Home1({Key key}) : super(key: key);
 
   @override
-  _MoreState createState() => _MoreState();
+  _Home1State createState() => _Home1State();
 }
 
-class _MoreState extends State<More> {
+class _Home1State extends State<Home1> {
   int _selectedIndex = 0;
+  // ignore: unused_field
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static List<Widget> _widgetOptions = <Widget>[
+    HomePage1(),
+    SearchPage(),
+    Donation(),
    MorePage(),
-    Text(
-      'Index 1: Business',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 2: School',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 3: Blah',
-      style: optionStyle,
-    ),
   ];
 
   void _onItemTapped(int index) {
@@ -41,7 +37,7 @@ class _MoreState extends State<More> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
+      
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
@@ -73,7 +69,7 @@ class _MoreState extends State<More> {
             icon: SvgPicture.asset(
               "images/grid_view.svg",
             ),
-            label: 'App',
+            label: 'More',
           ),
         ],
         currentIndex: _selectedIndex,
