@@ -84,7 +84,7 @@ class ForgotPasswordState extends State<ForgotPassword> {
     if (message['status_code'] == "00") {
       Navigator.pop(context);
 
-      successAlertDialog(context, message['message'], 'Log In to Continue');
+     failedAlertDialog(context, "Success",  message['message']);
     } else {
       Navigator.pop(context);
 

@@ -215,7 +215,7 @@ class _SearchPageState extends State<SearchPage> {
                                       child: results[i] == 'sermon'
                                           ? AudioTile(
                                               url:
-                                                  "http://157.230.150.194:3000/uploads/sermons/SermonAudio%20-%20Media%20Player_2.mp3",
+                                                  _contentData[i],
                                             )
                                           : results[i] == 'video'
                                               ? InkWell(

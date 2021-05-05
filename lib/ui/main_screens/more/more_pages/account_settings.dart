@@ -1,3 +1,4 @@
+import 'package:cornerstone/ui/main_screens/more/more_pages/account_settings/change_password.dart';
 import 'package:flutter/material.dart';
 
 class AccountSettings extends StatelessWidget {
@@ -47,7 +48,14 @@ class AccountSettings extends StatelessWidget {
             ),
         
             trailing: Icon(Icons.arrow_forward_ios_sharp, color: Colors.blue ),
-            onTap: () {},
+            onTap: () {
+               Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChangePassword(),
+                    ),
+                  );
+            },
           ),
         ],
       ),

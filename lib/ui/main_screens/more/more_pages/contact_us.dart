@@ -169,18 +169,50 @@ class _ContactUsState extends State<ContactUs> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    InkWell( onTap: (){
-                      launch(fbHandle);
-                    },
-                                          child: Image.asset(
-                        "images/facebook_logo.png",
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        height: 70,
+                        width: 70,
+                        child: InkWell(
+                          onTap: () {
+                            launch(fbHandle);
+                          },
+                          child: Image.asset(
+                            "images/facebook.png",
+                          ),
+                        ),
                       ),
                     ),
-                    Image.asset(
-                      "images/instagram_logo.png",
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        height: 70,
+                        width: 70,
+                        child: InkWell(
+                          onTap: () {
+                            launch(igHandle);
+                          },
+                          child: Image.asset(
+                            "images/instagram.png",
+                          ),
+                        ),
+                      ),
                     ),
-                    Image.asset(
-                      "images/twitter_logo.png",
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        height: 70,
+                        width: 70,
+                        child: InkWell(
+                          onTap: () {
+                            launch(twitterHandle);
+                          },
+                          child: Image.asset(
+                            "images/twitter.png",
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),

@@ -63,7 +63,7 @@ class _HomePage1State extends State<HomePage1> {
         "http://157.230.150.194:3000/api/churchcontent/video?limit=0&offset=0";
 
     var audioUrls =
-        "http://157.230.150.194:3000/api/churchcontent/audio?limit=0&offset=0";
+        "http://157.230.150.194:3000/api/churchcontent/sermon?limit=0&offset=0";
 
     var churchUrl = "http://157.230.150.194:3000/api/church";
 

@@ -54,12 +54,16 @@ class _EventSuccessState extends State<EventSuccess> {
         'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 1 devotional');
 
     print(responseJson['data'].length);
-
+    print(responseJson['data'][0]);
+    
+    
+    
     print(churchResponseJson["name"]);
     if (this.mounted) {
       setState(() {
         churchName = churchResponseJson["name"];
         ready = true;
+        data = responseJson['data'];
       });
     }
 
@@ -98,12 +102,13 @@ class _EventSuccessState extends State<EventSuccess> {
                       for (int i = 0; i < data.length; i++)
                         Card(
                           child: ListTile(
-                            leading: image == null
+                            leading: /* image == null
                                 ? new Image.asset(
                                     "images/easter.png",
                                   )
-                                : Image.network(
-                                    "http://${data[i]['imageBanner']}"),
+                                : */ Image.network(
+                                    "http://${data[i]['imageBanner']}",
+                                    ),
 
                             title: Padding(
                               padding: const EdgeInsets.all(8.0),
