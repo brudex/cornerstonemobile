@@ -1,18 +1,63 @@
-import 'package:cornerstone/list/list_page.dart';
+import 'package:cornerstone/ui/widgets/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io';
+
 
 class VideoDetail extends StatefulWidget {
   final String backgroundImage;
   final String videoUrl;
+  final String title;
+  final int id; 
 
-  const VideoDetail({Key key, @required this.backgroundImage, @required this.videoUrl})
+  const VideoDetail({Key key, @required this.backgroundImage, @required this.videoUrl, @required this.title, @required this.id})
       : super(key: key);
   @override
   _VideoDetailState createState() => _VideoDetailState();
 }
 
 class _VideoDetailState extends State<VideoDetail> {
+
+   Future addToPlaylist() async {
+     
+showLoading(context);
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    var token = "${prefs.getString('token')}";
+    var url = "http://157.230.150.194:3000/api/churchContent/playlist/add";
+
+    var data = {
+      "churchContentId": "${widget.id}",
+    "title": "${widget.title}"
+    };
+
+     var response = await http.post(
+      Uri.parse(url),
+      body: data,
+      headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
+    );
+    var message = jsonDecode(response.body);
+    print(message);
+    /* print(message['message']);
+    print(message['status_code']);
+    print(message['reason']);
+ */
+    
+    if (message['status'] == "00") {
+      Navigator.pop(context);
+
+      failedAlertDialog(context,"Success", message['message']);
+    } else {
+      Navigator.pop(context);
+
+      failedAlertDialog(context, message['message'], message['reason']);
+    }
+  }
+
   @override
   @override
   Widget build(BuildContext context) {
@@ -67,15 +112,14 @@ class _VideoDetailState extends State<VideoDetail> {
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      "The Law of Process",
-                                      style: TextStyle(fontSize: 25),
+                                    child: FittedBox( fit: BoxFit.fitWidth, 
+                                                                          child: Text(
+                                        "${widget.title}",
+                                        style: TextStyle(fontSize: 25),
+                                      ),
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text("1h 29m"),
-                                  ),
+                                
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text("• Video Sermon"),
@@ -126,48 +170,33 @@ class _VideoDetailState extends State<VideoDetail> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceEvenly,
                                       children: [
+                                        
                                         OutlinedButton(
                                           child: Row(
                                             children: [
-                                              Icon(
-                                                  Icons.bookmark_outline_sharp),
-                                              Text("  My Lists"),
+                                              Icon(Icons.add),
+                                              Text("  Add To List"),
                                             ],
                                           ),
                                           onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ListPage(),
-                                              ),
-                                            );
+                                            addToPlaylist();
                                           },
-                                        ),
-                                        OutlinedButton(
-                                          child: Row(
-                                            children: [
-                                              Icon(Icons.share_sharp),
-                                              Text("  Share"),
-                                            ],
-                                          ),
-                                          onPressed: () {},
                                         ),
                                       ],
                                     ),
                                   ),
                                   Text(
-                                      "In this video sermon, Pastor Chris shares with us the Law of Process of life"),
+                                      "In this video sermon, ${widget.title}"),
                                   Spacer(),
                                   Column(
                                     children: [
                                       Row(
                                         children: [
-                                          Text(
+                                        /*   Text(
                                             'By: Pastor Chris Oyakhilome',
                                             style:
                                                 TextStyle(color: Colors.grey),
-                                          ),
+                                          ), */
                                         ],
                                       ),
                                       SizedBox(height: 20),

@@ -59,6 +59,7 @@ void dispose() {
     return WillPopScope(
       onWillPop: () async => false,
           child: WebView(
+            javascriptMode: JavascriptMode.unrestricted,
         initialUrl: 'http://157.230.150.194:3000${widget.paymentUrl}',
       ),
     );

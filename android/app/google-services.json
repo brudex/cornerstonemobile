@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "996372751425",
+    "project_id": "cornerstonechurch-f3972",
+    "storage_bucket": "cornerstonechurch-f3972.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:996372751425:android:078fc92e59438a072212c0",
+        "android_client_info": {
+          "package_name": "com.example.cornerstone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "996372751425-d6upja2of786gl928sjg35uthc2i2apv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYfgvAnfZn_Y3W1HXt1xI8znaxuBkD9KI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "996372751425-d6upja2of786gl928sjg35uthc2i2apv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

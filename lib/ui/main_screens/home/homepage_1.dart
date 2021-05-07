@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 //import 'package:shimmer/shimmer.dart';
 
@@ -55,6 +56,36 @@ class _HomePage1State extends State<HomePage1> {
   List _audioLinks = [];
 
   Future fetchDevotion() async {
+      final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+    _firebaseMessaging.configure(
+      // ignore: missing_return
+      onLaunch: (Map<String, dynamic> message) {
+        print('onLaunch called $message');
+      },
+      // ignore: missing_return
+      onResume: (Map<String, dynamic> message) {
+        print('onResume called $message');
+      },
+      // ignore: missing_return
+      onMessage: (Map<String, dynamic> message) {
+        print('onMessage called $message');
+      },
+    );
+    _firebaseMessaging.subscribeToTopic('all');
+    _firebaseMessaging.requestNotificationPermissions(IosNotificationSettings(
+      sound: true,
+      badge: true,
+      alert: true,
+    ));
+    _firebaseMessaging.onIosSettingsRegistered
+        .listen((IosNotificationSettings settings) {
+      print('Hello');
+    });
+    _firebaseMessaging.getToken().then((token) {
+      print(token); // Print the Token in Console
+    });
+
+
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     var url = "http://157.230.150.194:3000/api/churchcontent/dailydevotional";

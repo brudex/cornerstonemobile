@@ -20,7 +20,8 @@ class _BibleState extends State<Bible> {
   @override
   Widget build(BuildContext context) {
     return WebView(
-      initialUrl: 'https://www.bible.com',
+      javascriptMode: JavascriptMode.unrestricted,
+      initialUrl: 'https://www.bible.com/bible/59/GEN.1.ESV',
     );
   }
 }

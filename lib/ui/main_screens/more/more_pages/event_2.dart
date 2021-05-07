@@ -55,9 +55,7 @@ class _EventSuccessState extends State<EventSuccess> {
 
     print(responseJson['data'].length);
     print(responseJson['data'][0]);
-    
-    
-    
+
     print(churchResponseJson["name"]);
     if (this.mounted) {
       setState(() {
@@ -102,14 +100,18 @@ class _EventSuccessState extends State<EventSuccess> {
                       for (int i = 0; i < data.length; i++)
                         Card(
                           child: ListTile(
-                            leading: /* image == null
-                                ? new Image.asset(
-                                    "images/easter.png",
-                                  )
-                                : */ Image.network(
-                                    "http://${data[i]['imageBanner']}",
-                                    ),
+                            leading:
+                                /* image == null
+                                ?
+                                : */
+                                Image.network(
+                              "http://${data[i]['imageBanner']}",
+                            ),
 
+                            /*    new Image.asset(
+                                    "images/easter.png",
+                                  ),
+ */
                             title: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: new Text(
@@ -132,28 +134,31 @@ class _EventSuccessState extends State<EventSuccess> {
                                           fontWeight: FontWeight.normal),
                                     ),
                                   ),
-                                  Row(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: new Text(
-                                          '${data[i]['eventDate']}',
-                                          style: new TextStyle(
-                                              fontSize: 11.0,
-                                              fontWeight: FontWeight.normal),
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: new Text(
+                                            '${data[i]['eventDate']}',
+                                            style: new TextStyle(
+                                                fontSize: 11.0,
+                                                fontWeight: FontWeight.normal),
+                                          ),
                                         ),
-                                      ),
-                                      Spacer(),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: new Text(
-                                          '${data[i]['eventTime']}, ${data[i]['eventVenue']}',
-                                          style: new TextStyle(
-                                              fontSize: 11.0,
-                                              fontWeight: FontWeight.normal),
+                                        //  Spacer(),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: new Text(
+                                            '${data[i]['eventTime']}, ${data[i]['eventVenue']}',
+                                            style: new TextStyle(
+                                                fontSize: 11.0,
+                                                fontWeight: FontWeight.normal),
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ]),
                             //trailing: ,
@@ -173,7 +178,6 @@ class _EventSuccessState extends State<EventSuccess> {
                             SizedBox(
                               height: 30,
                             ),
-                         
                           ],
                         ),
                       ),
@@ -203,7 +207,6 @@ class _EventSuccessState extends State<EventSuccess> {
                           ),
                         ],
                       ),
-                    
                     ],
                   ),
       ),

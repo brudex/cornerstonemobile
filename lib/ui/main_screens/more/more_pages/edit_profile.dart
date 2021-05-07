@@ -2,6 +2,12 @@ import 'package:cornerstone/ui/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 class EditProfile extends StatefulWidget {
+  final String email;
+  final String fname;
+
+  const EditProfile({Key key, @required this.email, this.fname}) : super(key: key); 
+
+
   @override
   State createState() => EditProfileState();
 }
@@ -45,9 +51,9 @@ class EditProfileState extends State<EditProfile> {
 
   @override
   void initState() {
-    _emailController = TextEditingController(text: 'jonathan@mail.com');
-    _passwordController = TextEditingController(text: 'jonathan');
-    _fNameController = TextEditingController(text: 'Jonathan Afari');
+    _emailController = TextEditingController(text: '${widget.email}');
+  
+    _fNameController = TextEditingController(text: '${widget.fname}');
 
     _emailFocus = FocusNode();
     _passwordFocus = FocusNode();
@@ -84,13 +90,7 @@ class EditProfileState extends State<EditProfile> {
                 child: Container(
                   width: 90,
                   height: 80,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                        colorFilter:
-                            ColorFilter.mode(Colors.black12, BlendMode.darken),
-                        image: AssetImage('images/profile.png'),
-                        fit: BoxFit.cover),
-                  ),
+                
                   child: Icon(Icons.camera_alt_outlined, color: Colors.blue,),
                 ),
               ),

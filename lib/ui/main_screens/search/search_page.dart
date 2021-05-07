@@ -1,4 +1,5 @@
 import 'package:cornerstone/ui/main_screens/search/video_details.dart';
+import 'package:cornerstone/ui/widgets/dialogs.dart';
 import 'package:cornerstone/ui/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,6 +15,47 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+  Future<void> _askedToLead(String quote, String title, int id,
+      {String sermon}) async {
+        
+    switch (await showDialog<SearchPage>(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            insetPadding: EdgeInsets.all(10),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                OutlinedButton(
+                  child: Row(
+                    children: [
+                      Icon(Icons.add),
+                      Text("  Add To List "),
+                    ],
+                  ),
+                  onPressed: () {
+                    addToPlaylist("$title", id);
+                  },
+                ),
+              ],
+            ),
+            children: <Widget>[
+              SimpleDialogOption(
+                // onPressed: () { Navigator.pop(context, Department.treasury); },
+                child: Text(
+                  sermon != 'sermon' ? '$quote' : "$title",
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+            ],
+          );
+        })) {
+      case null:
+        // dialog dismissed
+        break;
+    }
+  }
+
   TextEditingController _searchPageController;
   FocusNode _searchPageFocus;
   bool _loading = false;
@@ -21,12 +63,46 @@ class _SearchPageState extends State<SearchPage> {
   List _contentData = [];
   List _youtubeUrls = [];
   List audioUrls = [];
+  List idList = [];
+  List titleList = [];
   bool found = false;
 
   // Initially password is obscure
 
   // ignore: unused_field
   String _searchPage;
+
+  Future addToPlaylist(String title, int id) async {
+    showLoading(context);
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    var token = "${prefs.getString('token')}";
+    var url = "http://157.230.150.194:3000/api/churchContent/playlist/add";
+
+    var data = {"churchContentId": "$id", "title": "$title"};
+
+    var response = await http.post(
+      Uri.parse(url),
+      body: data,
+      headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
+    );
+    var message = jsonDecode(response.body);
+    print(message);
+    /* print(message['message']);
+    print(message['status_code']);
+    print(message['reason']);
+ */
+     
+    if (message['status'] == "00") {
+      Navigator.pop(context);
+
+      failedAlertDialog(context,"Success", message['message']);
+    } else {
+      Navigator.pop(context);
+
+      failedAlertDialog(context, message['message'], message['reason']);
+    }
+  }
 
   void performDonationHistory() {
     //DonationHistory here
@@ -53,7 +129,10 @@ class _SearchPageState extends State<SearchPage> {
     print((message)['data']);
     List dataTypes = [];
     List contentData = [];
+    List ids = [];
+    List titles = [];
     List youtubeUrls = [];
+
     audioUrls = [];
     for (var item in message['data']) {
       dataTypes.add(item['contentType']);
@@ -63,6 +142,8 @@ class _SearchPageState extends State<SearchPage> {
     }
     for (var item in message['data']) {
       contentData.add(item['contentData']);
+      ids.add(item['id']);
+      titles.add(item['title']);
     }
 
     print(dataTypes);
@@ -78,6 +159,8 @@ class _SearchPageState extends State<SearchPage> {
       results = dataTypes;
       print('done');
       _contentData = contentData;
+      idList = ids;
+      titleList = titles;
       _loading = false;
     });
   }
@@ -213,25 +296,37 @@ class _SearchPageState extends State<SearchPage> {
                                     Padding(
                                       padding: const EdgeInsets.all(16.0),
                                       child: results[i] == 'sermon'
-                                          ? AudioTile(
-                                              url:
-                                                  _contentData[i],
-                                            )
+                                          ? Stack(children: [
+                                              InkWell(
+                                                onTap: () {
+                                                  _askedToLead(_contentData[i],
+                                                      titleList[i], idList[i],
+                                                      sermon: 'sermon');
+                                                },
+                                                child: AudioTile(
+                                                  url: _contentData[i],
+                                                ),
+                                              ),
+                                            ])
                                           : results[i] == 'video'
                                               ? InkWell(
                                                   onTap: () {
                                                     print('tapped');
-                                                     Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => VideoDetail(
-                                            backgroundImage:
-                                                'https://img.youtube.com/vi/${_youtubeUrls[i]}/0.jpg',
-                                                videoUrl: _contentData[i],
-                                          ),
-                                        ),
-                                      );
-                                                   /*  launch(
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            VideoDetail(
+                                                          backgroundImage:
+                                                              'https://img.youtube.com/vi/${_youtubeUrls[i]}/0.jpg',
+                                                          videoUrl:
+                                                              _contentData[i],
+                                                          title: titleList[i],
+                                                          id: idList[i],
+                                                        ),
+                                                      ),
+                                                    );
+                                                    /*  launch(
                                                         "${_contentData[i]}"); */ //or any link you want
                                                   },
                                                   child: Padding(
@@ -262,28 +357,36 @@ class _SearchPageState extends State<SearchPage> {
                                                     ),
                                                   ),
                                                 )
-                                              : Container(
-                                                  margin:
-                                                      EdgeInsets.only(top: 5),
-                                                  height: 180,
-                                                  width: double.infinity,
-                                                  child: Card(
-                                                    color: Colors.black,
-                                                    semanticContainer: true,
-                                                    // color: Colors.grey,
-                                                    elevation: 5.0,
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      child:
-                                                          SingleChildScrollView(
-                                                        child: Text(
-                                                          _contentData[i],
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontSize: 18),
+                                              : InkWell(
+                                                  onTap: () {
+                                                    _askedToLead(
+                                                        _contentData[i],
+                                                        titleList[i],
+                                                        idList[i]);
+                                                  },
+                                                  child: Container(
+                                                    margin:
+                                                        EdgeInsets.only(top: 5),
+                                                    height: 180,
+                                                    width: double.infinity,
+                                                    child: Card(
+                                                      color: Colors.black,
+                                                      semanticContainer: true,
+                                                      // color: Colors.grey,
+                                                      elevation: 5.0,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child:
+                                                            SingleChildScrollView(
+                                                          child: Text(
+                                                            _contentData[i],
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 18),
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
@@ -309,9 +412,15 @@ class _SearchPageState extends State<SearchPage> {
                         results[i] == 'sermon'
                             ? Padding(
                                 padding: const EdgeInsets.all(16.0),
-                                child: AudioTile(
-                                  url:
-                                      "http://157.230.150.194:3000/uploads/sermons/SermonAudio%20-%20Media%20Player_2.mp3",
+                                child: InkWell(
+                                  onTap: () {
+                                    _askedToLead(_contentData[i], titleList[i],
+                                        idList[i],
+                                        sermon: 'sermon');
+                                  },
+                                  child: AudioTile(
+                                    url: _contentData[i],
+                                  ),
                                 ),
                               )
                             : SizedBox(),
@@ -326,23 +435,29 @@ class _SearchPageState extends State<SearchPage> {
                         results[i] == 'devotional'
                             ? Padding(
                                 padding: const EdgeInsets.all(16.0),
-                                child: Container(
-                                  margin: EdgeInsets.only(top: 5),
-                                  height: 180,
-                                  width: double.infinity,
-                                  child: Card(
-                                    color: Colors.black,
-                                    semanticContainer: true,
-                                    // color: Colors.grey,
-                                    elevation: 5.0,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: SingleChildScrollView(
-                                        child: Text(
-                                          _contentData[i],
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 18),
+                                child: InkWell(
+                                  onTap: () {
+                                    _askedToLead(_contentData[i], titleList[i],
+                                        idList[i]);
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.only(top: 5),
+                                    height: 180,
+                                    width: double.infinity,
+                                    child: Card(
+                                      color: Colors.black,
+                                      semanticContainer: true,
+                                      // color: Colors.grey,
+                                      elevation: 5.0,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: SingleChildScrollView(
+                                          child: Text(
+                                            _contentData[i],
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 18),
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -368,8 +483,9 @@ class _SearchPageState extends State<SearchPage> {
                                       builder: (context) => VideoDetail(
                                         backgroundImage:
                                             'https://img.youtube.com/vi/${_youtubeUrls[i]}/0.jpg',
-
-                                          videoUrl: _contentData[i],
+                                        videoUrl: _contentData[i],
+                                        title: titleList[i],
+                                        id: idList[i],
                                       ),
                                     ),
                                   );

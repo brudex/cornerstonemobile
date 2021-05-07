@@ -124,8 +124,8 @@ class ChangePasswordState extends State<ChangePassword> {
     print(message['status_code']);
     print(message['reason']);
 
-    //using status_code 03 for now
-    if (message['status_code'] == "03") {
+    
+    if (message['status_code'] == "00") {
       Navigator.pop(context);
 
       failedAlertDialog(context,"Success", message['message']);

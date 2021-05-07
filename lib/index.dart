@@ -2,7 +2,7 @@ import 'package:cornerstone/ui/main_screens/more/more_pages/account_settings.dar
 import 'package:cornerstone/ui/main_screens/more/more_pages/bible.dart';
 import 'package:cornerstone/ui/main_screens/more/more_pages/contact_us.dart';
 import 'package:cornerstone/ui/main_screens/donations/donation_history.dart';
-import 'package:cornerstone/ui/main_screens/more/more_pages/edit_profile.dart';
+
 import 'package:cornerstone/ui/main_screens/more/more_pages/event_2.dart';
 import 'package:cornerstone/ui/main_screens/home/homepage_2.dart';
 import 'package:cornerstone/ui/main_screens/home_1.dart';
@@ -160,17 +160,7 @@ class Index extends StatelessWidget {
                   );
                 },
               ),
-              ListTile(
-                title: Text("Edit Profile Screen"),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EditProfile(),
-                    ),
-                  );
-                },
-              ),
+             
              
             ],
           ),

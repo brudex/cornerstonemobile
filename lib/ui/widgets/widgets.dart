@@ -113,6 +113,96 @@ class _AudioTileState extends State<AudioTile> {
   }
 }
 
+class ListAudioTile extends StatefulWidget {
+  final String url;
+
+  const ListAudioTile({Key key, @required this.url}) : super(key: key);
+  @override
+  _ListAudioTileState createState() => _ListAudioTileState();
+}
+
+class _ListAudioTileState extends State<ListAudioTile> {
+  // ignore: unused_field
+  TargetPlatform _platform;
+  VideoPlayerController _videoPlayerController1;
+
+  ChewieAudioController _chewieAudioController;
+
+  @override
+  void initState() {
+    super.initState();
+    initializePlayer();
+  }
+
+  @override
+  void dispose() {
+    _videoPlayerController1.dispose();
+
+    _chewieAudioController.dispose();
+    super.dispose();
+  }
+
+  Future<void> initializePlayer() async {
+    _videoPlayerController1 = VideoPlayerController.network(widget.url);
+
+    await Future.wait([
+      _videoPlayerController1.initialize(),
+    ]);
+    setState(() {
+      _chewieAudioController = ChewieAudioController(
+        videoPlayerController: _videoPlayerController1,
+        autoPlay: false,
+        looping: false,
+        // Try playing around with some of these other options:
+
+        // showControls: false,
+        // materialProgressColors: ChewieProgressColors(
+        //   playedColor: Colors.red,
+        //   handleColor: Colors.blue,
+        //   backgroundColor: Colors.grey,
+        //   bufferedColor: Colors.lightGreen,
+        // ),
+        // placeholder: Container(
+        //   color: Colors.grey,
+        // ),
+        // autoInitialize: true,
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(top: 5),
+      height: 50,
+      width: double.infinity,
+      child: Card(
+        semanticContainer: true,
+        color: Colors.grey,
+        elevation: 5.0,
+        child: _chewieAudioController != null &&
+                _chewieAudioController.videoPlayerController.value.isInitialized
+            ? ChewieAudio(
+              controller: _chewieAudioController,
+            )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    'Loading',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+      ),
+    );
+  }
+}
+
 class VideoTile extends StatefulWidget {
   final String link;
   final double width;
