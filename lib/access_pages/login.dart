@@ -63,44 +63,37 @@ class LoginState extends State<Login> {
       setState(() {
         email_verify = false;
       });
-    }  if (RegExp(
-                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+    }
+    if (RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
             .hasMatch(_emailController.text) ==
         false) {
-          setState(() {
-             email_verify = false;
-          });
-     
+      setState(() {
+        email_verify = false;
+      });
     } else {
       setState(() {
         email_verify = true;
       });
-      
     }
-    if ((_pwController.text == null) || (_pwController.text  == '')) {
-     setState(() {
-         password_verify = false;
-     });
-    
+    if ((_pwController.text == null) || (_pwController.text == '')) {
+      setState(() {
+        password_verify = false;
+      });
     }
     // ignore: null_aware_before_operator
-    else if  (_pwController.text?.length <= 2){
+    else if (_pwController.text?.length <= 2) {
       setState(() {
-         password_verify = false;
+        password_verify = false;
       });
-
-     
-    }
-    else{
-       password_verify = true;
+    } else {
+      password_verify = true;
     }
 
-    if(password_verify == true && email_verify == true){
-   
-        showLoading(context);
-           print('password = true');
-        print('email = true');
-        login();
+    if (password_verify == true && email_verify == true) {
+      showLoading(context);
+      print('password = true');
+      print('email = true');
+      login();
     }
   }
 
@@ -122,24 +115,20 @@ class LoginState extends State<Login> {
     if (message['status_code'] == "00") {
       Navigator.pop(context);
 
-
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('token', message['token']);
+      prefs.setInt('alert', 0);
 
-       Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => Home1()),
-          (Route<dynamic> route) => false,
-        );
-
-
-    }
-    else{
-       Navigator.pop(context);
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => Home1()),
+        (Route<dynamic> route) => false,
+      );
+    } else {
+      Navigator.pop(context);
 
       failedAlertDialog(context, message['message'], message['reason']);
     }
-    
   }
 
   @override
@@ -188,7 +177,7 @@ class LoginState extends State<Login> {
                         color: Colors.transparent,
                         borderRadius: BorderRadius.circular(10.0),
                         child: TextField(
-                         // focusNode: _emailFocus,
+                          // focusNode: _emailFocus,
                           controller: _emailController,
                           obscureText: false,
                           keyboardType:
@@ -253,49 +242,51 @@ class LoginState extends State<Login> {
                       ),
                     ),
                     ButtonBar(
-                        children: <Widget>[
-                          InkWell(onTap: (){
+                      children: <Widget>[
+                        InkWell(
+                          onTap: () {
                             Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ForgotPassword(),
-                      ),
-                    );
-                          },
-                                                      child: Padding(
-                              padding: const EdgeInsets.only(right: 16.0),
-                              child: Text(
-                                'Forgot Password ?',
-                                style: TextStyle(color: Colors.grey),
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ForgotPassword(),
                               ),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 16.0),
+                            child: Text(
+                              'Forgot Password ?',
+                              style: TextStyle(color: Colors.grey),
                             ),
-                          )
-                        ],
-                      ),
+                          ),
+                        )
+                      ],
+                    ),
                     Container(
-                margin: EdgeInsets.only(top: 32, bottom: 5),
-                decoration: BoxDecoration(
-                  //   color: Colors.blue,
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(8),
-                  ),
-                  gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [Color(0xff4fc3f7), Color(0xff01579b)],
-                  ),
-                ),
-                width: 320,
-                // ignore: deprecated_member_use
-                child: FlatButton(
-                  child: Text('Log in',
-                      style: TextStyle(fontSize: 20, color: Colors.white)),
-                  onPressed: () {
-                    performLogin();
-                  },
-                ),
-              ),
+                      margin: EdgeInsets.only(top: 32, bottom: 5),
+                      decoration: BoxDecoration(
+                        //   color: Colors.blue,
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(8),
+                        ),
+                        gradient: LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [Color(0xff4fc3f7), Color(0xff01579b)],
+                        ),
+                      ),
+                      width: 320,
+                      // ignore: deprecated_member_use
+                      child: FlatButton(
+                        child: Text('Log in',
+                            style:
+                                TextStyle(fontSize: 20, color: Colors.white)),
+                        onPressed: () {
+                          performLogin();
+                        },
+                      ),
+                    ),
                   ],
                 ),
               ),

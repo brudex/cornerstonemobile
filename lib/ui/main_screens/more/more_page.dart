@@ -4,8 +4,8 @@ import 'package:cornerstone/ui/main_screens/more/more_pages/appointment.dart';
 import 'package:cornerstone/ui/main_screens/more/more_pages/contact_us.dart';
 import 'package:cornerstone/ui/main_screens/more/more_pages/event_2.dart';
 import 'package:cornerstone/access_pages/onboardingScreen.dart';
+import 'package:cornerstone/ui/main_screens/more/more_pages/privacy.dart';
 import 'package:cornerstone/ui/main_screens/more/more_pages/terms.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'more_pages/account_settings.dart';
@@ -33,37 +33,6 @@ class _MorePageState extends State<MorePage> {
     fetchUserDetails();
   }
 
-  Future test() async {
-    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-    _firebaseMessaging.configure(
-      // ignore: missing_return
-      onLaunch: (Map<String, dynamic> message) {
-        print('onLaunch called');
-      },
-      // ignore: missing_return
-      onResume: (Map<String, dynamic> message) {
-        print('onResume called');
-      },
-      // ignore: missing_return
-      onMessage: (Map<String, dynamic> message) {
-        print('onMessage called');
-      },
-    );
-    _firebaseMessaging.subscribeToTopic('all');
-    _firebaseMessaging.requestNotificationPermissions(IosNotificationSettings(
-      sound: true,
-      badge: true,
-      alert: true,
-    ));
-    _firebaseMessaging.onIosSettingsRegistered
-        .listen((IosNotificationSettings settings) {
-      print('Hello');
-    });
-    _firebaseMessaging.getToken().then((token) {
-      print(token); // Print the Token in Console
-    });
-  }
-
   Future fetchUserDetails() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -78,12 +47,14 @@ class _MorePageState extends State<MorePage> {
     final responseJson = jsonDecode(response.body);
     print('$responseJson' +
         'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 1 devotional');
-    setState(() {
-    email = responseJson['data']["email"];
-    firstName = responseJson['data']["firstName"];
-    lastName = responseJson['data']["lastName"];
-    ready = true;
-    });
+    if (this.mounted) {
+      setState(() {
+        email = responseJson['data']["email"];
+        firstName = responseJson['data']["firstName"];
+        lastName = responseJson['data']["lastName"];
+        ready = true;
+      });
+    }
   }
 
   Future logout() async {
@@ -142,7 +113,7 @@ class _MorePageState extends State<MorePage> {
                     child: Container(
                       width: 90,
                       height: 80,
-                     /*  decoration: BoxDecoration(
+                      /*  decoration: BoxDecoration(
                         image: DecorationImage(
                             image: AssetImage('images/profile.png'),
                             fit: BoxFit.cover),
@@ -177,7 +148,6 @@ class _MorePageState extends State<MorePage> {
                             builder: (context) => EditProfile(
                               email: '$email',
                               fname: '$firstName $lastName',
-
                             ),
                           ),
                         );
@@ -279,7 +249,7 @@ class _MorePageState extends State<MorePage> {
                   },
                   title: Text('Book Appointment'),
                 ),
-                  ListTile(
+                ListTile(
                   leading: Icon(
                     Icons.list_outlined,
                     color: Colors.blue,
@@ -310,13 +280,12 @@ class _MorePageState extends State<MorePage> {
                 ),
                 ListTile(
                   onTap: () {
-                    test();
-                    /*   Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SermonDetail(),
-                ),
-              ); */
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Privacy(),
+                      ),
+                    );
                   },
                   title: Text(
                     'Privacy & Policy',

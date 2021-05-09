@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 
 class Register extends StatefulWidget {
   @override
@@ -25,6 +27,8 @@ class RegisterState extends State<Register> {
   String _email;
   String _fName;
   String _lName;
+  // ignore: non_constant_identifier_names
+  var fcm_token;
 
   // ignore: non_constant_identifier_names
   bool church_verify = true;
@@ -225,6 +229,7 @@ class RegisterState extends State<Register> {
       "email": "${_emailController.text}",
       "password": "${_pwController.text}",
       "churchId": "$_currentSelectedId",
+      "fcm_token": "$fcm_token"
     };
 
     var response = await http.post(Uri.parse(url), body: data);
@@ -264,6 +269,43 @@ class RegisterState extends State<Register> {
   }
 
   Future fetch() async {
+
+    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+    _firebaseMessaging.configure(
+      // ignore: missing_return
+      onLaunch: (Map<String, dynamic> message) {
+        print('onLaunch called $message');
+      },
+      // ignore: missing_return
+      onResume: (Map<String, dynamic> message) {
+        print('onResume called $message');
+      },
+      // ignore: missing_return
+      onMessage: (Map<String, dynamic> message) {
+        print('onMessage called $message');
+        
+      },
+
+      // ignore: missing_return
+     
+    );
+    _firebaseMessaging.subscribeToTopic('all');
+    _firebaseMessaging.requestNotificationPermissions(IosNotificationSettings(
+      sound: true,
+      badge: true,
+      alert: true,
+    ));
+    _firebaseMessaging.onIosSettingsRegistered
+        .listen((IosNotificationSettings settings) {
+      print('Hello');
+    });
+    _firebaseMessaging.getToken().then((token) {
+      print(token); // Print the Token in Console
+      fcm_token = token;
+    });
+
+
+
     final response =
         await http.get(Uri.parse('http://157.230.150.194:3000/api/churches'));
 

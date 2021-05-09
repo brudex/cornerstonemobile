@@ -1,4 +1,4 @@
-import 'package:cornerstone/ui/main_screens/home_1.dart';
+
 import 'package:cornerstone/access_pages/onboardingScreen.dart';
 import 'package:flutter/material.dart';
 
@@ -171,11 +171,11 @@ successAlertDialog(BuildContext context, title, result) {
   Widget okButton = FlatButton(
     onPressed: () {
       if (result == 'login successful') {
-        Navigator.pushAndRemoveUntil(
+     /*    Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => Home1()),
           (Route<dynamic> route) => false,
-        );
+        ); */
       }
       else if(title == 'Registration successful')
       {

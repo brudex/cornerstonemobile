@@ -2,22 +2,24 @@ import 'dart:io';
 import 'dart:async';
 import 'package:badges/badges.dart';
 import 'package:cornerstone/ui/widgets/widgets.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-
-//import 'package:shimmer/shimmer.dart';
 
 class HomePage1 extends StatefulWidget {
   @override
   _HomePage1State createState() => _HomePage1State();
 }
 
+int fcmAlerts;
+
 class _HomePage1State extends State<HomePage1> {
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
   Future<void> _askedToLead() async {
     switch (await showDialog<HomePage1>(
         context: context,
@@ -46,29 +48,23 @@ class _HomePage1State extends State<HomePage1> {
   void initState() {
     super.initState();
     fetchDevotion();
-  }
 
-  var churchName;
-  var devotionalQuote;
-  bool ready = false;
-  List _links = [];
-  List _youtubeLinks = [];
-  List _audioLinks = [];
-
-  Future fetchDevotion() async {
-      final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
     _firebaseMessaging.configure(
       // ignore: missing_return
       onLaunch: (Map<String, dynamic> message) {
-        print('onLaunch called $message');
+        print('onLaunch called');
       },
       // ignore: missing_return
       onResume: (Map<String, dynamic> message) {
-        print('onResume called $message');
+        print('onResume called');
       },
       // ignore: missing_return
       onMessage: (Map<String, dynamic> message) {
-        print('onMessage called $message');
+        print('onMessage called sweet');
+        setState(() {
+         fcmAlerts++;
+        increaseAlerts();
+        });
       },
     );
     _firebaseMessaging.subscribeToTopic('all');
@@ -84,10 +80,32 @@ class _HomePage1State extends State<HomePage1> {
     _firebaseMessaging.getToken().then((token) {
       print(token); // Print the Token in Console
     });
+  }
 
+  var value = 1;
+  var churchName;
+  var devotionalQuote;
+  bool ready = false;
+  List _links = [];
+  List _youtubeLinks = [];
+  List _audioLinks = [];
 
+  Future increaseAlerts() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
+    setState(() {
+      prefs.setInt('alert', fcmAlerts);
+    });
+  }
+
+  Future fetchDevotion() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      fcmAlerts = prefs.getInt('alert');
+      print(
+          "$fcmAlerts jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj");
+      //print(fcmAlerts);
+    });
     var url = "http://157.230.150.194:3000/api/churchcontent/dailydevotional";
     var token = "${prefs.getString('token')}";
     var youtubeUrls =
@@ -196,15 +214,20 @@ class _HomePage1State extends State<HomePage1> {
                 Padding(
                   padding:
                       const EdgeInsets.only(top: 16.0, bottom: 16.0, right: 8),
-                  child: Icon(
-                    Icons.bookmark_border_sharp,
+                  child: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        value++;
+                      });
+                    },
+                    icon: Icon(Icons.bookmark_border_sharp),
                     color: Colors.black,
                   ),
                 ),
                 PopupMenuButton(
                   icon: Badge(
                     badgeContent: Text(
-                      '2',
+                      '$fcmAlerts',
                       style: TextStyle(color: Colors.white),
                     ),
                     badgeColor: Colors.blue,

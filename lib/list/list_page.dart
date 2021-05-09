@@ -286,12 +286,15 @@ class _ListPageState extends State<ListPage> {
                 ],
               ) :  Column(
         children: [
-          SizedBox(height: 30),
+          SizedBox(height: 70),
           Container(child: Center(child: SvgPicture.asset('images/empty.svg'),),),
-             Spacer(),
+             
           Align(
             alignment: Alignment.bottomCenter,
-            child:Text('Nothing here')),
+            child:Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text('Nothing here', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+            )),
         ],
       ),);
   }

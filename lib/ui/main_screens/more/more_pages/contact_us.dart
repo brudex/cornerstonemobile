@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'dart:async';
 import 'package:url_launcher/url_launcher.dart';
+// ignore: unused_import
 import 'package:geocoding/geocoding.dart';
 
 class ContactUs extends StatefulWidget {
@@ -46,9 +47,9 @@ class _ContactUsState extends State<ContactUs> {
         'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 1 devotional');
     address = responseJson['address'];
     print(responseJson['phone']);
-    List<Placemark> placemarks = await placemarkFromCoordinates(
-        double.parse(address[0]), double.parse(address[1]));
-    print(placemarks[0].street);
+    /* List<Placemark> placemarks = await placemarkFromCoordinates(
+      address[0],address[1]);
+    print(placemarks[0].street); */
 
     print(responseJson['address']);
 
@@ -61,7 +62,7 @@ class _ContactUsState extends State<ContactUs> {
         fbHandle = responseJson['fbHandle'];
         igHandle = responseJson['IGHandle'];
         twitterHandle = responseJson['twitterHandle'];
-        findUs = placemarks[0].street;
+        //findUs = placemarks[0].street;
       });
     }
 

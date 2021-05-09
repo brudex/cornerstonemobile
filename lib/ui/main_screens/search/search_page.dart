@@ -1,3 +1,4 @@
+import 'package:cornerstone/ui/main_screens/home/homepage_1.dart';
 import 'package:cornerstone/ui/main_screens/search/video_details.dart';
 import 'package:cornerstone/ui/widgets/dialogs.dart';
 import 'package:cornerstone/ui/widgets/widgets.dart';
@@ -8,6 +9,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+
+
+var x = fcmAlerts;
 
 class SearchPage extends StatefulWidget {
   @override

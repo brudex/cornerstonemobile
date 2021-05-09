@@ -211,12 +211,12 @@ class Index extends StatelessWidget {
                ListTile(
                 title: Text("Home Screen 1"),
                 onTap: () {
-                  Navigator.push(
+                /*   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => Home1(),
                     ),
-                  );
+                  ); */
                 },
               ),
               ListTile(
