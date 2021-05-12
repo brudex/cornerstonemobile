@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
-import 'package:firebase_messaging/firebase_messaging.dart';
+
 
 
 class Register extends StatefulWidget {
@@ -270,7 +270,7 @@ class RegisterState extends State<Register> {
 
   Future fetch() async {
 
-    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+   /*  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
     _firebaseMessaging.configure(
       // ignore: missing_return
       onLaunch: (Map<String, dynamic> message) {
@@ -302,7 +302,7 @@ class RegisterState extends State<Register> {
     _firebaseMessaging.getToken().then((token) {
       print(token); // Print the Token in Console
       fcm_token = token;
-    });
+    }); */
 
 
 

@@ -1,5 +1,6 @@
 
 import 'package:cornerstone/access_pages/onboardingScreen.dart';
+import 'package:cornerstone/ui/main_screens/home_1.dart';
 import 'package:flutter/material.dart';
 
 showLoading(BuildContext context) {
@@ -182,6 +183,14 @@ successAlertDialog(BuildContext context, title, result) {
          Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => OnboardingScreen()),
+          (Route<dynamic> route) => false,
+        );
+      }
+        else if(title == 'Success')
+      {
+         Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => Home1()),
           (Route<dynamic> route) => false,
         );
       }

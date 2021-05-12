@@ -10,9 +10,6 @@ import 'dart:io';
 import 'dart:async';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-
-var x = fcmAlerts;
-
 class SearchPage extends StatefulWidget {
   @override
   _SearchPageState createState() => _SearchPageState();
@@ -21,7 +18,6 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   Future<void> _askedToLead(String quote, String title, int id,
       {String sermon}) async {
-        
     switch (await showDialog<SearchPage>(
         context: context,
         builder: (BuildContext context) {
@@ -96,11 +92,11 @@ class _SearchPageState extends State<SearchPage> {
     print(message['status_code']);
     print(message['reason']);
  */
-     
+
     if (message['status'] == "00") {
       Navigator.pop(context);
 
-      failedAlertDialog(context,"Success", message['message']);
+      failedAlertDialog(context, "Success", message['message']);
     } else {
       Navigator.pop(context);
 
@@ -218,12 +214,14 @@ class _SearchPageState extends State<SearchPage> {
                                 color: Colors.blue,
                               ),
                               onPressed: () {
-                                setState(
-                                  () {
-                                    _loading = true;
-                                    search();
-                                  },
-                                );
+                                if (_searchPageController.text != '') {
+                                  setState(
+                                    () {
+                                      _loading = true;
+                                      search();
+                                    },
+                                  );
+                                }
                               },
                             ),
                           ),

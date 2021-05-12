@@ -5,7 +5,7 @@ import 'package:cornerstone/ui/main_screens/donations/donation_history.dart';
 
 import 'package:cornerstone/ui/main_screens/more/more_pages/event_2.dart';
 import 'package:cornerstone/ui/main_screens/home/homepage_2.dart';
-import 'package:cornerstone/ui/main_screens/home_1.dart';
+
 import 'package:cornerstone/access_pages/login.dart';
 import 'package:cornerstone/access_pages/onboardingScreen.dart';
 import 'package:cornerstone/ui/main_screens/donations/donation_success_screen.dart';

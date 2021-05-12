@@ -5,8 +5,8 @@ import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'dart:async';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:geocoder/geocoder.dart';
 // ignore: unused_import
-import 'package:geocoding/geocoding.dart';
 
 class ContactUs extends StatefulWidget {
   @override
@@ -65,6 +65,14 @@ class _ContactUsState extends State<ContactUs> {
         //findUs = placemarks[0].street;
       });
     }
+
+    // From coordinates
+final coordinates = new Coordinates(1.10, 45.50);
+var addresses = await Geocoder.local.findAddressesFromCoordinates(coordinates);
+
+print(addresses);
+/* var first = addresses.first;
+print("${first.featureName} : ${first.addressLine}"); */
 
     //var value = jsonDecode(message['data']);
     //print(value);

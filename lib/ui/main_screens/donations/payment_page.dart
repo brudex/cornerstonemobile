@@ -17,20 +17,16 @@ class PaymentPage extends StatefulWidget {
 }
 
 class _PaymentPageState extends State<PaymentPage> {
-  Timer timer;
+ 
   @override
   void initState() {
     super.initState();
-      timer = Timer.periodic(Duration(seconds: 3), (Timer t) => checkStatus());
+  
     // Enable hybrid composition.
     if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
   }
 
-  @override
-void dispose() {
-  timer?.cancel();
-  super.dispose();
-}
+
 
  Future checkStatus() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -56,12 +52,9 @@ void dispose() {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false,
-          child: WebView(
-            javascriptMode: JavascriptMode.unrestricted,
+    return WebView(
+      javascriptMode: JavascriptMode.unrestricted,
         initialUrl: 'http://157.230.150.194:3000${widget.paymentUrl}',
-      ),
-    );
+      );
   }
 }

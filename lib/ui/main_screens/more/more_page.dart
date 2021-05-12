@@ -26,6 +26,8 @@ class _MorePageState extends State<MorePage> {
   var email;
   var firstName;
   var lastName;
+  var image;
+  var imageUrl;
 
   @override
   void initState() {
@@ -34,6 +36,7 @@ class _MorePageState extends State<MorePage> {
   }
 
   Future fetchUserDetails() async {
+    await getUserProfilePic();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     var url = "http://157.230.150.194:3000/api/users/getdetails";
@@ -52,9 +55,40 @@ class _MorePageState extends State<MorePage> {
         email = responseJson['data']["email"];
         firstName = responseJson['data']["firstName"];
         lastName = responseJson['data']["lastName"];
-        ready = true;
+        image.resolve(ImageConfiguration()).addListener(
+    ImageStreamListener(
+      (info, call) {
+        print('Networkimage is fully loaded and saved');
+        setState(() {
+          ready = true;
+        });
+        // do something
+      },
+    ),
+  );
       });
     }
+  }
+
+  Future getUserProfilePic() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    var url = "http://157.230.150.194:3000/api/users/getprofilepicture";
+    var token = "${prefs.getString('token')}";
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
+    );
+
+    final responseJson = jsonDecode(response.body);
+
+    print(responseJson['data']);
+    setState(() {
+      image = NetworkImage(responseJson['data']);
+
+      imageUrl = responseJson['data'];
+    });
   }
 
   Future logout() async {
@@ -109,19 +143,19 @@ class _MorePageState extends State<MorePage> {
                 ),
                 Container(
                   color: Colors.white,
-                  child: Center(
-                    child: Container(
-                      width: 90,
-                      height: 80,
-                      /*  decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage('images/profile.png'),
-                            fit: BoxFit.cover),
-                      ), */
-
-                      child: Icon(Icons.person, size: 100),
-                    ),
-                  ),
+                  width: 200,
+                  height: 200,
+                  child: image == null
+                      ? CircleAvatar(
+                          backgroundColor: Colors.white,
+                          radius: 30,
+                          child: Icon(Icons.person, size: 50),
+                        )
+                      : CircleAvatar(
+                          backgroundImage: image,
+                          backgroundColor: Colors.white,
+                          radius: 30,
+                        ),
                 ),
                 Container(
                   color: Colors.white,
@@ -147,7 +181,8 @@ class _MorePageState extends State<MorePage> {
                           MaterialPageRoute(
                             builder: (context) => EditProfile(
                               email: '$email',
-                              fname: '$firstName $lastName',
+                              fname: '$firstName',
+                              lname: '$lastName',
                             ),
                           ),
                         );

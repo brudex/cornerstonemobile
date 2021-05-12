@@ -1,10 +1,24 @@
 import 'package:cornerstone/splashscreen.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+Future<void> _messageHandler(RemoteMessage message) async {
+  /*  final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-void main() {
+  var fcmAlerts = prefs.getInt('alert'); */
+
+  print('background message ${message.notification.body}');
+
+  /* fcmAlerts++;
+  prefs.setInt('alert', fcmAlerts); */
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(_messageHandler);
   runApp(MyApp());
 }
 
@@ -13,55 +27,31 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
-var fcmAlerts = 0;
-
-
 class _MyAppState extends State<MyApp> {
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-
+  FirebaseMessaging messaging;
+  String notificationText;
   @override
   void initState() {
     super.initState();
-
-    _firebaseMessaging.configure(
-      // ignore: missing_return
-      onLaunch: (Map<String, dynamic> message) {
-        print('onLaunch called');
-      },
-      // ignore: missing_return
-      onResume: (Map<String, dynamic> message) {
-        print('onResume called');
-      },
-      // ignore: missing_return
-      onMessage: (Map<String, dynamic> message) {
-        print('onMessage called sweet');
-
+    messaging = FirebaseMessaging.instance;
+    messaging.subscribeToTopic("messaging");
+    messaging.getToken().then((value) {
+      print(value);
+    });
+    FirebaseMessaging.onMessage.listen((RemoteMessage event) async {
+      print("message recieved");
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      if (this.mounted) {
         setState(() {
+          var fcmAlerts = prefs.getInt('alert');
+
           fcmAlerts++;
-          increaseAlerts();
+          prefs.setInt('alert', fcmAlerts);
         });
-      },
-    );
-    _firebaseMessaging.subscribeToTopic('all');
-    _firebaseMessaging.requestNotificationPermissions(IosNotificationSettings(
-      sound: true,
-      badge: true,
-      alert: true,
-    ));
-    _firebaseMessaging.onIosSettingsRegistered
-        .listen((IosNotificationSettings settings) {
-      print('Hello');
+      }
     });
-    _firebaseMessaging.getToken().then((token) {
-      print(token); // Print the Token in Console
-    });
-  }
-
-  Future increaseAlerts() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    setState(() {
-      prefs.setInt('alert', fcmAlerts);
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      print('Message clicked!');
     });
   }
 

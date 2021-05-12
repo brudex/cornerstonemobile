@@ -3,7 +3,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'dart:io';
+import 'package:intl/intl.dart';
+
+
 import 'dart:async';
+class DateUtil {
+  static const DATE_FORMAT = 'dd/MM/yyyy';
+  String formattedDate(DateTime dateTime) {
+    print('dateTime ($dateTime)');
+    return DateFormat(DATE_FORMAT).format(dateTime);
+  }
+}
+
 
 class EventSuccess extends StatefulWidget {
   @override
@@ -141,7 +152,7 @@ class _EventSuccessState extends State<EventSuccess> {
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: new Text(
-                                            '${data[i]['eventDate']}',
+                                            '${DateUtil().formattedDate(DateTime.parse(data[i]['eventDate']))}',
                                             style: new TextStyle(
                                                 fontSize: 11.0,
                                                 fontWeight: FontWeight.normal),

@@ -18,7 +18,7 @@ class HomePage1 extends StatefulWidget {
 int fcmAlerts;
 
 class _HomePage1State extends State<HomePage1> {
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  FirebaseMessaging messaging;
 
   Future<void> _askedToLead() async {
     switch (await showDialog<HomePage1>(
@@ -49,7 +49,27 @@ class _HomePage1State extends State<HomePage1> {
     super.initState();
     fetchDevotion();
 
-    _firebaseMessaging.configure(
+    messaging = FirebaseMessaging.instance;
+    messaging.subscribeToTopic("messaging");
+    messaging.getToken().then((value) {
+      print(value);
+    });
+    FirebaseMessaging.onMessage.listen((RemoteMessage event) async {
+      print("message recieved");
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      if (this.mounted) {
+        setState(() {
+          fcmAlerts++;
+          prefs.setInt('alert', fcmAlerts);
+        });
+      }
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((message) async {
+      print('Message clicked!');
+    });
+
+    /* _firebaseMessaging.configure(
       // ignore: missing_return
       onLaunch: (Map<String, dynamic> message) {
         print('onLaunch called');
@@ -79,7 +99,7 @@ class _HomePage1State extends State<HomePage1> {
     });
     _firebaseMessaging.getToken().then((token) {
       print(token); // Print the Token in Console
-    });
+    }); */
   }
 
   var value = 1;
@@ -90,22 +110,16 @@ class _HomePage1State extends State<HomePage1> {
   List _youtubeLinks = [];
   List _audioLinks = [];
 
-  Future increaseAlerts() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    setState(() {
-      prefs.setInt('alert', fcmAlerts);
-    });
-  }
-
   Future fetchDevotion() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      fcmAlerts = prefs.getInt('alert');
-      print(
-          "$fcmAlerts jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj");
-      //print(fcmAlerts);
-    });
+    if (this.mounted) {
+      setState(() {
+        fcmAlerts = prefs.getInt('alert');
+        print(
+            "$fcmAlerts jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj ");
+        //print(fcmAlerts);
+      });
+    }
     var url = "http://157.230.150.194:3000/api/churchcontent/dailydevotional";
     var token = "${prefs.getString('token')}";
     var youtubeUrls =
@@ -208,34 +222,26 @@ class _HomePage1State extends State<HomePage1> {
               ),
               leading: Image.asset(
                 'images/CE_logo.png',
-                scale: 2,
+                scale: 0.7,
               ),
               actions: [
-                Padding(
-                  padding:
-                      const EdgeInsets.only(top: 16.0, bottom: 16.0, right: 8),
-                  child: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        value++;
-                      });
-                    },
-                    icon: Icon(Icons.bookmark_border_sharp),
-                    color: Colors.black,
-                  ),
-                ),
                 PopupMenuButton(
-                  icon: Badge(
-                    badgeContent: Text(
-                      '$fcmAlerts',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    badgeColor: Colors.blue,
-                    child: Icon(
-                      Icons.notifications_none_sharp,
-                      color: Colors.black,
-                    ),
-                  ),
+                  icon: '$fcmAlerts' != '0'
+                      ? Badge(
+                          badgeContent: Text(
+                            '$fcmAlerts',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          badgeColor: Colors.blue,
+                          child: Icon(
+                            Icons.notifications_none_sharp,
+                            color: Colors.black,
+                          ),
+                        )
+                      : Icon(
+                          Icons.notifications_none_sharp,
+                          color: Colors.black,
+                        ),
                   itemBuilder: (BuildContext context) {
                     return [
                       PopupMenuItem(
