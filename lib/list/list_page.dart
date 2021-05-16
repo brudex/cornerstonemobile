@@ -54,7 +54,7 @@ class _ListPageState extends State<ListPage> {
             insetPadding: EdgeInsets.all(10),
             title: Text('$title'),
             children: <Widget>[
-            AudioTile(url: 'http://157.230.150.194:3000/uploads/sermons/$url')
+              AudioTile(url: 'http://157.230.150.194:3000/uploads/sermons/$url')
             ],
           );
         })) {
@@ -115,20 +115,28 @@ class _ListPageState extends State<ListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          leading: Icon(Icons.arrow_back, color: Colors.black),
-          elevation: 0,
-          backgroundColor: Color.fromRGBO(242, 245, 247, 1),
-          title: Text(
-            'My List',
-            style: TextStyle(color: Colors.black),
-          ),
+      appBar: AppBar(
+        leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.black,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
+        elevation: 0,
+        backgroundColor: Color.fromRGBO(242, 245, 247, 1),
+        title: Text(
+          'My List',
+          style: TextStyle(color: Colors.black),
         ),
-        body: loading == true
-            ? Center(child: CircularProgressIndicator())
-            : _dataTypes.length != 0 ? ListView(
-                children: [
-                  /*  Row(
+      ),
+      body: loading == true
+          ? Center(child: CircularProgressIndicator())
+          : _dataTypes.length != 0
+              ? ListView(
+                  children: [
+                    /*  Row(
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(
@@ -140,104 +148,105 @@ class _ListPageState extends State<ListPage> {
                       )
                     ],
                   ), */
-                  for (var i = 0; i < _titles.length; i++)
-                    _dataTypes[i] == "video"
-                        ? ListTile(
-                          onTap: (){
-                            launch(_contentData[i]);
-                          },
-                            leading: Image.network(
-                                'https://img.youtube.com/vi/${YoutubePlayer.convertUrlToId(_contentData[i])}/0.jpg'),
-                            title: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: [
-                                  Text("${_titles[i]}"),
-                                ],
-                              ),
-                            ),
-                            subtitle: Padding(
-                              padding: const EdgeInsets.only(top: 15.0),
-                              child: Text(
-                                '1hr 24mins',
-                                style: TextStyle(fontSize: 12),
-                              ),
-                            ),
-                            trailing: PopupMenuButton(
-                              icon: Icon(
-                                Icons.more_vert_sharp,
-                                color: Colors.black,
-                              ),
-                              itemBuilder: (BuildContext context) {
-                                return [
-                                  PopupMenuItem(
-                                    child: InkWell(
-                                      splashColor: Colors.grey, // splash color
-                                      child: Row(children: [
-                                        Text('Delete'),
-                                        Spacer(),
-                                        Icon(
-                                          Icons.delete,
-                                          color: Colors.red,
-                                        ),
-                                      ]),
-                                    ),
-                                  ),
-                                ];
+                    for (var i = 0; i < _titles.length; i++)
+                      _dataTypes[i] == "video"
+                          ? ListTile(
+                              onTap: () {
+                                launch(_contentData[i]);
                               },
-                            ),
-                          )
-                        : _dataTypes[i] == "devotional"
-                            ? Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 8.0, bottom: 8.0),
-                                child: ListTile(
-                                  onTap: () {
-                                    _askedToLead(_contentData[i], _titles[i]);
-                                  },
-                                  leading: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Icon(
-                                      Icons.library_books_outlined,
-                                      size: 50,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  title: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      children: [
-                                        Text("${_titles[i]}"),
-                                      ],
-                                    ),
-                                  ),
-                                  trailing: PopupMenuButton(
-                                    icon: Icon(
-                                      Icons.more_vert_sharp,
-                                      color: Colors.black,
-                                    ),
-                                    itemBuilder: (BuildContext context) {
-                                      return [
-                                        PopupMenuItem(
-                                          child: InkWell(
-                                            splashColor:
-                                                Colors.grey, // splash color
-                                            child: Row(children: [
-                                              Text('Delete'),
-                                              Spacer(),
-                                              Icon(
-                                                Icons.delete,
-                                                color: Colors.red,
-                                              ),
-                                            ]),
-                                          ),
-                                        ),
-                                      ];
-                                    },
-                                  ),
+                              leading: Image.network(
+                                  'https://img.youtube.com/vi/${YoutubePlayer.convertUrlToId(_contentData[i])}/0.jpg'),
+                              title: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: [
+                                    Text("${_titles[i]}"),
+                                  ],
                                 ),
-                              )
-                            : ListTile(
+                              ),
+                              subtitle: Padding(
+                                padding: const EdgeInsets.only(top: 15.0),
+                                child: Text(
+                                  '1hr 24mins',
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                              ),
+                              trailing: PopupMenuButton(
+                                icon: Icon(
+                                  Icons.more_vert_sharp,
+                                  color: Colors.black,
+                                ),
+                                itemBuilder: (BuildContext context) {
+                                  return [
+                                    PopupMenuItem(
+                                      child: InkWell(
+                                        splashColor:
+                                            Colors.grey, // splash color
+                                        child: Row(children: [
+                                          Text('Delete'),
+                                          Spacer(),
+                                          Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                          ),
+                                        ]),
+                                      ),
+                                    ),
+                                  ];
+                                },
+                              ),
+                            )
+                          : _dataTypes[i] == "devotional"
+                              ? Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 8.0, bottom: 8.0),
+                                  child: ListTile(
+                                    onTap: () {
+                                      _askedToLead(_contentData[i], _titles[i]);
+                                    },
+                                    leading: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Icon(
+                                        Icons.library_books_outlined,
+                                        size: 50,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    title: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        children: [
+                                          Text("${_titles[i]}"),
+                                        ],
+                                      ),
+                                    ),
+                                    trailing: PopupMenuButton(
+                                      icon: Icon(
+                                        Icons.more_vert_sharp,
+                                        color: Colors.black,
+                                      ),
+                                      itemBuilder: (BuildContext context) {
+                                        return [
+                                          PopupMenuItem(
+                                            child: InkWell(
+                                              splashColor:
+                                                  Colors.grey, // splash color
+                                              child: Row(children: [
+                                                Text('Delete'),
+                                                Spacer(),
+                                                Icon(
+                                                  Icons.delete,
+                                                  color: Colors.red,
+                                                ),
+                                              ]),
+                                            ),
+                                          ),
+                                        ];
+                                      },
+                                    ),
+                                  ),
+                                )
+                              : ListTile(
                                   onTap: () {
                                     _playaudio(_contentData[i], _titles[i]);
                                   },
@@ -282,20 +291,28 @@ class _ListPageState extends State<ListPage> {
                                     },
                                   ),
                                 ),
-                              
-                ],
-              ) :  Column(
-        children: [
-          SizedBox(height: 70),
-          Container(child: Center(child: SvgPicture.asset('images/empty.svg'),),),
-             
-          Align(
-            alignment: Alignment.bottomCenter,
-            child:Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text('Nothing here', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-            )),
-        ],
-      ),);
+                  ],
+                )
+              : Column(
+                  children: [
+                    SizedBox(height: 70),
+                    Container(
+                      child: Center(
+                        child: SvgPicture.asset('images/empty.svg'),
+                      ),
+                    ),
+                    Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'Nothing here',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                        )),
+                  ],
+                ),
+    );
   }
 }

@@ -6,27 +6,30 @@ import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 
-
 class ChangePassword extends StatefulWidget {
   @override
   State createState() => ChangePasswordState();
 }
 
 class ChangePasswordState extends State<ChangePassword> {
-  TextEditingController _pwController, _confirmpwController;
+  TextEditingController _pwController, _confirmpwController, _oldPwController;
 
-  FocusNode _pwFocus, _confirmpwFocus;
+  FocusNode _pwFocus, _confirmpwFocus, _oldpw;
 
   // Initially password is obscure
   bool _obscureText = true;
   bool _obscureText2 = true;
+  bool _obscureText3 = true;
   String _password;
+  String _oldPassword;
   String _confirmpassword;
 
   // ignore: non_constant_identifier_names
   bool password_verify = true;
   // ignore: non_constant_identifier_names
   bool confirmPassword_verify = true;
+  // ignore: non_constant_identifier_names
+  bool oldPassword_verify = true;
 
   bool isValidPassword() {
     if ((_password == null) || (_password.length == 0)) {
@@ -34,6 +37,14 @@ class ChangePasswordState extends State<ChangePassword> {
     }
     // ignore: null_aware_before_operator
     return (_password?.length > 6);
+  }
+
+  bool isValidOldPassword() {
+    if ((_oldPassword == null) || (_oldPassword.length == 0)) {
+      return true;
+    }
+    // ignore: null_aware_before_operator
+    return (_oldPassword?.length > 6);
   }
 
   bool isSamePassword() {
@@ -56,10 +67,17 @@ class ChangePasswordState extends State<ChangePassword> {
     });
   }
 
+  void _toggle3() {
+    setState(() {
+      _obscureText3 = !_obscureText3;
+    });
+  }
+
   void _validate() {
     setState(() {
       _password = _pwController.text;
       _confirmpassword = _confirmpwController.text;
+      _oldPassword = _oldPwController.text;
     });
   }
 
@@ -81,6 +99,21 @@ class ChangePasswordState extends State<ChangePassword> {
       });
     }
 
+    if ((_oldPwController.text == null) || (_oldPwController.text == '')) {
+      setState(() {
+        oldPassword_verify = false;
+      });
+      // ignore: null_aware_before_operator
+    } else if (_oldPwController.text?.length <= 6) {
+      setState(() {
+        oldPassword_verify = false;
+      });
+    } else {
+      setState(() {
+        oldPassword_verify = true;
+      });
+    }
+
     if (_confirmpwController.text != _pwController.text) {
       setState(() {
         confirmPassword_verify = false;
@@ -91,29 +124,33 @@ class ChangePasswordState extends State<ChangePassword> {
       });
     }
 
-    if (password_verify == true && confirmPassword_verify == true) {
+    if (password_verify == true &&
+        confirmPassword_verify == true &&
+        oldPassword_verify == true) {
       print('All is true');
 
       showLoading(context);
       changePassword();
       // print(map[_currentSelectedValue].toInt());
     }
+    else{
+      print('err');
+    }
   }
 
-  
-
   Future changePassword() async {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     var token = "${prefs.getString('token')}";
     var url = "http://157.230.150.194:3000/api/users/change_password";
 
     var data = {
+      "oldPassword": "${_oldPwController.text}",
       "password": "${_pwController.text}",
       "confirmPassword": "${_confirmpwController.text}",
     };
 
-     var response = await http.post(
+    var response = await http.post(
       Uri.parse(url),
       body: data,
       headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
@@ -124,11 +161,10 @@ class ChangePasswordState extends State<ChangePassword> {
     print(message['status_code']);
     print(message['reason']);
 
-    
     if (message['status_code'] == "00") {
       Navigator.pop(context);
 
-      failedAlertDialog(context,"Success", message['message']);
+      failedAlertDialog(context, "Success", message['message']);
     } else {
       Navigator.pop(context);
 
@@ -140,9 +176,11 @@ class ChangePasswordState extends State<ChangePassword> {
   void initState() {
     _pwController = TextEditingController();
     _confirmpwController = TextEditingController();
+    _oldPwController = TextEditingController();
 
     _pwFocus = FocusNode();
     _confirmpwFocus = FocusNode();
+    _oldpw = FocusNode();
 
     super.initState();
   }
@@ -150,22 +188,22 @@ class ChangePasswordState extends State<ChangePassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:  AppBar(
-          elevation: 0,
-          backgroundColor: Color.fromRGBO(242, 245, 247, 1),
-          title: Text(
-            'Change Password',
-            style: TextStyle(color: Colors.black),
-          ),
-          leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: Colors.black,
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              }),
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Color.fromRGBO(242, 245, 247, 1),
+        title: Text(
+          'Change Password',
+          style: TextStyle(color: Colors.black),
         ),
+        leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.black,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
+      ),
       body: SingleChildScrollView(
         child: SafeArea(
           child: Column(
@@ -177,8 +215,8 @@ class ChangePasswordState extends State<ChangePassword> {
                   SizedBox(
                     height: 30,
                   ),
-                
-               /*    Row(
+
+                  /*    Row(
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -190,7 +228,41 @@ class ChangePasswordState extends State<ChangePassword> {
                       ),
                     ],
                   ), */
-                 
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 16.0, right: 16, bottom: 16),
+                    child: Material(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: TextField(
+                        focusNode: _oldpw,
+                        controller: _oldPwController,
+                        obscureText: _obscureText3,
+                        textInputAction: TextInputAction.done,
+                       /*  onSubmitted: (input) {
+                          _oldpw.unfocus();
+                          performChangePassword();
+                        },
+                        onTap: _validate, */
+                        decoration: InputDecoration(
+                          labelText: "Old Password",
+                          hintText: 'Enter your old password',
+                          errorText: isValidOldPassword() && oldPassword_verify
+                              ? null
+                              : "Password too short.",
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscureText3
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                              color: Colors.blue,
+                            ),
+                            onPressed: _toggle3,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(
                         left: 16.0, right: 16, bottom: 16),
@@ -202,12 +274,12 @@ class ChangePasswordState extends State<ChangePassword> {
                         controller: _pwController,
                         obscureText: _obscureText,
                         textInputAction: TextInputAction.done,
-                        onSubmitted: (input) {
+                       /*  onSubmitted: (input) {
                           _pwFocus.unfocus();
                           _password = input;
                           performChangePassword();
                         },
-                        onTap: _validate,
+                        onTap: _validate, */
                         decoration: InputDecoration(
                           labelText: "New Password",
                           hintText: 'Enter your password',
@@ -238,12 +310,12 @@ class ChangePasswordState extends State<ChangePassword> {
                         controller: _confirmpwController,
                         obscureText: _obscureText2,
                         textInputAction: TextInputAction.done,
-                        onSubmitted: (input) {
+                      /*   onSubmitted: (input) {
                           _confirmpwFocus.unfocus();
                           _confirmpassword = input;
                           performChangePassword();
                         },
-                        onTap: _validate,
+                        onTap: _validate, */
                         decoration: InputDecoration(
                           labelText: "Confirm Password",
                           hintText: 'Enter your password',
@@ -287,6 +359,7 @@ class ChangePasswordState extends State<ChangePassword> {
                   child: Text(' Change Password',
                       style: TextStyle(fontSize: 20, color: Colors.white)),
                   onPressed: () {
+                    print('changing');
                     performChangePassword();
                   },
                 ),

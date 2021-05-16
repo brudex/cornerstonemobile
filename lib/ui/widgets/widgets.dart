@@ -66,7 +66,7 @@ class _AudioTileState extends State<AudioTile> {
     return Container(
       margin: EdgeInsets.only(top: 5),
       height: 200,
-      width: double.infinity,
+      width: 345,
       child: Card(
         semanticContainer: true,
         color: Colors.grey,

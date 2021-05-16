@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'dart:async';
 import 'package:badges/badges.dart';
+import 'package:cornerstone/ui/main_screens/more/more_pages/account_settings/notifications.dart';
 import 'package:cornerstone/ui/widgets/widgets.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -68,38 +68,6 @@ class _HomePage1State extends State<HomePage1> {
     FirebaseMessaging.onMessageOpenedApp.listen((message) async {
       print('Message clicked!');
     });
-
-    /* _firebaseMessaging.configure(
-      // ignore: missing_return
-      onLaunch: (Map<String, dynamic> message) {
-        print('onLaunch called');
-      },
-      // ignore: missing_return
-      onResume: (Map<String, dynamic> message) {
-        print('onResume called');
-      },
-      // ignore: missing_return
-      onMessage: (Map<String, dynamic> message) {
-        print('onMessage called sweet');
-        setState(() {
-         fcmAlerts++;
-        increaseAlerts();
-        });
-      },
-    );
-    _firebaseMessaging.subscribeToTopic('all');
-    _firebaseMessaging.requestNotificationPermissions(IosNotificationSettings(
-      sound: true,
-      badge: true,
-      alert: true,
-    ));
-    _firebaseMessaging.onIosSettingsRegistered
-        .listen((IosNotificationSettings settings) {
-      print('Hello');
-    });
-    _firebaseMessaging.getToken().then((token) {
-      print(token); // Print the Token in Console
-    }); */
   }
 
   var value = 1;
@@ -107,7 +75,7 @@ class _HomePage1State extends State<HomePage1> {
   var devotionalQuote;
   bool ready = false;
   List _links = [];
-  List _youtubeLinks = [];
+  List _videoLinks = [];
   List _audioLinks = [];
 
   Future fetchDevotion() async {
@@ -120,9 +88,10 @@ class _HomePage1State extends State<HomePage1> {
         //print(fcmAlerts);
       });
     }
-    var url = "http://157.230.150.194:3000/api/churchcontent/dailydevotional";
+    var devotionalUrl =
+        "http://157.230.150.194:3000/api/churchcontent/dailydevotional";
     var token = "${prefs.getString('token')}";
-    var youtubeUrls =
+    var videoUrls =
         "http://157.230.150.194:3000/api/churchcontent/video?limit=0&offset=0";
 
     var audioUrls =
@@ -139,13 +108,13 @@ class _HomePage1State extends State<HomePage1> {
     print('$churchResponseJson' +
         'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 1 devotional');
 
-    final response = await http.get(
-      Uri.parse(url),
+    final getDevotion = await http.get(
+      Uri.parse(devotionalUrl),
       headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
     );
 
-    final getUrls = await http.get(
-      Uri.parse(youtubeUrls),
+    final getVideoUrls = await http.get(
+      Uri.parse(videoUrls),
       headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
     );
 
@@ -153,47 +122,33 @@ class _HomePage1State extends State<HomePage1> {
       Uri.parse(audioUrls),
       headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
     );
-    final responseJson = jsonDecode(response.body);
+    final responseJson = jsonDecode(getDevotion.body);
     print('$responseJson' +
         'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 1 devotional');
 
     final responseJson2 = jsonDecode(getaudioUrls.body);
     print('$responseJson2' +
         'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 3 audio');
-
-    var message = jsonDecode(response.body);
-    //  print(message['data']);
-//var value = message['data'];
-    //   print(value['id']);
-
-    var message2 = jsonDecode(getUrls.body);
+    var message = jsonDecode(getDevotion.body);
+    var message2 = jsonDecode(getVideoUrls.body);
     print('$message2' + 'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 2 video');
     var message3 = jsonDecode(getaudioUrls.body);
-    //(message2['data']);
-    //var value2 = message2['data'][1];
-    // print(value2);
-    //print(value2['contentData']);
-    List links = [];
-    List youtubeLinks = [];
+
+    List videoLinks = [];
     List audioLinks = [];
-    for (var item in message2['data']) {
-      links.add(YoutubePlayer.convertUrlToId(item['contentData']));
-    }
 
     for (var item in message2['data']) {
-      youtubeLinks.add(item['contentData']);
+      videoLinks.add(item['contentData']);
     }
 
     for (var item in message3['data']) {
       audioLinks.add(item['contentData']);
     }
 
-    print(links);
     if (this.mounted) {
       setState(() {
         churchName = churchResponseJson["name"];
-        _links = links;
-        _youtubeLinks = youtubeLinks;
+        _videoLinks = videoLinks;
         _audioLinks = audioLinks;
         if (message['data'] != null) {
           devotionalQuote = message['data']['devotionalContent'];
@@ -225,7 +180,7 @@ class _HomePage1State extends State<HomePage1> {
                 scale: 0.7,
               ),
               actions: [
-                PopupMenuButton(
+                IconButton(
                   icon: '$fcmAlerts' != '0'
                       ? Badge(
                           badgeContent: Text(
@@ -242,21 +197,13 @@ class _HomePage1State extends State<HomePage1> {
                           Icons.notifications_none_sharp,
                           color: Colors.black,
                         ),
-                  itemBuilder: (BuildContext context) {
-                    return [
-                      PopupMenuItem(
-                        child: InkWell(
-                          splashColor: Colors.grey, // splash color
-                          child:
-                              Text('• Payment of GHc 2,000.00 was successful'),
-                        ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Notifications(),
                       ),
-                      PopupMenuItem(
-                          child: InkWell(
-                              splashColor: Colors.grey, // splash color
-                              child: Text(
-                                  '• Password has been changed successfully'))),
-                    ];
+                    );
                   },
                 ),
               ],
@@ -349,7 +296,7 @@ class _HomePage1State extends State<HomePage1> {
                       ],
                     ),
                   ),
-                  _links.length == 0
+                  _videoLinks.length == 0
                       ? Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Container(
@@ -381,33 +328,13 @@ class _HomePage1State extends State<HomePage1> {
                           scrollDirection: Axis.horizontal,
                           child: Row(
                             children: [
-                              for (var i = 0; i < _links.length; i++)
+                              for (var i = 0; i < _videoLinks.length; i++)
                                 Padding(
                                   padding: const EdgeInsets.all(16.0),
-                                  child: InkWell(
-                                    onTap: () {
-                                      print('tapped');
-
-                                      launch(
-                                          "${_youtubeLinks[i]}"); //or any link you want
-                                    },
-                                    child: Stack(children: [
-                                      Container(
-                                        height: 150,
-                                        width: 220,
-                                        child: Image.network(
-                                            'https://img.youtube.com/vi/${_links[i]}/0.jpg'),
-                                      ),
-                                      Container(
-                                        width: 220,
-                                        height: 150,
-                                        child: Icon(
-                                          Icons.play_arrow,
-                                          color: Colors.white,
-                                          size: 100,
-                                        ),
-                                      ),
-                                    ]),
+                                  child: VideoTile(
+                                    link: '${_videoLinks[i]}',
+                                    height: 200,
+                                    width: 200,
                                   ),
                                 ),
                             ],
@@ -430,10 +357,10 @@ class _HomePage1State extends State<HomePage1> {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: _audioLinks.length == 0
-                        ? Container(
+                  _audioLinks.length == 0
+                      ? Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Container(
                             margin: EdgeInsets.only(top: 5),
                             height: 200,
                             width: double.infinity,
@@ -456,13 +383,22 @@ class _HomePage1State extends State<HomePage1> {
                                 ],
                               ),
                             ),
-                          )
-                        : Column(
+                          ),
+                        )
+                      : SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
                             children: [
-                              for (String i in _audioLinks) AudioTile(url: i),
+                              for (var i = 0; i < _audioLinks.length; i++)
+                                Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: AudioTile(
+                                      url:
+                                          'http://157.230.150.194:3000/uploads/sermons/SermonAudio-Media-Player_2.mp3'),
+                                ),
                             ],
                           ),
-                  ),
+                        ),
                 ],
               ),
             ),

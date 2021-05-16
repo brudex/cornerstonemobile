@@ -4,6 +4,18 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'dart:async';
+import 'package:intl/intl.dart';
+
+
+
+class DateUtil {
+  static const DATE_FORMAT = 'dd/MM/yyyy';
+  String formattedDate(DateTime dateTime) {
+    print('dateTime ($dateTime)');
+    return DateFormat(DATE_FORMAT).format(dateTime);
+  }
+}
+
 
 class Notifications extends StatefulWidget {
   @override
@@ -30,8 +42,8 @@ class _NotificationsState extends State<Notifications> {
   Future fetchEvents() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    var url = "http://157.230.150.194:3000/api/notifications/getusernotifications";
-    
+    var url =
+        "http://157.230.150.194:3000/api/notifications/getusernotifications";
 
     var token = "${prefs.getString('token')}";
 
@@ -40,21 +52,16 @@ class _NotificationsState extends State<Notifications> {
       headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
     );
 
-   
-
-    
-
     final responseJson = jsonDecode(response.body);
     print('$responseJson' +
         'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 1 devotional');
 
-  //  print(responseJson['data'].length);
-  //  print(responseJson['data'][0]);
-
-    
-
-    //var value = jsonDecode(message['data']);
-    //print(value);
+    if (this.mounted) {
+      setState(() {
+        data = responseJson['data'];
+        ready = true;
+      });
+    }
   }
 
   @override
@@ -64,7 +71,7 @@ class _NotificationsState extends State<Notifications> {
         elevation: 0,
         backgroundColor: Color.fromRGBO(242, 245, 247, 1),
         title: Text(
-          'Events',
+          'Notifications & Messages',
           style: TextStyle(color: Colors.black),
         ),
         leading: IconButton(
@@ -88,8 +95,7 @@ class _NotificationsState extends State<Notifications> {
                       for (int i = 0; i < data.length; i++)
                         Card(
                           child: ListTile(
-                           
-                                /* image == null
+                            /* image == null
                                 ?
                                 : */
                             /*     Image.network(
@@ -103,7 +109,7 @@ class _NotificationsState extends State<Notifications> {
                             title: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: new Text(
-                                'he',
+                                '${data[i]['body']}',
                                 style: new TextStyle(
                                   fontSize: 18.0,
                                 ),
@@ -113,15 +119,9 @@ class _NotificationsState extends State<Notifications> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: new Text(
-                                      's',
-                                      style: new TextStyle(
-                                          fontSize: 13.0,
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                  ),
+                                SizedBox(
+                                  height: 20
+                                ),
                                   SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
                                     child: Row(
@@ -129,7 +129,7 @@ class _NotificationsState extends State<Notifications> {
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: new Text(
-                                            's',
+                                            '${data[i]['title']}',
                                             style: new TextStyle(
                                                 fontSize: 11.0,
                                                 fontWeight: FontWeight.normal),
@@ -139,7 +139,7 @@ class _NotificationsState extends State<Notifications> {
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: new Text(
-                                            's',
+                                            '${DateUtil().formattedDate(DateTime.parse(data[i]['createdAt']))}',
                                             style: new TextStyle(
                                                 fontSize: 11.0,
                                                 fontWeight: FontWeight.normal),
@@ -176,7 +176,7 @@ class _NotificationsState extends State<Notifications> {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                'No Events Yet',
+                                'No Notifications Yet',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     color: Colors.black, fontSize: 20),

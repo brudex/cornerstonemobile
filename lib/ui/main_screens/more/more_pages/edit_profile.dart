@@ -191,7 +191,7 @@ class EditProfileState extends State<EditProfile> {
       var url = "http://157.230.150.194:3000/api/users/edit_user_details";
 
       var data = {
-        "email": "${_emailController.text}",
+        //"email": "${_emailController.text}",
         "firstName": "${_fNameController.text}",
         "lastName": "${_lNameController.text}",
       };

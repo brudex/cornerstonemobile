@@ -157,7 +157,7 @@ print("${first.featureName} : ${first.addressLine}"); */
                   ),
                 ),
                 ListTile(
-                  subtitle: Text('$findUs'),
+                  subtitle: Text(''),
                   title: new Text(
                     'Find us',
                     style: new TextStyle(
