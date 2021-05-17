@@ -1,3 +1,6 @@
+import 'package:cornerstone/globals.dart';
+import 'package:cornerstone/ui/main_screens/donations/donation_failure.dart';
+import 'package:cornerstone/ui/main_screens/donations/donation_success_screen.dart';
 import 'package:cornerstone/ui/widgets/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,11 +30,11 @@ class DonationState extends State<Donation> {
   String _currentPaymentMethod;
   String _currentDonationType;
 
-  var _paymentMethod = [
-    "Visa, Mastercard",
-  ];
+  var _paymentMethod = ["Visa, Mastercard", "PayPal"];
 
-  List _donations = [];
+  List<String> _donations = [];
+  List<int> _ids = [];
+  Map<String, int> maps;
 
   Future performDonation() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -40,7 +43,7 @@ class DonationState extends State<Donation> {
     var data = {
       "amount": "${_amountController.text}",
       "paymentMode": "$_currentPaymentMethod",
-      "donationType": "$_currentDonationType",
+      "donationType": "${maps[_currentDonationType]}",
     };
 
     var token = "${prefs.getString('token')}";
@@ -56,7 +59,10 @@ class DonationState extends State<Donation> {
 
     if (message['status'] == "00") {
       Navigator.pop(context);
-      Navigator.push(
+
+      _navigateAndDisplaySelection(
+          context, message['paymentUrl'], message['reference']);
+      /*  Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => PaymentPage(
@@ -64,7 +70,7 @@ class DonationState extends State<Donation> {
             reference: message['reference'],
           ),
         ),
-      );
+      ); */
     } else {
       Navigator.pop(context);
 
@@ -80,6 +86,39 @@ class DonationState extends State<Donation> {
 
     super.initState();
     fetchDonationTypes();
+  }
+
+  void _navigateAndDisplaySelection(
+      BuildContext context, String paymentUrl, String reference) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PaymentPage(
+          paymentUrl: paymentUrl,
+          reference: reference,
+        ),
+      ),
+    );
+
+    print(result);
+
+    // After the Selection Screen returns a result, hide any previous snackbars
+    // and show the new result.
+    "$result" == 'Failed' ? Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DonationFailure(
+      ),
+      ),
+    ) :Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DonationSuccess(
+      ),
+      ),
+    );
   }
 
   Future fetchDonationTypes() async {
@@ -98,14 +137,23 @@ class DonationState extends State<Donation> {
     print('$responseJson' +
         'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 1 devotional');
 
-    List donationTypes = [];
+    List<String> donationTypes = [];
+    List<int> ids = [];
+
     for (var item in responseJson['data']) {
       donationTypes.add(item['donationType']);
+      ids.add(item['id']);
     }
 
     if (this.mounted) {
       setState(() {
         _donations = donationTypes;
+        _ids = ids;
+
+        Map<String, int> map = new Map.fromIterables(_donations, _ids);
+
+        print(map);
+        maps = map;
         ready = true;
       });
     }
@@ -161,11 +209,11 @@ class DonationState extends State<Donation> {
         child: SafeArea(
           child: ready == false
               ? Column(
-                children: [
-                  SizedBox(height: 50),
-                  Center(child: CircularProgressIndicator()),
-                ],
-              )
+                  children: [
+                    SizedBox(height: 50),
+                    Center(child: CircularProgressIndicator()),
+                  ],
+                )
               : Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
@@ -250,15 +298,25 @@ class DonationState extends State<Donation> {
                                 },
                                 items: _paymentMethod.map((String value) {
                                   return DropdownMenuItem<String>(
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(value),
-                                        Text('  '),
-                                        Image.asset('images/visa.png'),
-                                      ],
-                                    ),
+                                    child: value == "Visa, Mastercard"
+                                        ? Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(value),
+                                              Text('  '),
+                                              Image.asset('images/visa.png'),
+                                            ],
+                                          )
+                                        : Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(value),
+                                              Text('  '),
+                                              Image.asset('images/paypal.png'),
+                                            ],
+                                          ),
                                     value: value,
                                   );
                                 }).toList(),
@@ -290,6 +348,7 @@ class DonationState extends State<Donation> {
                                   setState(() {
                                     _currentDonationType = newValue;
                                     state.didChange(newValue);
+                                    print(maps[_currentDonationType]);
                                   });
                                 },
                                 items: _donations.map((var value) {

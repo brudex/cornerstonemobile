@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:async';
 import 'package:badges/badges.dart';
+import 'package:cornerstone/ui/main_screens/home/all_audios.dart';
+import 'package:cornerstone/ui/main_screens/home/all_videos.dart';
 import 'package:cornerstone/ui/main_screens/more/more_pages/account_settings/notifications.dart';
 import 'package:cornerstone/ui/widgets/widgets.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -289,9 +291,19 @@ class _HomePage1State extends State<HomePage1> {
                           "Video Sermons",
                           style: TextStyle(fontSize: 20),
                         ),
-                        Text(
-                          "View More",
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                        InkWell(
+                          onTap: (){
+                             Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AllVideos(),
+                    ),
+                  );
+                          },
+                                                  child: Text(
+                            "View More",
+                            style: TextStyle(fontSize: 14, color: Colors.grey),
+                          ),
                         ),
                       ],
                     ),
@@ -326,7 +338,21 @@ class _HomePage1State extends State<HomePage1> {
                         )
                       : SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
-                          child: Row(
+                          child:
+                          _videoLinks.length > 2?
+                           Row(
+                            children: [
+                              for (var i = 0; i < 2; i++)
+                                Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: VideoTile(
+                                    link: '${_videoLinks[i]}',
+                                    height: 200,
+                                    width: 250,
+                                  ),
+                                ),
+                            ],
+                          ) :                           Row(
                             children: [
                               for (var i = 0; i < _videoLinks.length; i++)
                                 Padding(
@@ -334,11 +360,11 @@ class _HomePage1State extends State<HomePage1> {
                                   child: VideoTile(
                                     link: '${_videoLinks[i]}',
                                     height: 200,
-                                    width: 200,
+                                    width: 250,
                                   ),
                                 ),
                             ],
-                          ),
+                          ) ,
                         ),
                   Padding(
                     padding:
@@ -350,9 +376,19 @@ class _HomePage1State extends State<HomePage1> {
                           "Audio Sermons",
                           style: TextStyle(fontSize: 20),
                         ),
-                        Text(
-                          "View More",
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                        InkWell(
+                          onTap: (){
+                              Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AllAudios(),
+                    ),
+                  );
+                          },
+                                                  child: Text(
+                            "View More",
+                            style: TextStyle(fontSize: 14, color: Colors.grey),
+                          ),
                         ),
                       ],
                     ),
@@ -387,14 +423,34 @@ class _HomePage1State extends State<HomePage1> {
                         )
                       : SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
-                          child: Row(
+                          child: _audioLinks.length > 2 ?
+                          
+                           Row(
+                            children: [
+                              for (var i = 0; i < 2; i++)
+                                Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Container(
+                                      height: 200,
+                                    width: 250,
+                                    child: AudioTile(
+                                        url:
+                                            'http://157.230.150.194:3000/uploads/sermons/SermonAudio-Media-Player_2.mp3'),
+                                  ),
+                                ),
+                            ],
+                          ) :   Row(
                             children: [
                               for (var i = 0; i < _audioLinks.length; i++)
                                 Padding(
                                   padding: const EdgeInsets.all(16.0),
-                                  child: AudioTile(
-                                      url:
-                                          'http://157.230.150.194:3000/uploads/sermons/SermonAudio-Media-Player_2.mp3'),
+                                  child: Container(
+                                      height: 200,
+                                    width: 250,
+                                    child: AudioTile(
+                                        url:
+                                            'http://157.230.150.194:3000/uploads/sermons/SermonAudio-Media-Player_2.mp3'),
+                                  ),
                                 ),
                             ],
                           ),

@@ -46,7 +46,10 @@ class _AudioTileState extends State<AudioTile> {
         looping: false,
         // Try playing around with some of these other options:
 
-        // showControls: false,
+        showControls: true,
+        allowMuting: false,
+        allowPlaybackSpeedChanging: false
+        
         // materialProgressColors: ChewieProgressColors(
         //   playedColor: Colors.red,
         //   handleColor: Colors.blue,
