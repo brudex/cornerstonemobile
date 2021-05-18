@@ -5,16 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:intl/intl.dart';
 
-
 import 'dart:async';
-class DateUtil {
-  static const DATE_FORMAT = 'dd/MM/yyyy';
-  String formattedDate(DateTime dateTime) {
-    print('dateTime ($dateTime)');
-    return DateFormat(DATE_FORMAT).format(dateTime);
-  }
-}
-
 
 class EventSuccess extends StatefulWidget {
   @override
@@ -111,12 +102,16 @@ class _EventSuccessState extends State<EventSuccess> {
                       for (int i = 0; i < data.length; i++)
                         Card(
                           child: ListTile(
-                            leading:
-                                /* image == null
-                                ?
-                                : */
-                                Image.network(
-                              "http://${data[i]['imageBanner']}",
+                            leading: Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    
+                                    image: NetworkImage(
+                                        "http://${data[i]['imageBanner']}", scale: 1),
+                                    fit: BoxFit.cover),
+                              ),
                             ),
 
                             /*    new Image.asset(
@@ -152,7 +147,7 @@ class _EventSuccessState extends State<EventSuccess> {
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: new Text(
-                                            '${DateUtil().formattedDate(DateTime.parse(data[i]['eventDate']))}',
+                                            '${data[i]['eventDate']}',
                                             style: new TextStyle(
                                                 fontSize: 11.0,
                                                 fontWeight: FontWeight.normal),

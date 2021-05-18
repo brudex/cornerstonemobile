@@ -85,6 +85,9 @@ class _HomePage1State extends State<HomePage1> {
     if (this.mounted) {
       setState(() {
         fcmAlerts = prefs.getInt('alert');
+        if(fcmAlerts == null){
+          fcmAlerts = 0;
+        }
         print(
             "$fcmAlerts jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj ");
         //print(fcmAlerts);

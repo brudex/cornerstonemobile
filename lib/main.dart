@@ -5,14 +5,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> _messageHandler(RemoteMessage message) async {
-  /*  final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-  var fcmAlerts = prefs.getInt('alert'); */
+ 
 
   print('background message ${message.notification.body}');
 
-  /* fcmAlerts++;
-  prefs.setInt('alert', fcmAlerts); */
+  
 }
 
 void main() async {

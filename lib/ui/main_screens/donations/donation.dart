@@ -106,19 +106,22 @@ class DonationState extends State<Donation> {
 
     // After the Selection Screen returns a result, hide any previous snackbars
     // and show the new result.
-    "$result" == 'Failed' ? Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => DonationFailure(
-      ),
-      ),
-    ) :Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => DonationSuccess(
-      ),
-      ),
-    );
+
+    if ("$result" == 'Failed') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DonationFailure(),
+        ),
+      );
+    } else if ("$result" == 'Success') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DonationSuccess(),
+        ),
+      );
+    }
   }
 
   Future fetchDonationTypes() async {

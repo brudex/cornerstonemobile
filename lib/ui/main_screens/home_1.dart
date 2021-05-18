@@ -32,7 +32,7 @@ class _Home1State extends State<Home1> {
 
     setState(() {
       let = prefs.getInt('alert');
-      print(let);
+     // print(let);
     });
   }
 

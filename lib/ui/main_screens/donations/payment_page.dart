@@ -19,28 +19,29 @@ class PaymentPage extends StatefulWidget {
 }
 
 class _PaymentPageState extends State<PaymentPage> {
-
-   StreamSubscription<String> _onStateChanged;
+  //StreamSubscription<String> _onStateChanged;
   final flutterWebviewPlugin = new FlutterWebviewPlugin();
 
   @override
   void initState() {
     super.initState();
 
-     _onStateChanged =
-            flutterWebviewPlugin.onUrlChanged.listen((String state) async {
-          if (state.startsWith( "http://157.230.150.194:3000/paymentResult/failed")) {
-                 Navigator.pop(context, 'Failed');
-                /*  Navigator.push(
+    flutterWebviewPlugin.onUrlChanged.listen((String state) async {
+      if (state
+          .startsWith("http://157.230.150.194:3000/paymentResult/failed")) {
+            await checkStatus();
+        Navigator.pop(context, 'Failed');
+        /*  Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => DonationSuccess(),
                     ),
                   ); */
-           }
-        });
-
-    
+      } else if(state
+          .startsWith("http://157.230.150.194:3000/paymentResult/success")){
+              Navigator.pop(context, 'Success');
+          }
+    });
   }
 
   Future checkStatus() async {
@@ -67,11 +68,9 @@ class _PaymentPageState extends State<PaymentPage> {
   @override
   Widget build(BuildContext context) {
     return WebviewScaffold(
-      
       withJavascript: true,
       // javascriptMode: JavascriptMode.unrestricted,
       url: 'http://157.230.150.194:3000${widget.paymentUrl}',
-
     );
   }
 }
