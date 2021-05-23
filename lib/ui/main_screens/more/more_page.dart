@@ -36,7 +36,7 @@ class _MorePageState extends State<MorePage> {
   }
 
   Future fetchUserDetails() async {
-    await getUserProfilePic();
+     await getUserProfilePic();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     var url = "http://157.230.150.194:3000/api/users/getdetails";
@@ -55,17 +55,22 @@ class _MorePageState extends State<MorePage> {
         email = responseJson['data']["email"];
         firstName = responseJson['data']["firstName"];
         lastName = responseJson['data']["lastName"];
-        image.resolve(ImageConfiguration()).addListener(
-    ImageStreamListener(
-      (info, call) {
-        print('Networkimage is fully loaded and saved');
-        setState(() {
+
+        if (image != null) {
+          image.resolve(ImageConfiguration()).addListener(
+            ImageStreamListener(
+              (info, call) {
+                print('Networkimage is fully loaded and saved');
+                setState(() {
+                  ready = true;
+                });
+                // do something
+              },
+            ),
+          );
+        } else{
           ready = true;
-        });
-        // do something
-      },
-    ),
-  );
+        }
       });
     }
   }
@@ -84,11 +89,14 @@ class _MorePageState extends State<MorePage> {
     final responseJson = jsonDecode(response.body);
 
     print(responseJson['data']);
-    setState(() {
-      image = NetworkImage(responseJson['data']);
 
-      imageUrl = responseJson['data'];
-    });
+    if (responseJson['data'] != null) {
+      setState(() {
+        image = NetworkImage(responseJson['data']);
+
+        imageUrl = responseJson['data'];
+      });
+    }
   }
 
   Future logout() async {
@@ -183,6 +191,7 @@ class _MorePageState extends State<MorePage> {
                               email: '$email',
                               fname: '$firstName',
                               lname: '$lastName',
+                              image: '$imageUrl',
                             ),
                           ),
                         );

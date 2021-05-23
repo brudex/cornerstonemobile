@@ -135,6 +135,9 @@ class ForgotPasswordState extends State<ForgotPassword> {
                   'images/logo 1.png',
                   scale: 2,
                 ),
+                SizedBox(
+                  height: 20
+                ),
               
               
                   Row(
@@ -150,6 +153,10 @@ class ForgotPasswordState extends State<ForgotPassword> {
                         ),
                       ],
                     ),
+
+                     SizedBox(
+                  height: 20
+                ),
                 Padding(
                   padding: const EdgeInsets.only(
                       left: 16.0, right: 16, bottom: 16),

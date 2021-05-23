@@ -13,7 +13,7 @@ class OnboardingScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               Center(
-                child: Image.asset('images/logo 1.png'),
+                child: Image.asset('images/logo 1.png', scale: 3,),
               ),
               SizedBox(height: 50),
               Text(

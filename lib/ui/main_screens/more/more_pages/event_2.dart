@@ -56,7 +56,7 @@ class _EventSuccessState extends State<EventSuccess> {
         'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 1 devotional');
 
     print(responseJson['data'].length);
-    print(responseJson['data'][0]);
+    //print(responseJson['data'][0]);
 
     print(churchResponseJson["name"]);
     if (this.mounted) {

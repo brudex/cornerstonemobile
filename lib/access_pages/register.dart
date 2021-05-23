@@ -13,11 +13,11 @@ class Register extends StatefulWidget {
 
 class RegisterState extends State<Register> {
   TextEditingController _emailController,
-      _pwController,
+      _pwController,_phoneController,
       _confirmpwController,
       _fNameController,
       _lNameController;
-  FocusNode _emailFocus, _pwFocus, _confirmpwFocus, _fNameFocus, _lNameFocus;
+  FocusNode _emailFocus, _pwFocus, _confirmpwFocus, _fNameFocus, _lNameFocus, _phoneFocus;
 
   // Initially password is obscure
   bool _obscureText = true;
@@ -27,6 +27,7 @@ class RegisterState extends State<Register> {
   String _email;
   String _fName;
   String _lName;
+  String _phone;
   // ignore: non_constant_identifier_names
   var fcm_token;
 
@@ -43,6 +44,9 @@ class RegisterState extends State<Register> {
   // ignore: non_constant_identifier_names
   bool lName_verify = true;
 
+  // ignore: non_constant_identifier_names
+  bool phone_verify = true;
+
   String _currentSelectedValue;
   int _currentSelectedId;
 
@@ -56,14 +60,7 @@ class RegisterState extends State<Register> {
 
 
 
-  Map<String, int> map = {
-    "Roman": 1,
-    "Presbyterian Church of Ghana": 2,
-    "Christ Embassy": 3,
-    "The Church of Pentecost": 4,
-    "Church of Christ": 5,
-    "ICGC": 6
-  };
+ 
   bool isValidEmail() {
     if ((_email == null) || (_email.length == 0)) {
       return true;
@@ -71,6 +68,14 @@ class RegisterState extends State<Register> {
     return RegExp(
             r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
         .hasMatch(_email);
+  }
+
+  bool isValidPhone() {
+    if ((_phone == null) || (_phone.length == 0) || (_phone != null)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   bool isValidPassword() {
@@ -124,6 +129,7 @@ class RegisterState extends State<Register> {
       _confirmpassword = _confirmpwController.text;
       _fName = _fNameController.text;
       _lName = _lNameController.text;
+      _phone = _phoneController.text;
     });
   }
 
@@ -181,6 +187,16 @@ class RegisterState extends State<Register> {
       });
     }
 
+     if (_phoneController.text == '') {
+      setState(() {
+        phone_verify = false;
+      });
+    } else {
+      setState(() {
+        phone_verify = true;
+      });
+    }
+
     if (_confirmpwController.text != _pwController.text) {
       setState(() {
         confirmPassword_verify = false;
@@ -205,7 +221,7 @@ class RegisterState extends State<Register> {
         confirmPassword_verify == true &&
         fName_verify == true &&
         lName_verify == true &&
-        church_verify == true) {
+        church_verify == true && phone_verify == true) {
       
       print('All is true');
       for (int i = 0; i < _churches.length; i++) {
@@ -229,7 +245,8 @@ class RegisterState extends State<Register> {
       "email": "${_emailController.text}",
       "password": "${_pwController.text}",
       "churchId": "$_currentSelectedId",
-      "fcm_token": "$fcm_token"
+      "fcm_token": "$fcm_token",
+      "phone" : "${_phoneController.text}"
     };
 
     var response = await http.post(Uri.parse(url), body: data);
@@ -257,52 +274,20 @@ class RegisterState extends State<Register> {
     _confirmpwController = TextEditingController();
     _fNameController = TextEditingController();
     _lNameController = TextEditingController();
+    _phoneController = TextEditingController();
 
     _emailFocus = FocusNode();
     _pwFocus = FocusNode();
     _confirmpwFocus = FocusNode();
     _fNameFocus = FocusNode();
     _lNameFocus = FocusNode();
+    _phoneFocus = FocusNode();
     super.initState();
 
     fetch();
   }
 
   Future fetch() async {
-
-   /*  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-    _firebaseMessaging.configure(
-      // ignore: missing_return
-      onLaunch: (Map<String, dynamic> message) {
-        print('onLaunch called $message');
-      },
-      // ignore: missing_return
-      onResume: (Map<String, dynamic> message) {
-        print('onResume called $message');
-      },
-      // ignore: missing_return
-      onMessage: (Map<String, dynamic> message) {
-        print('onMessage called $message');
-        
-      },
-
-      // ignore: missing_return
-     
-    );
-    _firebaseMessaging.subscribeToTopic('all');
-    _firebaseMessaging.requestNotificationPermissions(IosNotificationSettings(
-      sound: true,
-      badge: true,
-      alert: true,
-    ));
-    _firebaseMessaging.onIosSettingsRegistered
-        .listen((IosNotificationSettings settings) {
-      print('Hello');
-    });
-    _firebaseMessaging.getToken().then((token) {
-      print(token); // Print the Token in Console
-      fcm_token = token;
-    }); */
 
 
 
@@ -351,266 +336,306 @@ class RegisterState extends State<Register> {
     return Scaffold(
       body: SingleChildScrollView(
         child: SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Column(
-                children: [
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Image.asset(
-                    'images/logo 1.png',
-                    scale: 2,
-                  ),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          'Create Account',
-                          style: TextStyle(fontSize: 28.0, color: Colors.blue),
-                          textAlign: TextAlign.left,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Text(
-                      'Enter information below or register with your social account to get started',
-                      style: TextStyle(fontSize: 15.0, color: Colors.grey),
-                      textAlign: TextAlign.left,
+          child: Container(
+             decoration: BoxDecoration(
+              image: DecorationImage(
+                colorFilter: ColorFilter.mode(Colors.white54, BlendMode.lighten),
+                  image: AssetImage('images/Background.jpg'),
+                  fit: BoxFit.cover, ),
+              //   color: Colors.blue,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.all(
+                Radius.circular(8),
+              ),
+            ),
+          
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Column(
+                  children: [
+                    SizedBox(
+                      height: 30,
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 16.0, right: 16, bottom: 16),
-                    child: Material(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(10.0),
-                      child: TextField(
-                        focusNode: _emailFocus,
-                        controller: _emailController,
-                        obscureText: false,
-                        keyboardType:
-                            TextInputType.emailAddress, //show email keyboard
-                        textInputAction: TextInputAction.next,
-                        onSubmitted: (input) {
-                          _emailFocus.unfocus();
-                          _email = input;
-                          FocusScope.of(context).requestFocus(_pwFocus);
-                        },
-                        onTap: _validate,
-                        decoration: InputDecoration(
-                          labelText: "Email",
-                          hintText: 'Enter your Email',
-                          errorText: isValidEmail() && email_verify
-                              ? null
-                              : "Invalid Email Address",
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              Icons.mail_outline,
-                              color: Colors.blue,
-                            ),
-                            onPressed: () {},
+                    Image.asset(
+                      'images/logo 1.png',
+                      scale: 3,
+                    ),
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            'Create Account',
+                            style: TextStyle(fontSize: 28.0, color: Colors.blue),
+                            textAlign: TextAlign.left,
                           ),
                         ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text(
+                        'Enter information below or register with your social account to get started',
+                        style: TextStyle(fontSize: 15.0, color: Colors.grey),
+                        textAlign: TextAlign.left,
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 16.0, right: 16, bottom: 16),
-                    child: Material(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(10.0),
-                      child: TextField(
-                        focusNode: _pwFocus,
-                        controller: _pwController,
-                        obscureText: _obscureText,
-                        textInputAction: TextInputAction.done,
-                        onSubmitted: (input) {
-                          _pwFocus.unfocus();
-                          _password = input;
-                          performRegister();
-                        },
-                        onTap: _validate,
-                        decoration: InputDecoration(
-                          labelText: "Password",
-                          hintText: 'Enter your password',
-                          errorText: isValidPassword() && password_verify
-                              ? null
-                              : "Password too short.",
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _obscureText
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
-                              color: Colors.blue,
-                            ),
-                            onPressed: _toggle,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 16.0, right: 16, bottom: 16),
-                    child: Material(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(10.0),
-                      child: TextField(
-                        focusNode: _confirmpwFocus,
-                        controller: _confirmpwController,
-                        obscureText: _obscureText2,
-                        textInputAction: TextInputAction.done,
-                        onSubmitted: (input) {
-                          _confirmpwFocus.unfocus();
-                          _confirmpassword = input;
-                          performRegister();
-                        },
-                        onTap: _validate,
-                        decoration: InputDecoration(
-                          labelText: "Confirm Password",
-                          hintText: 'Enter your password',
-                          errorText: isSamePassword() && confirmPassword_verify
-                              ? null
-                              : "Passwords do not match",
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _obscureText2
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
-                              color: Colors.blue,
-                            ),
-                            onPressed: _toggle2,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 16.0, right: 16, bottom: 16),
-                    child: Material(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(10.0),
-                      child: TextField(
-                        focusNode: _fNameFocus,
-                        controller: _fNameController,
-                        textInputAction: TextInputAction.done,
-                        onSubmitted: (input) {
-                          _fNameFocus.unfocus();
-                          _fName = input;
-                          performRegister();
-                        },
-                        onTap: _validate,
-                        decoration: InputDecoration(
-                          labelText: "First Name",
-                          hintText: 'Enter your First Name',
-                          errorText: isValidFirstName() && fName_verify
-                              ? null
-                              : "Invalid Name",
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 16.0, right: 16, bottom: 16),
-                    child: Material(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(10.0),
-                      child: TextField(
-                        focusNode: _lNameFocus,
-                        controller: _lNameController,
-                        textInputAction: TextInputAction.done,
-                        onSubmitted: (input) {
-                          _lNameFocus.unfocus();
-                          _lName = input;
-                          performRegister();
-                        },
-                        onTap: _validate,
-                        decoration: InputDecoration(
-                          labelText: "Last Name",
-                          hintText: 'Enter your Last Name',
-                          errorText: isValidLastName() && lName_verify
-                              ? null
-                              : "Invalid Name",
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 16.0, right: 16, bottom: 16),
-                    child: FormField<String>(
-                      builder: (FormFieldState<String> state) {
-                        return InputDecorator(
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 16.0, right: 16, bottom: 16),
+                      child: Material(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: TextField(
+                          focusNode: _emailFocus,
+                          controller: _emailController,
+                          obscureText: false,
+                          keyboardType:
+                              TextInputType.emailAddress, //show email keyboard
+                          textInputAction: TextInputAction.next,
+                          onSubmitted: (input) {
+                            _emailFocus.unfocus();
+                            _email = input;
+                            FocusScope.of(context).requestFocus(_pwFocus);
+                          },
+                          onTap: _validate,
                           decoration: InputDecoration(
-                            errorText:
-                                church_verify ? null : "Please select a church",
-                            errorStyle: TextStyle(
-                                color: Colors.redAccent, fontSize: 16),
-                            hintText: 'Please select church',
-                          ),
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              hint: churches_list_ready == false
-                                  ? Text('Loading...')
-                                  : Text('Select church'),
-                              value: _currentSelectedValue,
-                              isDense: true,
-                              onChanged: churches_list_ready == false
-                                  ? null
-                                  : (String newValue) {
-                                      setState(() {
-                                        _currentSelectedValue = newValue;
-                                        state.didChange(newValue);
-                                      });
-                                    },
-                              items: _churches.map((dynamic value) {
-                                return DropdownMenuItem<String>(
-                                  child: Text(value),
-                                  value: value,
-                                );
-                              }).toList(),
+                            labelText: "Email",
+                            hintText: 'Enter your Email',
+                            errorText: isValidEmail() && email_verify
+                                ? null
+                                : "Invalid Email Address",
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                Icons.mail_outline,
+                                color: Colors.blue,
+                              ),
+                              onPressed: () {},
                             ),
                           ),
-                        );
-                      },
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 16.0, right: 16, bottom: 16),
+                      child: Material(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: TextField(
+                          focusNode: _pwFocus,
+                          controller: _pwController,
+                          obscureText: _obscureText,
+                          textInputAction: TextInputAction.done,
+                          onSubmitted: (input) {
+                            _pwFocus.unfocus();
+                            _password = input;
+                            performRegister();
+                          },
+                          onTap: _validate,
+                          decoration: InputDecoration(
+                            labelText: "Password",
+                            hintText: 'Enter your password',
+                            errorText: isValidPassword() && password_verify
+                                ? null
+                                : "Password too short.",
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscureText
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                color: Colors.blue,
+                              ),
+                              onPressed: _toggle,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 16.0, right: 16, bottom: 16),
+                      child: Material(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: TextField(
+                          focusNode: _confirmpwFocus,
+                          controller: _confirmpwController,
+                          obscureText: _obscureText2,
+                          textInputAction: TextInputAction.done,
+                          onSubmitted: (input) {
+                            _confirmpwFocus.unfocus();
+                            _confirmpassword = input;
+                            performRegister();
+                          },
+                          onTap: _validate,
+                          decoration: InputDecoration(
+                            labelText: "Confirm Password",
+                            hintText: 'Enter your password',
+                            errorText: isSamePassword() && confirmPassword_verify
+                                ? null
+                                : "Passwords do not match",
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscureText2
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                color: Colors.blue,
+                              ),
+                              onPressed: _toggle2,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 16.0, right: 16, bottom: 16),
+                      child: Material(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: TextField(
+                          focusNode: _fNameFocus,
+                          controller: _fNameController,
+                          textInputAction: TextInputAction.done,
+                          onSubmitted: (input) {
+                            _fNameFocus.unfocus();
+                            _fName = input;
+                            performRegister();
+                          },
+                          onTap: _validate,
+                          decoration: InputDecoration(
+                            labelText: "First Name",
+                            hintText: 'Enter your First Name',
+                            errorText: isValidFirstName() && fName_verify
+                                ? null
+                                : "Invalid Name",
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 16.0, right: 16, bottom: 16),
+                      child: Material(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: TextField(
+                          focusNode: _lNameFocus,
+                          controller: _lNameController,
+                          textInputAction: TextInputAction.done,
+                          onSubmitted: (input) {
+                            _lNameFocus.unfocus();
+                            _lName = input;
+                            performRegister();
+                          },
+                          onTap: _validate,
+                          decoration: InputDecoration(
+                            labelText: "Last Name",
+                            hintText: 'Enter your Last Name',
+                            errorText: isValidLastName() && lName_verify
+                                ? null
+                                : "Invalid Name",
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 16.0, right: 16, bottom: 16),
+                      child: Material(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: TextField(
+                          focusNode: _phoneFocus,
+                          controller: _phoneController,
+                          textInputAction: TextInputAction.done,
+                          onSubmitted: (input) {
+                            _phoneFocus.unfocus();
+                            _phone = input;
+                            performRegister();
+                          },
+                          onTap: _validate,
+                          decoration: InputDecoration(
+                            labelText: "Phone Number",
+                            hintText: 'Enter your Phone Number',
+                            errorText: isValidPhone() && phone_verify
+                                ? null
+                                : "Invalid Number",
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 16.0, right: 16, bottom: 16),
+                      child: FormField<String>(
+                        builder: (FormFieldState<String> state) {
+                          return InputDecorator(
+                            decoration: InputDecoration(
+                              errorText:
+                                  church_verify ? null : "Please select a church",
+                              errorStyle: TextStyle(
+                                  color: Colors.redAccent, fontSize: 16),
+                              hintText: 'Please select church',
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                hint: churches_list_ready == false
+                                    ? Text('Loading...')
+                                    : Text('Select church'),
+                                value: _currentSelectedValue,
+                                isDense: true,
+                                onChanged: churches_list_ready == false
+                                    ? null
+                                    : (String newValue) {
+                                        setState(() {
+                                          _currentSelectedValue = newValue;
+                                          state.didChange(newValue);
+                                        });
+                                      },
+                                items: _churches.map((dynamic value) {
+                                  return DropdownMenuItem<String>(
+                                    child: Text(value),
+                                    value: value,
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 32, bottom: 5),
+                  decoration: BoxDecoration(
+                    //   color: Colors.blue,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(8),
+                    ),
+                    gradient: LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      colors: [Color(0xff4fc3f7), Color(0xff01579b)],
                     ),
                   ),
-                ],
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 32, bottom: 5),
-                decoration: BoxDecoration(
-                  //   color: Colors.blue,
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(8),
-                  ),
-                  gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [Color(0xff4fc3f7), Color(0xff01579b)],
+                  width: 320,
+                  // ignore: deprecated_member_use
+                  child: FlatButton(
+                    child: Text('Register',
+                        style: TextStyle(fontSize: 20, color: Colors.white)),
+                    onPressed: () {
+                      performRegister();
+                    },
                   ),
                 ),
-                width: 320,
-                // ignore: deprecated_member_use
-                child: FlatButton(
-                  child: Text('Register',
-                      style: TextStyle(fontSize: 20, color: Colors.white)),
-                  onPressed: () {
-                    performRegister();
-                  },
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

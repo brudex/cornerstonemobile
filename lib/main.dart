@@ -58,7 +58,7 @@ class _MyAppState extends State<MyApp> {
     precacheImage(AssetImage('images/stripe.png'), context);
     precacheImage(AssetImage('images/paypal.png'), context);
     precacheImage(AssetImage('images/easter.png'), context);
-    precacheImage(AssetImage('images/Background.png'), context);
+    precacheImage(AssetImage('images/Background.jpg'), context);
     precacheImage(AssetImage('images/events_unavailable.png'), context);
 
     return MaterialApp(

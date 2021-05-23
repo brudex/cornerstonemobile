@@ -16,8 +16,9 @@ class EditProfile extends StatefulWidget {
   final String email;
   final String fname;
   final String lname;
+  final String image;
 
-  const EditProfile({Key key, @required this.email, this.fname, this.lname})
+  const EditProfile({Key key, @required this.email, this.fname, this.lname, this.image})
       : super(key: key);
 
   @override
@@ -167,7 +168,7 @@ class EditProfileState extends State<EditProfile> {
       var url = "http://157.230.150.194:3000/api/users/edit_user_details";
 
       var data = {
-        "email": "${_emailController.text}",
+        //"email": "${_emailController.text}",
         "firstName": "${_fNameController.text}",
         "lastName": "${_lNameController.text}",
       };
@@ -268,11 +269,11 @@ class EditProfileState extends State<EditProfile> {
                     width: 200,
                     height: 200,
                     child: _image == null
-                        ? CircleAvatar(
-                            backgroundColor: Colors.white,
-                            radius: 30,
-                            child: Icon(Icons.person, size: 50),
-                          )
+                        ?CircleAvatar(
+                          backgroundColor: Colors.white,
+                          radius: 30,
+                          child: Icon(Icons.person, size: 50),
+                        )
                         : CircleAvatar(
                             backgroundImage: FileImage(_image),
                             backgroundColor: Colors.white,

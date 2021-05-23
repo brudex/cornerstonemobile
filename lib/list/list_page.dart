@@ -154,8 +154,14 @@ class _ListPageState extends State<ListPage> {
                               onTap: () {
                                 launch(_contentData[i]);
                               },
-                              leading: Image.network(
-                                  'https://img.youtube.com/vi/${YoutubePlayer.convertUrlToId(_contentData[i])}/0.jpg'),
+                              leading:Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Icon(
+                                        Icons.video_library_outlined,
+                                        size: 50,
+                                        color: Colors.black,
+                                      ),
+                                    ),
                               title: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
@@ -167,7 +173,7 @@ class _ListPageState extends State<ListPage> {
                               subtitle: Padding(
                                 padding: const EdgeInsets.only(top: 15.0),
                                 child: Text(
-                                  '1hr 24mins',
+                                  'Video',
                                   style: TextStyle(fontSize: 12),
                                 ),
                               ),
@@ -220,6 +226,13 @@ class _ListPageState extends State<ListPage> {
                                         ],
                                       ),
                                     ),
+                                       subtitle: Padding(
+                                padding: const EdgeInsets.only(top: 15.0),
+                                child: Text(
+                                  'Devotional Text',
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                              ),
                                     trailing: PopupMenuButton(
                                       icon: Icon(
                                         Icons.more_vert_sharp,
@@ -248,7 +261,7 @@ class _ListPageState extends State<ListPage> {
                                 )
                               : ListTile(
                                   onTap: () {
-                                    _playaudio(_contentData[i], _titles[i]);
+                                //    _playaudio(_contentData[i], _titles[i]);
                                   },
                                   leading: Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -266,6 +279,13 @@ class _ListPageState extends State<ListPage> {
                                       ],
                                     ),
                                   ),
+                                     subtitle: Padding(
+                                padding: const EdgeInsets.only(top: 15.0),
+                                child: Text(
+                                  'Audio',
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                              ),
                                   trailing: PopupMenuButton(
                                     icon: Icon(
                                       Icons.more_vert_sharp,

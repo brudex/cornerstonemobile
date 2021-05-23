@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'dart:async';
 import 'package:badges/badges.dart';
+import 'package:cornerstone/player_widget.dart';
 import 'package:cornerstone/ui/main_screens/home/all_audios.dart';
 import 'package:cornerstone/ui/main_screens/home/all_videos.dart';
+import 'package:cornerstone/ui/main_screens/home/clips.dart';
 import 'package:cornerstone/ui/main_screens/more/more_pages/account_settings/notifications.dart';
 import 'package:cornerstone/ui/widgets/widgets.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -74,18 +76,21 @@ class _HomePage1State extends State<HomePage1> {
 
   var value = 1;
   var churchName;
+  var img;
   var devotionalQuote;
   bool ready = false;
   List _links = [];
   List _videoLinks = [];
   List _audioLinks = [];
+  List _total = [];
+  List audios = [];
 
   Future fetchDevotion() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (this.mounted) {
       setState(() {
         fcmAlerts = prefs.getInt('alert');
-        if(fcmAlerts == null){
+        if (fcmAlerts == null) {
           fcmAlerts = 0;
         }
         print(
@@ -112,6 +117,8 @@ class _HomePage1State extends State<HomePage1> {
     final churchResponseJson = jsonDecode(churchResponse.body);
     print('$churchResponseJson' +
         'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 1 devotional');
+
+    print(churchResponseJson['image']);
 
     final getDevotion = await http.get(
       Uri.parse(devotionalUrl),
@@ -141,25 +148,34 @@ class _HomePage1State extends State<HomePage1> {
 
     List videoLinks = [];
     List audioLinks = [];
+    List total = [];
 
     for (var item in message2['data']) {
       videoLinks.add(item['contentData']);
     }
 
+    total = message2['data'];
+
     for (var item in message3['data']) {
       audioLinks.add(item['contentData']);
     }
 
+    audios = message3['data'];
+
     if (this.mounted) {
       setState(() {
         churchName = churchResponseJson["name"];
+        img = churchResponseJson["image"];
+
         _videoLinks = videoLinks;
         _audioLinks = audioLinks;
+        _total = total;
         if (message['data'] != null) {
           devotionalQuote = message['data']['devotionalContent'];
         }
       });
       setState(() {
+        print(audioLinks);
         ready = true;
       });
     }
@@ -180,9 +196,18 @@ class _HomePage1State extends State<HomePage1> {
                 '$churchName',
                 style: TextStyle(color: Colors.black),
               ),
-              leading: Image.asset(
-                'images/CE_logo.png',
-                scale: 0.7,
+              leading: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CircleAvatar(
+                  backgroundImage: NetworkImage(
+                    img != null
+                        ? "http://157.230.150.194:3000/uploads/$img"
+                        : null,
+                    scale: 0.3,
+                  ),
+                  backgroundColor: Colors.white,
+                  radius: 10,
+                ),
               ),
               actions: [
                 IconButton(
@@ -295,15 +320,15 @@ class _HomePage1State extends State<HomePage1> {
                           style: TextStyle(fontSize: 20),
                         ),
                         InkWell(
-                          onTap: (){
-                             Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AllVideos(),
-                    ),
-                  );
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AllVideos(videos: _total),
+                              ),
+                            );
                           },
-                                                  child: Text(
+                          child: Text(
                             "View More",
                             style: TextStyle(fontSize: 14, color: Colors.grey),
                           ),
@@ -341,33 +366,36 @@ class _HomePage1State extends State<HomePage1> {
                         )
                       : SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
-                          child:
-                          _videoLinks.length > 2?
-                           Row(
-                            children: [
-                              for (var i = 0; i < 2; i++)
-                                Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: VideoTile(
-                                    link: '${_videoLinks[i]}',
-                                    height: 200,
-                                    width: 250,
-                                  ),
+                          child: _videoLinks.length > 2
+                              ? Row(
+                                  children: [
+                                    for (var i = 0; i < 2; i++)
+                                      Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: VideoTile(
+                                          details: _total[i]['title'],
+                                          getting: true,
+                                          link: _total[i]['contentData'],
+                                          id: _total[i]['id'],
+                                          height: 200,
+                                          width: 250,
+                                        ),
+                                      ),
+                                  ],
+                                )
+                              : Row(
+                                  children: [
+                                    for (var i = 0; i < _videoLinks.length; i++)
+                                      Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: VideoTile(
+                                          link: '${_videoLinks[i]}',
+                                          height: 200,
+                                          width: 250,
+                                        ),
+                                      ),
+                                  ],
                                 ),
-                            ],
-                          ) :                           Row(
-                            children: [
-                              for (var i = 0; i < _videoLinks.length; i++)
-                                Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: VideoTile(
-                                    link: '${_videoLinks[i]}',
-                                    height: 200,
-                                    width: 250,
-                                  ),
-                                ),
-                            ],
-                          ) ,
                         ),
                   Padding(
                     padding:
@@ -380,15 +408,17 @@ class _HomePage1State extends State<HomePage1> {
                           style: TextStyle(fontSize: 20),
                         ),
                         InkWell(
-                          onTap: (){
-                              Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AllAudios(),
-                    ),
-                  );
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AllAudios(
+                                  audios: audios,
+                                ),
+                              ),
+                            );
                           },
-                                                  child: Text(
+                          child: Text(
                             "View More",
                             style: TextStyle(fontSize: 14, color: Colors.grey),
                           ),
@@ -426,37 +456,71 @@ class _HomePage1State extends State<HomePage1> {
                         )
                       : SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
-                          child: _audioLinks.length > 2 ?
-                          
-                           Row(
-                            children: [
-                              for (var i = 0; i < 2; i++)
-                                Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Container(
-                                      height: 200,
-                                    width: 250,
-                                    child: AudioTile(
-                                        url:
-                                            'http://157.230.150.194:3000/uploads/sermons/SermonAudio-Media-Player_2.mp3'),
-                                  ),
+                          child: _audioLinks.length > 2
+                              ? Row(
+                                  children: [
+                                    for (var i = 0; i < 2; i++)
+                                      Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Container(
+                                          height: 200,
+                                          width: 250,
+                                          child: InkWell(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AudioApp(
+                                                    details: audios[i]['title'],
+                                                    id: audios[i]['id'],
+                                                    url: audios[i]
+                                                        ['contentData'],
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            child: AudioTile(
+                                              url: audios[i]['contentData'],
+                                              title: audios[i]['title'],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                )
+                              : Row(
+                                  children: [
+                                    for (var i = 0; i < _audioLinks.length; i++)
+                                      Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Container(
+                                          height: 200,
+                                          width: 250,
+                                          child: InkWell(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AudioApp(
+                                                    details: audios[i]['title'],
+                                                    id: audios[i]['id'],
+                                                    url: audios[i]
+                                                        ['contentData'],
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            child: AudioTile(
+                                              url: audios[i]['contentData'],
+                                              title: audios[i]['title'],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
                                 ),
-                            ],
-                          ) :   Row(
-                            children: [
-                              for (var i = 0; i < _audioLinks.length; i++)
-                                Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Container(
-                                      height: 200,
-                                    width: 250,
-                                    child: AudioTile(
-                                        url:
-                                            'http://157.230.150.194:3000/uploads/sermons/SermonAudio-Media-Player_2.mp3'),
-                                  ),
-                                ),
-                            ],
-                          ),
                         ),
                 ],
               ),

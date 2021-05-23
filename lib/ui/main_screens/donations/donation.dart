@@ -1,4 +1,4 @@
-import 'package:cornerstone/globals.dart';
+
 import 'package:cornerstone/ui/main_screens/donations/donation_failure.dart';
 import 'package:cornerstone/ui/main_screens/donations/donation_success_screen.dart';
 import 'package:cornerstone/ui/widgets/dialogs.dart';
@@ -42,7 +42,7 @@ class DonationState extends State<Donation> {
 
     var data = {
       "amount": "${_amountController.text}",
-      "paymentMode": "$_currentPaymentMethod",
+      "paymentMode": "$_currentPaymentMethod" == 'Visa, Mastercard' ? 'stripe' : null,
       "donationType": "${maps[_currentDonationType]}",
     };
 
@@ -208,16 +208,11 @@ class DonationState extends State<Donation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
+      body: ready == false
+              ? Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
         child: SafeArea(
-          child: ready == false
-              ? Column(
-                  children: [
-                    SizedBox(height: 50),
-                    Center(child: CircularProgressIndicator()),
-                  ],
-                )
-              : Column(
+          child:  Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     SizedBox(

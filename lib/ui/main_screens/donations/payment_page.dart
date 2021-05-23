@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:cornerstone/ui/main_screens/donations/donation_success_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';

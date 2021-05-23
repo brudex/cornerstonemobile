@@ -1,76 +1,44 @@
+import 'package:cornerstone/player_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
-import 'dart:async';
-import 'package:badges/badges.dart';
-import 'package:cornerstone/ui/main_screens/more/more_pages/account_settings/notifications.dart';
-import 'package:cornerstone/ui/widgets/widgets.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:flutter_svg/svg.dart';
 
 class AllAudios extends StatefulWidget {
+  // ignore: use_key_in_widget_constructors
+  const AllAudios(
+      {this.title = 'Chewie Audio Demo',
+      this.details,
+      this.id,
+      this.url,
+      this.audios});
+
+  final String title;
+  final String details;
+  final int id;
+  final String url;
+  final List audios;
+
   @override
-  _AllAudiosState createState() => _AllAudiosState();
+  State<StatefulWidget> createState() {
+    return _AllAudiosState();
+  }
 }
 
 class _AllAudiosState extends State<AllAudios> {
   @override
   void initState() {
     super.initState();
-    fetchVideos();
   }
 
- List _audioLinks = [];
-  bool ready = false;
-
-  Future fetchVideos() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    var token = "${prefs.getString('token')}";
-    var audioUrls =
-        "http://157.230.150.194:3000/api/churchcontent/sermon?limit=0&offset=0";
-
-   final getaudioUrls = await http.get(
-      Uri.parse(audioUrls),
-      headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
-    );
-
-      var message3 = jsonDecode(getaudioUrls.body);
-    
-
-    List audioLinks = [];
-
-   
-    for (var item in message3['data']) {
-      audioLinks.add(item['contentData']);
-    }
-
-    if (this.mounted) {
-      setState(() {
-          _audioLinks = audioLinks;
-      });
-      setState(() {
-        ready = true;
-      });
-    }
-
-    //var value = jsonDecode(message['data']);
-    //print(value);
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Color.fromRGBO(242, 245, 247, 1),
-        title: Text(
-          'Audios',
-          style: TextStyle(color: Colors.black),
-        ),
         leading: IconButton(
             icon: Icon(
               Icons.arrow_back,
@@ -79,52 +47,106 @@ class _AllAudiosState extends State<AllAudios> {
             onPressed: () {
               Navigator.pop(context);
             }),
+        elevation: 0,
+        backgroundColor: Color.fromRGBO(242, 245, 247, 1),
+        title: Text(
+          'All Audios',
+          style: TextStyle(color: Colors.black),
+        ),
       ),
-      body: ready == false
-          ? Center(child: CircularProgressIndicator())
-          : _audioLinks.length == 0
-              ? Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Container(
-                    margin: EdgeInsets.only(top: 5),
-                    height: 200,
-                    width: double.infinity,
+      body: widget.audios.length > 0
+          ? GridView.count(
+              shrinkWrap: true,
+              crossAxisCount: 2,
+              crossAxisSpacing: 4.0,
+              mainAxisSpacing: 9.0,
+              childAspectRatio: MediaQuery.of(context).size.height / 700,
+              physics: ScrollPhysics(),
+              children: <Widget>[
+                for (var x = 0; x < widget.audios.length; x++)
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AudioApp(
+                            details: widget.audios[x]['title'],
+                            id: widget.audios[x]['id'],
+                            url: widget.audios[x]['contentData'],
+                          ),
+                        ),
+                      );
+                    },
                     child: Card(
                       semanticContainer: true,
-                      // color: Colors.grey,
+                      color: Colors.white,
                       elevation: 5.0,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Icon(
-                            Icons.error_outline_sharp,
-                            size: 50,
+                      child: Stack(
+                        children: [
+                          Column(
+                            children: [
+                              Spacer(),
+                              Container(
+                                width: 500,
+                                color: Colors.white,
+                                child: FittedBox(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      '${widget.audios[x]['title']}',
+                                      style: TextStyle(fontSize: 15),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          SizedBox(height: 20),
-                          Text(
-                            'No Audio\'s Available',
-                            style: TextStyle(color: Colors.black),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 30.0),
+                            child: Center(
+                              child: Icon(
+                                Icons.multitrack_audio,
+                                size: 150,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 30.0),
+                            child: Center(
+                              child: Icon(
+                                Icons.play_circle_fill_sharp,
+                                size: 50,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                )
-              : SingleChildScrollView(
-                 // scrollDirection: Axis.horizontal,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      for (var i = 0; i < _audioLinks.length; i++)
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: AudioTile(
-                                        url:
-                                            'http://157.230.150.194:3000/uploads/sermons/SermonAudio-Media-Player_2.mp3'),
-                        ),
-                    ],
+                  )
+              ],
+            )
+          : Column(
+              children: [
+                SizedBox(height: 70),
+                Container(
+                  child: Center(
+                    child: SvgPicture.asset('images/empty.svg'),
                   ),
                 ),
+                Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Nothing here',
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    )),
+              ],
+            ),
     );
   }
 }

@@ -1,13 +1,15 @@
+import 'package:cornerstone/ui/main_screens/home/playsingle.dart';
+import 'package:cornerstone/ui/main_screens/search/video_details.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie_audio/chewie_audio.dart';
 import 'package:flutter/cupertino.dart';
 
-
 class AudioTile extends StatefulWidget {
+  final String title;
   final String url;
 
-  const AudioTile({Key key, @required this.url}) : super(key: key);
+  const AudioTile({Key key, @required this.url, this.title}) : super(key: key);
   @override
   _AudioTileState createState() => _AudioTileState();
 }
@@ -41,26 +43,29 @@ class _AudioTileState extends State<AudioTile> {
     ]);
     setState(() {
       _chewieAudioController = ChewieAudioController(
-        videoPlayerController: _videoPlayerController1,
-        autoPlay: false,
-        looping: false,
-        // Try playing around with some of these other options:
+          /*   customControls: Card(
+          color: Colors.white,
+          child: Text('Title')), */
+          videoPlayerController: _videoPlayerController1,
+          autoPlay: false,
+          looping: false,
+          // Try playing around with some of these other options:
 
-        showControls: true,
-        allowMuting: false,
-        allowPlaybackSpeedChanging: false
-        
-        // materialProgressColors: ChewieProgressColors(
-        //   playedColor: Colors.red,
-        //   handleColor: Colors.blue,
-        //   backgroundColor: Colors.grey,
-        //   bufferedColor: Colors.lightGreen,
-        // ),
-        // placeholder: Container(
-        //   color: Colors.grey,
-        // ),
-        // autoInitialize: true,
-      );
+          showControls: true,
+          allowMuting: false,
+          allowPlaybackSpeedChanging: false
+
+          // materialProgressColors: ChewieProgressColors(
+          //   playedColor: Colors.red,
+          //   handleColor: Colors.blue,
+          //   backgroundColor: Colors.grey,
+          //   bufferedColor: Colors.lightGreen,
+          // ),
+          // placeholder: Container(
+          //   color: Colors.grey,
+          // ),
+          // autoInitialize: true,
+          );
     });
   }
 
@@ -81,8 +86,16 @@ class _AudioTileState extends State<AudioTile> {
                   Column(
                     children: [
                       Spacer(),
-                      ChewieAudio(
-                        controller: _chewieAudioController,
+                      Container(
+                        width: 500,
+                        color: Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            '${widget.title}',
+                            style: TextStyle(fontSize: 15),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -186,8 +199,8 @@ class _ListAudioTileState extends State<ListAudioTile> {
         child: _chewieAudioController != null &&
                 _chewieAudioController.videoPlayerController.value.isInitialized
             ? ChewieAudio(
-              controller: _chewieAudioController,
-            )
+                controller: _chewieAudioController,
+              )
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
@@ -210,8 +223,18 @@ class VideoTile extends StatefulWidget {
   final String link;
   final double width;
   final double height;
+  final bool getting;
+  final String details;
+  final int id;
 
-  const VideoTile({Key key, @required this.link, this.width, this.height})
+  const VideoTile(
+      {Key key,
+      @required this.link,
+      this.width,
+      this.height,
+      this.getting,
+      this.details,
+      this.id})
       : super(key: key);
   @override
   _VideoTileState createState() => _VideoTileState();
@@ -244,6 +267,7 @@ class _VideoTileState extends State<VideoTile> {
 
   @override
   Widget build(BuildContext context) {
+    List links = [widget.link];
     return Container(
       height: widget.height ?? 190,
       width: widget.width ?? double.infinity,
@@ -255,7 +279,14 @@ class _VideoTileState extends State<VideoTile> {
           children: <Widget>[
             VideoPlayer(_controller),
             // ClosedCaption(text: _controller.value.caption.text),
-            _ControlsOverlay(controller: _controller),
+            _ControlsOverlay(
+              controller: _controller,
+              gettingImage: widget.getting,
+              link: widget.link,
+              links: links,
+              details: widget.details,
+              id: widget.id,
+            ),
             VideoProgressIndicator(_controller, allowScrubbing: true),
           ],
         ),
@@ -265,7 +296,14 @@ class _VideoTileState extends State<VideoTile> {
 }
 
 class _ControlsOverlay extends StatelessWidget {
-  const _ControlsOverlay({Key key, @required this.controller})
+  const _ControlsOverlay(
+      {Key key,
+      @required this.controller,
+      this.gettingImage,
+      this.link,
+      this.links,
+      this.details,
+      this.id})
       : super(key: key);
 
   // ignore: unused_field
@@ -281,6 +319,11 @@ class _ControlsOverlay extends StatelessWidget {
   ];
 
   final VideoPlayerController controller;
+  final bool gettingImage;
+  final String link;
+  final List links;
+  final String details;
+  final int id;
 
   @override
   Widget build(BuildContext context) {
@@ -304,42 +347,25 @@ class _ControlsOverlay extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () {
-            controller.value.isPlaying ? controller.pause() : controller.play();
+            gettingImage == true
+                ? Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PlaySingle(
+                        clips: links,
+                        details: details,
+                        id: id,
+                      ),
+                    ),
+                  )
+                : controller.value.isPlaying
+                    ? controller.pause()
+                    : controller.play();
           },
           onDoubleTap: () {
             controller.seekTo(Duration(seconds: 3));
           },
         ),
-        //Increase speed
-        /* Align(
-          alignment: Alignment.topRight,
-          child: PopupMenuButton<double>(
-            initialValue: controller.value.playbackSpeed,
-            tooltip: 'Playback speed',
-            onSelected: (speed) {
-              controller.setPlaybackSpeed(speed);
-            },
-            itemBuilder: (context) {
-              return [
-                for (final speed in _examplePlaybackRates)
-                  PopupMenuItem(
-                    value: speed,
-                    child: Text('${speed}x'),
-                  )
-              ];
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                // Using less vertical padding as the text is also longer
-                // horizontally, so it feels like it would need more spacing
-                // horizontally (matching the aspect ratio of the video).
-                vertical: 12,
-                horizontal: 16,
-              ),
-              child: Text('${controller.value.playbackSpeed}x'),
-            ),
-          ),
-        ), */
       ],
     );
   }
