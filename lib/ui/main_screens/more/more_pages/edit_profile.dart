@@ -270,9 +270,10 @@ class EditProfileState extends State<EditProfile> {
                     height: 200,
                     child: _image == null
                         ?CircleAvatar(
-                          backgroundColor: Colors.white,
+                          backgroundImage: widget.image != 'null'? NetworkImage(widget.image) : null,
+                          backgroundColor: widget.image == 'null' ? Color.fromRGBO(242, 245, 247, 1) : null,
                           radius: 30,
-                          child: Icon(Icons.person, size: 50),
+                          child:widget.image == 'null' ? Icon(Icons.person, size: 50) : null,
                         )
                         : CircleAvatar(
                             backgroundImage: FileImage(_image),

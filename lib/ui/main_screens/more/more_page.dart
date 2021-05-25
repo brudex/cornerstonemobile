@@ -155,7 +155,7 @@ class _MorePageState extends State<MorePage> {
                   height: 200,
                   child: image == null
                       ? CircleAvatar(
-                          backgroundColor: Colors.white,
+                          backgroundColor: Color.fromRGBO(242, 245, 247, 1),
                           radius: 30,
                           child: Icon(Icons.person, size: 50),
                         )

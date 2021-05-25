@@ -16,6 +16,7 @@ class Donation extends StatefulWidget {
 }
 
 class DonationState extends State<Donation> {
+  final _formKeyScreen1 = GlobalKey<FormState>();
   bool ready = false;
   TextEditingController _amountController;
   FocusNode _amountFocus;
@@ -30,7 +31,7 @@ class DonationState extends State<Donation> {
   String _currentPaymentMethod;
   String _currentDonationType;
 
-  var _paymentMethod = ["Visa, Mastercard", "PayPal"];
+  var _paymentMethod = ["Visa, Mastercard & More", "PayPal"];
 
   List<String> _donations = [];
   List<int> _ids = [];
@@ -42,7 +43,7 @@ class DonationState extends State<Donation> {
 
     var data = {
       "amount": "${_amountController.text}",
-      "paymentMode": "$_currentPaymentMethod" == 'Visa, Mastercard' ? 'stripe' : null,
+      "paymentMode": "$_currentPaymentMethod" == 'Visa, Mastercard & More' ? 'stripe' : "$_currentPaymentMethod",
       "donationType": "${maps[_currentDonationType]}",
     };
 
@@ -108,6 +109,11 @@ class DonationState extends State<Donation> {
     // and show the new result.
 
     if ("$result" == 'Failed') {
+      setState(() {
+        _amountController.clear();
+      _currentPaymentMethod = null;
+      _currentDonationType = null;
+      });
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -115,6 +121,11 @@ class DonationState extends State<Donation> {
         ),
       );
     } else if ("$result" == 'Success') {
+       setState(() {
+        _amountController.clear();
+      _currentPaymentMethod = null;
+      _currentDonationType = null;
+      });
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -296,14 +307,14 @@ class DonationState extends State<Donation> {
                                 },
                                 items: _paymentMethod.map((String value) {
                                   return DropdownMenuItem<String>(
-                                    child: value == "Visa, Mastercard"
+                                    child: value == "Visa, Mastercard & More"
                                         ? Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(value),
                                               Text('  '),
-                                              Image.asset('images/visa.png'),
+                                              Image.asset('images/visa.jpeg', scale: 7,),
                                             ],
                                           )
                                         : Row(
@@ -312,7 +323,7 @@ class DonationState extends State<Donation> {
                                             children: [
                                               Text(value),
                                               Text('  '),
-                                              Image.asset('images/paypal.png'),
+                                              Image.asset('images/paypal.png',),
                                             ],
                                           ),
                                     value: value,

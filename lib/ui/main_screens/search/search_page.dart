@@ -79,6 +79,14 @@ class _SearchPageState extends State<SearchPage> {
   bool found = false;
   bool loaded = false;
   List _total = [];
+  List _videos = [];
+  List _sermons = [];
+  List _devotionals = [];
+  bool _searchdone = false;
+  List _searchedSermons = [];
+  List _searchedDevotionals = [];
+  List _searchedVideos = [];
+
   // Initially password is obscure
 
   // ignore: unused_field
@@ -116,10 +124,6 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-  void performDonationHistory() {
-    //DonationHistory here
-  }
-
   Future search() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -135,57 +139,61 @@ class _SearchPageState extends State<SearchPage> {
       headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
     );
 
-    print(jsonDecode(response.body));
+    //  print(jsonDecode(response.body));
 
     var message = jsonDecode(response.body);
-    print((message)['data']);
+    //  print((message)['data']);
     List dataTypes = [];
     List contentData = [];
     List ids = [];
     List titles = [];
     List videoUrl = [];
+    List searchedVideos = [];
+    List searchedDevotionals = [];
+    List searchedSermons = [];
 
     audioUrls = [];
     for (var item in message['data']) {
       dataTypes.add(item['contentType']);
       if (item['contentType'] == "video") {
-        videoUrl.add(item['contentData']);
+        searchedVideos.add(item);
+      } else if (item['contentType'] == "sermon") {
+        searchedSermons.add(item);
+      } else if (item['contentType'] == "devotional") {
+        searchedDevotionals.add(item);
       }
+      for (var item in message['data']) {
+        contentData.add(item['contentData']);
+        ids.add(item['id']);
+        titles.add(item['title']);
+      }
+
+      //print(searchedSermons.length);
+      print(searchedVideos.length);
+      //  print(dataTypes);
+      setState(() {
+        if (dataTypes.length > 0) {
+          found = true;
+        } else {
+          found = false;
+        }
+
+        if (videoUrl.length > 0) {
+          _videoUrl = videoUrl;
+        }
+
+        results = dataTypes;
+        print('done');
+        _contentData = contentData;
+        idList = ids;
+        titleList = titles;
+        _searchdone = true;
+        _searchedSermons = searchedSermons;
+        _searchedDevotionals = searchedDevotionals;
+        _searchedVideos = searchedVideos;
+        _loading = false;
+      });
     }
-    for (var item in message['data']) {
-      contentData.add(item['contentData']);
-      ids.add(item['id']);
-      titles.add(item['title']);
-    }
-
-    print(dataTypes);
-    setState(() {
-      if (dataTypes.length > 0) {
-        found = true;
-      }
-
-      if (videoUrl.length > 0) {
-        _videoUrl = videoUrl;
-      }
-
-      results = dataTypes;
-      print('done');
-      _contentData = contentData;
-      idList = ids;
-      titleList = titles;
-      _loading = false;
-    });
-  }
-
-  @override
-  void initState() {
-    _searchPageController = TextEditingController();
-
-    _searchPageFocus = FocusNode();
-
-    fetchRecent();
-
-    super.initState();
   }
 
   Future fetchRecent() async {
@@ -211,17 +219,50 @@ class _SearchPageState extends State<SearchPage> {
     }
  */
 
-    //print(total);
+    // print(total);
+
+    List sermons = [];
+    List videos = [];
+    List devotionals = [];
+
+    for (var item in total) {
+      if (item['contentType'] == 'sermon') {
+        sermons.add(item);
+      } else if (item['contentType'] == 'video') {
+        videos.add(item);
+      } else if (item['contentType'] == 'devotional') {
+        devotionals.add(item);
+      }
+    }
+
+    
+
+    // print(sermons);
     //print(total[0]['contentType']);
     // print(total[0]['title']);
 
     if (this.mounted) {
       setState(() {
+        _sermons = sermons;
+        print(_sermons.length);
+        _videos = videos;
+        _devotionals = devotionals;
         _total = total;
         loaded = true;
       });
+    }}
+
+    @override
+    void initState() {
+      _searchPageController = TextEditingController();
+
+      _searchPageFocus = FocusNode();
+
+      fetchRecent();
+
+      super.initState();
     }
-  }
+  
 
   var ind = 0;
 
@@ -316,7 +357,7 @@ class _SearchPageState extends State<SearchPage> {
                     if (ind == 0)
                       SingleChildScrollView(
                         child: _loading == false
-                            ? found == false
+                            ? _searchdone == false
                                 ? _total.length > 0
                                     ? Column(
                                         children: [
@@ -491,7 +532,8 @@ class _SearchPageState extends State<SearchPage> {
                                                               getting: true,
                                                               link:
                                                                   '${_total[x]['contentData']}',
-                                                                  id: _total[x]['id'],
+                                                              id: _total[x]
+                                                                  ['id'],
                                                             ),
                                                           )
                                             ],
@@ -530,135 +572,609 @@ class _SearchPageState extends State<SearchPage> {
                                           ),
                                         ], // https://www.youtube.com/watch?v=GEQGDJNPIbE
                                       )
-                                : SingleChildScrollView(
-                                    child: GridView.count(
-                                      shrinkWrap: true,
-                                      crossAxisCount: 2,
-                                      crossAxisSpacing: 4.0,
-                                      mainAxisSpacing: 9.0,
-                                      childAspectRatio:
-                                          MediaQuery.of(context).size.height /
-                                              700,
-                                      physics: ScrollPhysics(),
-                                      children: [
-                                        for (var i = 0; i < results.length; i++)
-                                          results[i] == 'sermon'
-                                              ? Stack(children: [
-                                                  InkWell(
-                                                    onTap: () {
-                                                      Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          AudioApp(
-                                                                    details: '${titleList[i]}',
-                                                                    id: idList[i],
-                                                                    url: '${_contentData[i]}'
+                                : found == true
+                                    ? SingleChildScrollView(
+                                        child: GridView.count(
+                                          shrinkWrap: true,
+                                          crossAxisCount: 2,
+                                          crossAxisSpacing: 4.0,
+                                          mainAxisSpacing: 9.0,
+                                          childAspectRatio:
+                                              MediaQuery.of(context)
+                                                      .size
+                                                      .height /
+                                                  700,
+                                          physics: ScrollPhysics(),
+                                          children: [
+                                            for (var i = 0;
+                                                i < results.length;
+                                                i++)
+                                              results[i] == 'sermon'
+                                                  ? Stack(children: [
+                                                      InkWell(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  AudioApp(
+                                                                      details:
+                                                                          '${titleList[i]}',
+                                                                      id: idList[
+                                                                          i],
+                                                                      url:
+                                                                          '${_contentData[i]}'),
+                                                            ),
+                                                          );
+                                                        },
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(16.0),
+                                                          child: Card(
+                                                            semanticContainer:
+                                                                true,
+                                                            color: Colors.white,
+                                                            elevation: 5.0,
+                                                            child: Stack(
+                                                              children: [
+                                                                Column(
+                                                                  children: [
+                                                                    Spacer(),
+                                                                    Container(
+                                                                      width:
+                                                                          500,
+                                                                      color: Colors
+                                                                          .white,
+                                                                      child:
+                                                                          FittedBox(
+                                                                        child:
+                                                                            Padding(
+                                                                          padding:
+                                                                              const EdgeInsets.all(8.0),
+                                                                          child:
+                                                                              Text(
+                                                                            '${titleList[i]}',
+                                                                            style:
+                                                                                TextStyle(fontSize: 15),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .only(
+                                                                      bottom:
+                                                                          30.0),
+                                                                  child: Center(
+                                                                    child: Icon(
+                                                                      Icons
+                                                                          .multitrack_audio,
+                                                                      size: 150,
+                                                                      color: Colors
+                                                                          .grey,
+                                                                    ),
                                                                   ),
                                                                 ),
-                                                              );
-                                                    },
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              16.0),
-                                                      child: Card(
-                                                        semanticContainer: true,
-                                                        color: Colors.white,
-                                                        elevation: 5.0,
-                                                        child: Stack(
-                                                          children: [
-                                                            Column(
-                                                              children: [
-                                                                Spacer(),
-                                                                Container(
-                                                                  width: 500,
-                                                                  color: Colors
-                                                                      .white,
-                                                                  child:
-                                                                      FittedBox(
-                                                                    child:
-                                                                        Padding(
-                                                                      padding:
-                                                                          const EdgeInsets.all(
-                                                                              8.0),
-                                                                      child:
-                                                                          Text(
-                                                                        '${titleList[i]}',
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                15),
-                                                                      ),
+                                                                Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .only(
+                                                                      bottom:
+                                                                          30.0),
+                                                                  child: Center(
+                                                                    child: Icon(
+                                                                      Icons
+                                                                          .play_circle_fill_sharp,
+                                                                      size: 50,
+                                                                      color: Colors
+                                                                          .white,
                                                                     ),
                                                                   ),
                                                                 ),
                                                               ],
                                                             ),
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                          .only(
-                                                                      bottom:
-                                                                          30.0),
-                                                              child: Center(
-                                                                child: Icon(
-                                                                  Icons
-                                                                      .multitrack_audio,
-                                                                  size: 150,
-                                                                  color: Colors
-                                                                      .grey,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                          .only(
-                                                                      bottom:
-                                                                          30.0),
-                                                              child: Center(
-                                                                child: Icon(
-                                                                  Icons
-                                                                      .play_circle_fill_sharp,
-                                                                  size: 50,
-                                                                  color: Colors
-                                                                      .white,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
+                                                          ),
                                                         ),
+                                                      ),
+                                                    ])
+                                                  : results[i] == 'video'
+                                                      ? Padding(
+                                                        padding: const EdgeInsets.only(right: 8.0, top: 5),
+                                                        child: VideoTile(
+                                                          getting: true,
+                                                          id: idList[i],
+                                                          details:
+                                                              titleList[i],
+                                                          link:
+                                                              '${_contentData[i]}',
+                                                          height: 220,
+                                                          width: 180,
+                                                        ),
+                                                      )
+                                                      : InkWell(
+                                                          onTap: () {
+                                                            _askedToLead(
+                                                                _contentData[i],
+                                                                titleList[i],
+                                                                idList[i],
+                                                                _contentData[
+                                                                    i]);
+                                                          },
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(16.0),
+                                                            child: Container(
+                                                              margin: EdgeInsets
+                                                                  .only(top: 5),
+                                                              height: 180,
+                                                              width: double
+                                                                  .infinity,
+                                                              child: Card(
+                                                                color: Colors
+                                                                    .black,
+                                                                semanticContainer:
+                                                                    true,
+                                                                // color: Colors.grey,
+                                                                elevation: 5.0,
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .only(
+                                                                      left: 2.0,
+                                                                      right:
+                                                                          2.0),
+                                                                  child: Text(
+                                                                    _contentData[
+                                                                        i],
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        fontSize:
+                                                                            18),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                          ],
+                                        ),
+                                      )
+                                    : Column(
+                                        children: [
+                                          SizedBox(height: 20),
+                                          Container(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 8.0),
+                                              child: Row(
+                                                children: [
+                                                  Text(
+                                                    'No Results Found',
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.grey),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(height: 40),
+                                          Image.asset(
+                                              'images/events_unavailable.png'),
+                                          Center(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                'Find Sermons',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 20),
+                                              ),
+                                            ),
+                                          ),
+                                          Center(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                'SearchPage Sermons, Devotions, Bible, as you like',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: Colors.grey),
+                                              ),
+                                            ),
+                                          ),
+                                        ], // https://www.youtube.com/watch?v=GEQGDJNPIbE
+                                      )
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(height: 30),
+                                  CircularProgressIndicator(),
+                                ],
+                              ),
+                      )
+                    else if (ind == 1)
+                      SingleChildScrollView(
+                        child: _loading == false
+                            ? _searchdone == false
+                                ? _total.length > 0
+                                    ? Column(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                  'Recent',
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      color: Colors.grey),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          GridView.count(
+                                            shrinkWrap: true,
+                                            crossAxisCount: 2,
+                                            crossAxisSpacing: 4.0,
+                                            mainAxisSpacing: 9.0,
+                                            childAspectRatio:
+                                                MediaQuery.of(context)
+                                                        .size
+                                                        .height /
+                                                    700,
+                                            physics: ScrollPhysics(),
+                                            children: [
+                                              for (var i = 0;
+                                                  i < _sermons.length;
+                                                  i++)
+                                                Stack(
+                                                  children: [
+                                                    InkWell(
+                                                      onTap: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                AudioApp(
+                                                                    details:
+                                                                        '${_sermons[i]['title']}',
+                                                                    id: _sermons[
+                                                                            i]
+                                                                        ['id'],
+                                                                    url:
+                                                                        '${_sermons[i]['contentData']}'),
+                                                          ),
+                                                        );
+                                                      },
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(16.0),
+                                                        child: Card(
+                                                            semanticContainer:
+                                                                true,
+                                                            color: Colors.white,
+                                                            elevation: 5.0,
+                                                            child: Stack(
+                                                              children: [
+                                                                Column(
+                                                                  children: [
+                                                                    Spacer(),
+                                                                    Container(
+                                                                      width:
+                                                                          500,
+                                                                      color: Colors
+                                                                          .white,
+                                                                      child:
+                                                                          FittedBox(
+                                                                        child:
+                                                                            Padding(
+                                                                          padding:
+                                                                              const EdgeInsets.all(8.0),
+                                                                          child:
+                                                                              Text(
+                                                                            '${_sermons[i]['title']}',
+                                                                            style:
+                                                                                TextStyle(fontSize: 15),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .only(
+                                                                      bottom:
+                                                                          30.0),
+                                                                  child: Center(
+                                                                    child: Icon(
+                                                                      Icons
+                                                                          .multitrack_audio,
+                                                                      size: 150,
+                                                                      color: Colors
+                                                                          .grey,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .only(
+                                                                      bottom:
+                                                                          30.0),
+                                                                  child: Center(
+                                                                    child: Icon(
+                                                                      Icons
+                                                                          .play_circle_fill_sharp,
+                                                                      size: 50,
+                                                                      color: Colors
+                                                                          .white,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            )),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                            ],
+                                          ),
+                                        ],
+                                      )
+                                    : Column(
+                                        children: [
+                                          SizedBox(height: 20),
+                                          Image.asset(
+                                              'images/events_unavailable.png'),
+                                          Center(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                'Find Sermons',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 20),
+                                              ),
+                                            ),
+                                          ),
+                                          Center(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                'SearchPage Sermons, Devotions, Bible, as you like',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: Colors.grey),
+                                              ),
+                                            ),
+                                          ),
+                                        ], // https://www.youtube.com/watch?v=GEQGDJNPIbE
+                                      )
+                                : found == true
+                                    ? SingleChildScrollView(
+                                        child: GridView.count(
+                                          shrinkWrap: true,
+                                          crossAxisCount: 2,
+                                          crossAxisSpacing: 4.0,
+                                          mainAxisSpacing: 9.0,
+                                          childAspectRatio:
+                                              MediaQuery.of(context)
+                                                      .size
+                                                      .height /
+                                                  700,
+                                          physics: ScrollPhysics(),
+                                          children: [
+                                            for (var i = 0;
+                                                i < _searchedSermons.length;
+                                                i++)
+                                              Stack(children: [
+                                                InkWell(
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) => AudioApp(
+                                                            details:
+                                                                '${_searchedSermons[i]['title']}',
+                                                            id: _searchedSermons[
+                                                                i]['id'],
+                                                            url:
+                                                                '${_searchedSermons[i]['contentData']}'),
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            16.0),
+                                                    child: Card(
+                                                      semanticContainer: true,
+                                                      color: Colors.white,
+                                                      elevation: 5.0,
+                                                      child: Stack(
+                                                        children: [
+                                                          Column(
+                                                            children: [
+                                                              Spacer(),
+                                                              Container(
+                                                                width: 500,
+                                                                color: Colors
+                                                                    .white,
+                                                                child:
+                                                                    FittedBox(
+                                                                  child:
+                                                                      Padding(
+                                                                    padding:
+                                                                        const EdgeInsets.all(
+                                                                            8.0),
+                                                                    child: Text(
+                                                                      '${_searchedSermons[i]['title']}',
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              15),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    bottom:
+                                                                        30.0),
+                                                            child: Center(
+                                                              child: Icon(
+                                                                Icons
+                                                                    .multitrack_audio,
+                                                                size: 150,
+                                                                color:
+                                                                    Colors.grey,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    bottom:
+                                                                        30.0),
+                                                            child: Center(
+                                                              child: Icon(
+                                                                Icons
+                                                                    .play_circle_fill_sharp,
+                                                                size: 50,
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
                                                     ),
                                                   ),
-                                                ])
-                                              : results[i] == 'video'
-                                                  ? InkWell(
-                                                      /*  onLongPress: () {
-                                                        print('object');
-                                                        _askedToLead(
-                                                          _contentData[i],
-                                                          titleList[i],
-                                                          idList[i],
-                                                        );
-                                                      }, */
-                                                      child: VideoTile(
-                                                        getting: true,
-                                                        id: idList[i],
-                                                        details: titleList[i],
-                                                        link: '${_contentData[i]}',
-                                                        height: 220,
-                                                        width: 180,
-                                                      ),
-                                                    )
-                                                  : InkWell(
+                                                ),
+                                              ])
+                                          ],
+                                        ),
+                                      )
+                                    : Column(
+                                        children: [
+                                          SizedBox(height: 20),
+                                          Container(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 8.0),
+                                              child: Row(
+                                                children: [
+                                                  Text(
+                                                    'No Results Found',
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.grey),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(height: 40),
+                                          Image.asset(
+                                              'images/events_unavailable.png'),
+                                          Center(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                'Find Sermons',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 20),
+                                              ),
+                                            ),
+                                          ),
+                                          Center(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                'SearchPage Sermons, Devotions, Bible, as you like',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: Colors.grey),
+                                              ),
+                                            ),
+                                          ),
+                                        ], // https://www.youtube.com/watch?v=GEQGDJNPIbE
+                                      )
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(height: 30),
+                                  CircularProgressIndicator(),
+                                ],
+                              ),
+                      )
+                    else if (ind == 2)
+                      SingleChildScrollView(
+                        child: _loading == false
+                            ? _searchdone == false
+                                ? _total.length > 0
+                                    ? Column(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                  'Recent',
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      color: Colors.grey),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          GridView.count(
+                                            shrinkWrap: true,
+                                            crossAxisCount: 2,
+                                            crossAxisSpacing: 4.0,
+                                            mainAxisSpacing: 9.0,
+                                            childAspectRatio:
+                                                MediaQuery.of(context)
+                                                        .size
+                                                        .height /
+                                                    700,
+                                            physics: ScrollPhysics(),
+                                            children: [
+                                              for (var i = 0;
+                                                  i < _devotionals.length;
+                                                  i++)
+                                                Stack(
+                                                  children: [
+                                                    InkWell(
                                                       onTap: () {
                                                         _askedToLead(
-                                                            _contentData[i],
-                                                            titleList[i],
-                                                            idList[i],
-                                                            _contentData[i]);
+                                                            _devotionals[i]
+                                                                ['contentData'],
+                                                            _devotionals[i]
+                                                                ['title'],
+                                                            _devotionals[i]
+                                                                ['id'],
+                                                            _devotionals[i][
+                                                                'contentData']);
                                                       },
                                                       child: Padding(
                                                         padding:
@@ -685,7 +1201,8 @@ class _SearchPageState extends State<SearchPage> {
                                                                       right:
                                                                           2.0),
                                                               child: Text(
-                                                                _contentData[i],
+                                                                _devotionals[i][
+                                                                    'contentData'],
                                                                 style: TextStyle(
                                                                     color: Colors
                                                                         .white,
@@ -697,9 +1214,174 @@ class _SearchPageState extends State<SearchPage> {
                                                         ),
                                                       ),
                                                     ),
-                                      ],
-                                    ),
-                                  )
+                                                  ],
+                                                ),
+                                            ],
+                                          ),
+                                        ],
+                                      )
+                                    : Column(
+                                        children: [
+                                          SizedBox(height: 20),
+                                          Image.asset(
+                                              'images/events_unavailable.png'),
+                                          Center(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                'Find Sermons',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 20),
+                                              ),
+                                            ),
+                                          ),
+                                          Center(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                'SearchPage Sermons, Devotions, Bible, as you like',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: Colors.grey),
+                                              ),
+                                            ),
+                                          ),
+                                        ], // https://www.youtube.com/watch?v=GEQGDJNPIbE
+                                      )
+                                : found == true
+                                    ? SingleChildScrollView(
+                                        child: GridView.count(
+                                          shrinkWrap: true,
+                                          crossAxisCount: 2,
+                                          crossAxisSpacing: 4.0,
+                                          mainAxisSpacing: 9.0,
+                                          childAspectRatio:
+                                              MediaQuery.of(context)
+                                                      .size
+                                                      .height /
+                                                  700,
+                                          physics: ScrollPhysics(),
+                                          children: [
+                                            for (var i = 0;
+                                                i < _searchedDevotionals.length;
+                                                i++)
+                                              Stack(children: [
+                                                InkWell(
+                                                  onTap: () {
+                                                    _askedToLead(
+                                                        _searchedDevotionals[
+                                                                i][
+                                                            'contentData'],
+                                                        _searchedDevotionals[
+                                                                i]
+                                                            ['title'],
+                                                        _searchedDevotionals[
+                                                            i]['id'],
+                                                        _searchedDevotionals[
+                                                                i][
+                                                            'contentData']);
+                                                  },
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets
+                                                                .all(
+                                                            16.0),
+                                                    child: Container(
+                                                      margin: EdgeInsets
+                                                          .only(
+                                                              top: 5),
+                                                      height: 180,
+                                                      width: double
+                                                          .infinity,
+                                                      child: Card(
+                                                        color: Colors
+                                                            .black,
+                                                        semanticContainer:
+                                                            true,
+                                                        // color: Colors.grey,
+                                                        elevation:
+                                                            5.0,
+                                                        child:
+                                                            Padding(
+                                                          padding: const EdgeInsets
+                                                                  .only(
+                                                              left:
+                                                                  2.0,
+                                                              right:
+                                                                  2.0),
+                                                          child: Text(
+                                                            _searchedDevotionals[
+                                                                    i]
+                                                                [
+                                                                'contentData'],
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize:
+                                                                    18),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ])
+                                          ],
+                                        ),
+                                      )
+                                    : Column(
+                                        children: [
+                                          SizedBox(height: 20),
+                                          Container(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 8.0),
+                                              child: Row(
+                                                children: [
+                                                  Text(
+                                                    'No Results Found',
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.grey),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(height: 40),
+                                          Image.asset(
+                                              'images/events_unavailable.png'),
+                                          Center(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                'Find Sermons',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 20),
+                                              ),
+                                            ),
+                                          ),
+                                          Center(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                'SearchPage Sermons, Devotions, Bible, as you like',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: Colors.grey),
+                                              ),
+                                            ),
+                                          ),
+                                        ], // https://www.youtube.com/watch?v=GEQGDJNPIbE
+                                      )
                             : Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -708,95 +1390,192 @@ class _SearchPageState extends State<SearchPage> {
                                 ],
                               ),
                       )
-                    else if (ind == 1)
+                    else if (ind == 3)
                       SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            for (var i = 0; i < results.length; i++)
-                              results[i] == 'sermon'
-                                  ? Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: InkWell(
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => AudioApp(
-                                                details: titleList[i],
-                                                id: idList[i],
-                                                url:  _contentData[i],
-                                              ),
+                        child: _loading == false
+                            ? _searchdone == false
+                                ? _total.length > 0
+                                    ? Column(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                  'Recent',
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      color: Colors.grey),
+                                                ),
+                                              ],
                                             ),
-                                          );
-                                        },
-                                        child: AudioTile(
-                                            url: _contentData[i],
-                                            title: titleList[i]),
-                                      ),
-                                    )
-                                  : SizedBox(),
-                          ],
-                        ),
-                      )
-                    else if (ind == 2)
-                      SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            for (var i = 0; i < results.length; i++)
-                              results[i] == 'devotional'
-                                  ? Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: InkWell(
-                                         onTap: () {
-                                          _askedToLead(_contentData[i],
-                                              titleList[i], idList[i], _contentData[i]);
-                                        },
-                                        child: Container(
-                                          margin: EdgeInsets.only(top: 5),
-                                          height: 180,
-                                          width: double.infinity,
-                                          child: Card(
-                                            color: Colors.black,
-                                            semanticContainer: true,
-                                            // color: Colors.grey,
-                                            elevation: 5.0,
+                                          ),
+                                          GridView.count(
+                                            shrinkWrap: true,
+                                            crossAxisCount: 2,
+                                            crossAxisSpacing: 4.0,
+                                            mainAxisSpacing: 9.0,
+                                            childAspectRatio:
+                                                MediaQuery.of(context)
+                                                        .size
+                                                        .height /
+                                                    700,
+                                            physics: ScrollPhysics(),
+                                            children: [
+                                              for (var i = 0;
+                                                  i < _videos.length;
+                                                  i++)
+                                                Padding(
+                                                  padding: const EdgeInsets.only(right: 8.0, top: 5),
+                                                  child: Stack(
+                                                    children: [
+                                                      VideoTile(
+                                                        getting: true,
+                                                        id: _videos[i]['id'],
+                                                        details: _videos[i]
+                                                            ['title'],
+                                                        link:
+                                                            '${_videos[i]['contentData']}',
+                                                        height: 220,
+                                                        width: 180,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                        ],
+                                      )
+                                    : Column(
+                                        children: [
+                                          SizedBox(height: 20),
+                                          Image.asset(
+                                              'images/events_unavailable.png'),
+                                          Center(
                                             child: Padding(
                                               padding:
                                                   const EdgeInsets.all(8.0),
-                                              child: SingleChildScrollView(
-                                                child: Text(
-                                                  _contentData[i],
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 18),
-                                                ),
+                                              child: Text(
+                                                'Find Sermons',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 20),
                                               ),
                                             ),
                                           ),
+                                          Center(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.only(right: 8.0),
+                                              child: Text(
+                                                'SearchPage Sermons, Devotions, Bible, as you like',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: Colors.grey),
+                                              ),
+                                            ),
+                                          ),
+                                        ], // https://www.youtube.com/watch?v=GEQGDJNPIbE
+                                      )
+                                : found == true
+                                    ? SingleChildScrollView(
+                                        child: GridView.count(
+                                          shrinkWrap: true,
+                                          crossAxisCount: 2,
+                                          crossAxisSpacing: 4.0,
+                                          mainAxisSpacing: 9.0,
+                                          childAspectRatio:
+                                              MediaQuery.of(context)
+                                                      .size
+                                                      .height /
+                                                  700,
+                                          physics: ScrollPhysics(),
+                                          children: [
+                                            for (var i = 0;
+                                                i < _searchedVideos.length;
+                                                i++)
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.only(top: 5, right:
+                                                        8.0),
+                                                child: Stack(
+                                                  children: [
+                                                    VideoTile(
+                                                      getting: true,
+                                                      id: _searchedVideos[
+                                                          i]['id'],
+                                                      details:
+                                                          _searchedVideos[
+                                                                  i]
+                                                              ['title'],
+                                                      link:
+                                                          '${_searchedVideos[i]['contentData']}',
+                                                      height: 220,
+                                                      width: 180,
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
+                                          ],
                                         ),
-                                      ),
-                                    )
-                                  : SizedBox(),
-                          ],
-                        ),
-                      )
-                    else if (ind == 3)
-                      SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            for (var i = 0; i < results.length; i++)
-                              results[i] == 'video'
-                                  ? VideoTile(
-                                   id: idList[i],
-                                      details: titleList[i],
-                                    getting: true,
-                                      link: '${_contentData[i]}',
-                                      height: 230,
-                                      width: 350,
-                                    )
-                                  : SizedBox(),
-                          ],
-                        ),
+                                      )
+                                    : Column(
+                                        children: [
+                                          SizedBox(height: 20),
+                                          Container(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 8.0),
+                                              child: Row(
+                                                children: [
+                                                  Text(
+                                                    'No Results Found',
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.grey),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(height: 40),
+                                          Image.asset(
+                                              'images/events_unavailable.png'),
+                                          Center(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                'Find Sermons',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 20),
+                                              ),
+                                            ),
+                                          ),
+                                          Center(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                'SearchPage Sermons, Devotions, Bible, as you like',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: Colors.grey),
+                                              ),
+                                            ),
+                                          ),
+                                        ], // https://www.youtube.com/watch?v=GEQGDJNPIbE
+                                      )
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(height: 30),
+                                  CircularProgressIndicator(),
+                                ],
+                              ),
                       )
                   ],
                 ),

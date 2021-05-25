@@ -1,3 +1,4 @@
+import 'package:cornerstone/ui/widgets/dialogs.dart';
 import 'package:cornerstone/ui/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -21,6 +22,7 @@ class _ListPageState extends State<ListPage> {
   List _titles = [];
   bool loading = true;
   List _dataTypes = [];
+  List _ids = [];
 
   Future<void> _askedToLead(String quote, String title) async {
     switch (await showDialog<ListPage>(
@@ -70,6 +72,43 @@ class _ListPageState extends State<ListPage> {
     fetchUserPlaylist();
   }
 
+  Future deletePlayList(id) async {
+    showLoading(context);
+     final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    var url = "http://157.230.150.194:3000/api/playlist/delete";
+
+    var token = "${prefs.getString('token')}";
+
+     var data = {"churchContentId": "$id"};
+
+    
+     var response = await http.post(
+      Uri.parse(url),
+      body: data,
+      headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
+    );
+
+    print(jsonDecode(response.body));
+
+    var message = jsonDecode(response.body);
+      print(message);
+      print(message['message']);
+      print(message['status_code']);
+
+    if (message['status'] == "00") {
+      Navigator.pop(context);
+
+      failedAlertDialog(context, "Success", message['message']);
+    } else {
+      Navigator.pop(context);
+
+       failedAlertDialog(context, message['message'], message['reason']);
+        
+    }
+
+  }
+
   Future fetchUserPlaylist() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -89,22 +128,26 @@ class _ListPageState extends State<ListPage> {
     List youtubeUrls = [];
     List contentData = [];
     List titles = [];
+    List ids = [];
 
     for (var item in responseJson['data']) {
       contentData.add(item['contentData']);
       dataTypes.add(item['contentType']);
       titles.add(item['title']);
+      ids.add(item['id']);
       if (item['contentType'] == "video") {
         youtubeUrls.add(YoutubePlayer.convertUrlToId(item['contentData']));
       }
     }
 
     setState(() {
-      print(titles);
+      /* print(titles);
       print(dataTypes);
       print(contentData);
-      print(youtubeUrls);
+      print(youtubeUrls); */
+      print(ids);
       _youtubeUrls = youtubeUrls;
+      _ids = ids;
       _contentData = contentData;
       _titles = titles;
       loading = false;
@@ -186,6 +229,10 @@ class _ListPageState extends State<ListPage> {
                                   return [
                                     PopupMenuItem(
                                       child: InkWell(
+                                          onTap: (){
+                                                print(_ids[i]);
+                                                deletePlayList(_ids[i]);
+                                              },
                                         splashColor:
                                             Colors.grey, // splash color
                                         child: Row(children: [
@@ -242,6 +289,10 @@ class _ListPageState extends State<ListPage> {
                                         return [
                                           PopupMenuItem(
                                             child: InkWell(
+                                              onTap: (){
+                                                print(_ids[i]);
+                                                deletePlayList(_ids[i]);
+                                              },
                                               splashColor:
                                                   Colors.grey, // splash color
                                               child: Row(children: [
@@ -295,6 +346,10 @@ class _ListPageState extends State<ListPage> {
                                       return [
                                         PopupMenuItem(
                                           child: InkWell(
+                                              onTap: (){
+                                                print(_ids[i]);
+                                                deletePlayList(_ids[i]);
+                                              },
                                             splashColor:
                                                 Colors.grey, // splash color
                                             child: Row(children: [

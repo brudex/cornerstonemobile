@@ -7,15 +7,7 @@ class DonationSuccess extends StatelessWidget {
     return WillPopScope(
       onWillPop: () async => false,
           child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Color.fromRGBO(242, 245, 247, 1),
-          title: Text(
-            'Donation Success',
-            style: TextStyle(color: Colors.black),
-          ),
-          
-        ),
+      
         body: SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,

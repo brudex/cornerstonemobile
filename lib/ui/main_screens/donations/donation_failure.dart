@@ -1,4 +1,5 @@
 
+import 'package:cornerstone/ui/main_screens/donations/donation_history.dart';
 import 'package:cornerstone/ui/main_screens/home_1.dart';
 import 'package:flutter/material.dart';
 
@@ -69,7 +70,7 @@ class DonationFailure extends StatelessWidget {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => Home1(),
+                          builder: (context) => DonationHistory(),
                         ),
                       );
                     },

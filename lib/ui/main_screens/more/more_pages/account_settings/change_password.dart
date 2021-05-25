@@ -1,3 +1,4 @@
+import 'package:cornerstone/access_pages/onboardingScreen.dart';
 import 'package:cornerstone/ui/widgets/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -81,7 +82,7 @@ class ChangePasswordState extends State<ChangePassword> {
     });
   }
 
-  void performChangePassword() {
+  Future<void> performChangePassword() async {
     //ChangePassword here
 
     if ((_pwController.text == null) || (_pwController.text == '')) {
@@ -130,8 +131,9 @@ class ChangePasswordState extends State<ChangePassword> {
       print('All is true');
 
       showLoading(context);
-      changePassword();
-      // print(map[_currentSelectedValue].toInt());
+      await changePassword();
+      
+    
     }
     else{
       print('err');
@@ -163,8 +165,13 @@ class ChangePasswordState extends State<ChangePassword> {
 
     if (message['status_code'] == "00") {
       Navigator.pop(context);
+  
+      await failedAlertDialog(context, "Success", message['message']);
 
-      failedAlertDialog(context, "Success", message['message']);
+    
+    
+     
+   
     } else {
       Navigator.pop(context);
 

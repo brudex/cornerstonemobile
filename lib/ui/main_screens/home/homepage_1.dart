@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:async';
 import 'package:badges/badges.dart';
+import 'package:cornerstone/access_pages/onboardingScreen.dart';
 import 'package:cornerstone/player_widget.dart';
 import 'package:cornerstone/ui/main_screens/home/all_audios.dart';
 import 'package:cornerstone/ui/main_screens/home/all_videos.dart';
@@ -138,6 +139,15 @@ class _HomePage1State extends State<HomePage1> {
     print('$responseJson' +
         'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 1 devotional');
 
+    if (responseJson['reason'] == "Invalid token") {
+      await prefs.clear();
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => OnboardingScreen()),
+        (Route<dynamic> route) => false,
+      );
+    }
+
     final responseJson2 = jsonDecode(getaudioUrls.body);
     print('$responseJson2' +
         'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 3 audio');
@@ -199,13 +209,13 @@ class _HomePage1State extends State<HomePage1> {
               leading: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: CircleAvatar(
-                  backgroundImage: NetworkImage(
-                    img != null
-                        ? "http://157.230.150.194:3000/uploads/$img"
-                        : null,
-                    scale: 0.3,
-                  ),
-                  backgroundColor: Colors.white,
+                  backgroundImage: img != null
+                      ? NetworkImage(
+                          "http://157.230.150.194:3000/uploads/$img",
+                          scale: 0.3,
+                        )
+                      : null,
+                  backgroundColor: Color.fromRGBO(242, 245, 247, 1),
                   radius: 10,
                 ),
               ),

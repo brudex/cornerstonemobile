@@ -172,10 +172,10 @@ class DonationHistoryState extends State<DonationHistory> {
                             element['amount'],
                             style: TextStyle(fontSize: 16),
                           ),
-                          leading: element['paymentMode'] == 'Visa, Mastercard'
-                              ? Image.asset('images/visa.png')
+                          leading: element['paymentMode'] == 'Visa, Mastercard & More'
+                              ? Image.asset('images/visa2.png')
                               : element['paymentMode'] == 'stripe'
-                                  ? Image.asset('images/visa.png')
+                                  ? Image.asset('images/visa2.png')
                                   : Image.asset('images/paypal.png'),
                           subtitle: Text(element['donationType']),
                           trailing: Text(element['statusMessage'],

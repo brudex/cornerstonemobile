@@ -1,7 +1,9 @@
-
 import 'package:cornerstone/access_pages/onboardingScreen.dart';
+import 'package:cornerstone/list/list_page.dart';
 import 'package:cornerstone/ui/main_screens/home_1.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 showLoading(BuildContext context) {
   AlertDialog alert = AlertDialog(
@@ -138,8 +140,28 @@ afterTransAlertDialog(BuildContext context, title, result) {
 failedAlertDialog(BuildContext context, title, result) {
   // ignore: deprecated_member_use
   Widget okButton = FlatButton(
-    onPressed: () {
-      Navigator.of(context).pop();
+    onPressed: () async {
+      if ('$result' == 'password changed successfully') {
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+        await prefs.clear();
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => OnboardingScreen()),
+          (Route<dynamic> route) => false,
+        );
+      } else if ('$result' == 'playlist deleted successfully') {
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ListPage(),
+          ),
+        );
+      } else {
+        Navigator.of(context).pop();
+      }
     },
     child: Text(
       'OK',
@@ -172,23 +194,19 @@ successAlertDialog(BuildContext context, title, result) {
   Widget okButton = FlatButton(
     onPressed: () {
       if (result == 'login successful') {
-     /*    Navigator.pushAndRemoveUntil(
+        /*    Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => Home1()),
           (Route<dynamic> route) => false,
         ); */
-      }
-      else if(title == 'Registration successful')
-      {
-         Navigator.pushAndRemoveUntil(
+      } else if (title == 'Registration successful') {
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => OnboardingScreen()),
           (Route<dynamic> route) => false,
         );
-      }
-        else if(title == 'Success')
-      {
-         Navigator.pushAndRemoveUntil(
+      } else if (title == 'Success') {
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => Home1()),
           (Route<dynamic> route) => false,

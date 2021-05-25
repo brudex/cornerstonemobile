@@ -1,3 +1,4 @@
+import 'package:cornerstone/list/list_page.dart';
 import 'package:cornerstone/splashscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -56,9 +57,11 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     precacheImage(AssetImage('images/logo 1.png'), context);
     precacheImage(AssetImage('images/stripe.png'), context);
+    precacheImage(AssetImage('images/visa2.png'), context);
     precacheImage(AssetImage('images/paypal.png'), context);
     precacheImage(AssetImage('images/easter.png'), context);
     precacheImage(AssetImage('images/Background.jpg'), context);
+    precacheImage(AssetImage('images/visa.jpeg'), context);
     precacheImage(AssetImage('images/events_unavailable.png'), context);
 
     return MaterialApp(
@@ -71,6 +74,7 @@ class _MyAppState extends State<MyApp> {
       ), */
       routes: {
         '/': (context) => SplashScreen(),
+        '/list': (BuildContext context) => ListPage(),
       },
     );
   }
