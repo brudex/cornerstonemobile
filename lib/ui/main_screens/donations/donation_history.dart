@@ -13,13 +13,20 @@ class DonationHistory extends StatefulWidget {
 }
 
 class DonationHistoryState extends State<DonationHistory> {
+  // ignore: unused_field
   TextEditingController _searchController;
+  // ignore: unused_field
   FocusNode _searchFocus;
+  // ignore: unused_field
   List _statusMessage = [];
+  // ignore: unused_field
   List _donationType = [];
+  // ignore: unused_field
   List _amount = [];
+  // ignore: unused_field
   List _paymentMode = [];
   bool ready = false;
+  // ignore: unused_field
   List _date = [];
   List solns = [];
   String _convertDateToday;

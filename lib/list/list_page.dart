@@ -1,10 +1,11 @@
+import 'package:cornerstone/player_widget.dart';
+import 'package:cornerstone/ui/main_screens/home/playsingle.dart';
 import 'package:cornerstone/ui/widgets/dialogs.dart';
 import 'package:cornerstone/ui/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:url_launcher/url_launcher.dart';
 import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
@@ -48,6 +49,7 @@ class _ListPageState extends State<ListPage> {
     }
   }
 
+  // ignore: unused_element
   Future<void> _playaudio(String url, String title) async {
     switch (await showDialog<ListPage>(
         context: context,
@@ -74,16 +76,15 @@ class _ListPageState extends State<ListPage> {
 
   Future deletePlayList(id) async {
     showLoading(context);
-     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     var url = "http://157.230.150.194:3000/api/playlist/delete";
 
     var token = "${prefs.getString('token')}";
 
-     var data = {"churchContentId": "$id"};
+    var data = {"churchContentId": "$id"};
 
-    
-     var response = await http.post(
+    var response = await http.post(
       Uri.parse(url),
       body: data,
       headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
@@ -92,9 +93,9 @@ class _ListPageState extends State<ListPage> {
     print(jsonDecode(response.body));
 
     var message = jsonDecode(response.body);
-      print(message);
-      print(message['message']);
-      print(message['status_code']);
+    print(message);
+    print(message['message']);
+    print(message['status_code']);
 
     if (message['status'] == "00") {
       Navigator.pop(context);
@@ -103,10 +104,8 @@ class _ListPageState extends State<ListPage> {
     } else {
       Navigator.pop(context);
 
-       failedAlertDialog(context, message['message'], message['reason']);
-        
+      failedAlertDialog(context, message['message'], message['reason']);
     }
-
   }
 
   Future fetchUserPlaylist() async {
@@ -195,16 +194,26 @@ class _ListPageState extends State<ListPage> {
                       _dataTypes[i] == "video"
                           ? ListTile(
                               onTap: () {
-                                launch(_contentData[i]);
-                              },
-                              leading:Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Icon(
-                                        Icons.video_library_outlined,
-                                        size: 50,
-                                        color: Colors.black,
-                                      ),
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PlaySingle(
+                                      clips: null,
+                                      playlistLink: _contentData[i],
+                                      details: _titles[i],
+                                      id: _ids[i],
                                     ),
+                                  ),
+                                );
+                              },
+                              leading: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Icon(
+                                  Icons.video_library_outlined,
+                                  size: 50,
+                                  color: Colors.black,
+                                ),
+                              ),
                               title: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
@@ -229,10 +238,10 @@ class _ListPageState extends State<ListPage> {
                                   return [
                                     PopupMenuItem(
                                       child: InkWell(
-                                          onTap: (){
-                                                print(_ids[i]);
-                                                deletePlayList(_ids[i]);
-                                              },
+                                        onTap: () {
+                                          print(_ids[i]);
+                                          deletePlayList(_ids[i]);
+                                        },
                                         splashColor:
                                             Colors.grey, // splash color
                                         child: Row(children: [
@@ -273,13 +282,13 @@ class _ListPageState extends State<ListPage> {
                                         ],
                                       ),
                                     ),
-                                       subtitle: Padding(
-                                padding: const EdgeInsets.only(top: 15.0),
-                                child: Text(
-                                  'Devotional Text',
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                              ),
+                                    subtitle: Padding(
+                                      padding: const EdgeInsets.only(top: 15.0),
+                                      child: Text(
+                                        'Devotional Text',
+                                        style: TextStyle(fontSize: 12),
+                                      ),
+                                    ),
                                     trailing: PopupMenuButton(
                                       icon: Icon(
                                         Icons.more_vert_sharp,
@@ -289,7 +298,7 @@ class _ListPageState extends State<ListPage> {
                                         return [
                                           PopupMenuItem(
                                             child: InkWell(
-                                              onTap: (){
+                                              onTap: () {
                                                 print(_ids[i]);
                                                 deletePlayList(_ids[i]);
                                               },
@@ -312,7 +321,15 @@ class _ListPageState extends State<ListPage> {
                                 )
                               : ListTile(
                                   onTap: () {
-                                //    _playaudio(_contentData[i], _titles[i]);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => AudioApp(
+                                            details: _titles[i],
+                                            id: _ids[i],
+                                            url: _contentData[i]),
+                                      ),
+                                    );
                                   },
                                   leading: Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -330,13 +347,13 @@ class _ListPageState extends State<ListPage> {
                                       ],
                                     ),
                                   ),
-                                     subtitle: Padding(
-                                padding: const EdgeInsets.only(top: 15.0),
-                                child: Text(
-                                  'Audio',
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                              ),
+                                  subtitle: Padding(
+                                    padding: const EdgeInsets.only(top: 15.0),
+                                    child: Text(
+                                      'Audio',
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                  ),
                                   trailing: PopupMenuButton(
                                     icon: Icon(
                                       Icons.more_vert_sharp,
@@ -346,10 +363,10 @@ class _ListPageState extends State<ListPage> {
                                       return [
                                         PopupMenuItem(
                                           child: InkWell(
-                                              onTap: (){
-                                                print(_ids[i]);
-                                                deletePlayList(_ids[i]);
-                                              },
+                                            onTap: () {
+                                              print(_ids[i]);
+                                              deletePlayList(_ids[i]);
+                                            },
                                             splashColor:
                                                 Colors.grey, // splash color
                                             child: Row(children: [

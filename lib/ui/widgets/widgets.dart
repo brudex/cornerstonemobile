@@ -1,5 +1,5 @@
 import 'package:cornerstone/ui/main_screens/home/playsingle.dart';
-import 'package:cornerstone/ui/main_screens/search/video_details.dart';
+
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie_audio/chewie_audio.dart';
@@ -8,8 +8,9 @@ import 'package:flutter/cupertino.dart';
 class AudioTile extends StatefulWidget {
   final String title;
   final String url;
+  final String bgImage;
 
-  const AudioTile({Key key, @required this.url, this.title}) : super(key: key);
+  const AudioTile({Key key, @required this.url, this.title, this.bgImage}) : super(key: key);
   @override
   _AudioTileState createState() => _AudioTileState();
 }
@@ -71,7 +72,52 @@ class _AudioTileState extends State<AudioTile> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return widget.bgImage != null ?  Container(
+      margin: EdgeInsets.only(top: 5),
+     decoration: BoxDecoration(
+  image: DecorationImage(
+    image: AssetImage('images/backgroundSD.png'),
+    fit: BoxFit.cover),
+),
+      height: 200,
+      width: 345,
+      child: _chewieAudioController != null &&
+              _chewieAudioController.videoPlayerController.value.isInitialized
+          ? Stack(
+              children: [
+                Column(
+                  children: [
+                    Spacer(),
+                    Container(
+                      width: 500,
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          '${widget.title}',
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              
+              ],
+            )
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'Loading',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
+    ) : Container(
       margin: EdgeInsets.only(top: 5),
       height: 200,
       width: 345,

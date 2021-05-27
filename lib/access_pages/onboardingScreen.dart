@@ -23,7 +23,7 @@ class OnboardingScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  'Free sermon streaming and donation app for your church',
+                  'Free Giving and Engagement App for All Organizations',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.grey),
                 ),

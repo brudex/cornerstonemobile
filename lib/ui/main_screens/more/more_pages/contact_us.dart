@@ -30,13 +30,15 @@ class _ContactUsState extends State<ContactUs> {
   var twitterHandle;
   var address;
   var findUs;
+  var _location;
 
   Future fetchDetails() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     var url = "http://157.230.150.194:3000/api/church";
     var token = "${prefs.getString('token')}";
-
+    // ignore: unused_local_variable
+    List add =[];
     final response = await http.get(
       Uri.parse(url),
       headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
@@ -51,7 +53,28 @@ class _ContactUsState extends State<ContactUs> {
       address[0],address[1]);
     print(placemarks[0].street); */
 
-    print(responseJson['address']);
+    var split = address.split(',');
+    final Map<int, String> values = {
+      for(int i = 0; i < split.length; i++)
+      i : split[i]
+    };
+   var addr1 = values[0];
+   var addr2 = values[1];
+
+   var location;
+
+   
+
+    if (address != null && address != '') {
+      final coordinates = new Coordinates(double.parse(addr1),double.parse(addr2));
+      var addresses =
+          await Geocoder.local.findAddressesFromCoordinates(coordinates);
+
+      
+      var first = addresses.first;
+      print("${first.featureName} : ${first.addressLine}");
+      location = "${first.featureName}";
+    }
 
     if (this.mounted) {
       setState(() {
@@ -62,17 +85,12 @@ class _ContactUsState extends State<ContactUs> {
         fbHandle = responseJson['fbHandle'];
         igHandle = responseJson['IGHandle'];
         twitterHandle = responseJson['twitterHandle'];
+        _location = location;
         //findUs = placemarks[0].street;
       });
     }
 
     // From coordinates
-final coordinates = new Coordinates(1.10, 45.50);
-var addresses = await Geocoder.local.findAddressesFromCoordinates(coordinates);
-
-print(addresses);
-/* var first = addresses.first;
-print("${first.featureName} : ${first.addressLine}"); */
 
     //var value = jsonDecode(message['data']);
     //print(value);
@@ -157,7 +175,7 @@ print("${first.featureName} : ${first.addressLine}"); */
                   ),
                 ),
                 ListTile(
-                  subtitle: Text(''),
+                  subtitle: Text('$_location'),
                   title: new Text(
                     'Find us',
                     style: new TextStyle(

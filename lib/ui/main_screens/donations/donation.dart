@@ -16,6 +16,7 @@ class Donation extends StatefulWidget {
 }
 
 class DonationState extends State<Donation> {
+  // ignore: unused_field
   final _formKeyScreen1 = GlobalKey<FormState>();
   bool ready = false;
   TextEditingController _amountController;

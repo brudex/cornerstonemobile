@@ -3,31 +3,26 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:async';
-import 'dart:math';
+
 import 'package:cornerstone/ui/widgets/dialogs.dart';
-import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'dart:async';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 
-import 'package:cornerstone/ui/widgets/dialogs.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:video_player/video_player.dart';
-import 'package:wakelock/wakelock.dart';
-
+// ignore: must_be_immutable
 class AudioApp extends StatefulWidget {
   // ignore: use_key_in_widget_constructors
-  const AudioApp(
-      {this.title = 'Chewie Audio Demo', this.details, this.id, this.url});
+   AudioApp(
+      {this.title = 'Chewie Audio Demo',this.fromList, this.details, this.id, this.url});
 
   final String title;
   final String details;
   final int id;
   final String url;
+  bool fromList = false;
 
   @override
   State<StatefulWidget> createState() {
@@ -199,6 +194,7 @@ class _AudioAppState extends State<AudioApp> {
                       ),
                     ),
                   ),
+                  widget.fromList != true?
                   Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Row(
@@ -217,7 +213,7 @@ class _AudioAppState extends State<AudioApp> {
                         ),
                       ],
                     ),
-                  ),
+                  ) : SizedBox(),
                 ],
               )
             : Column(

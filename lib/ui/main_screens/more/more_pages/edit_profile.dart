@@ -56,6 +56,7 @@ class EditProfileState extends State<EditProfile> {
 
   // Initially password is obscure
 
+  // ignore: unused_field
   bool _obscureText = true;
   // ignore: unused_field
   String _email;
@@ -70,6 +71,7 @@ class EditProfileState extends State<EditProfile> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     var url = "http://157.230.150.194:3000/api/users/upload_profile_picture";
 
+    // ignore: unused_local_variable
     var data = {
       'user-image': _image != null ? 'data:${_image.path}' : '',
     };

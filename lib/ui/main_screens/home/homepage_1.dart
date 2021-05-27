@@ -5,15 +5,14 @@ import 'package:cornerstone/access_pages/onboardingScreen.dart';
 import 'package:cornerstone/player_widget.dart';
 import 'package:cornerstone/ui/main_screens/home/all_audios.dart';
 import 'package:cornerstone/ui/main_screens/home/all_videos.dart';
-import 'package:cornerstone/ui/main_screens/home/clips.dart';
 import 'package:cornerstone/ui/main_screens/more/more_pages/account_settings/notifications.dart';
 import 'package:cornerstone/ui/widgets/widgets.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class HomePage1 extends StatefulWidget {
   @override
@@ -80,11 +79,16 @@ class _HomePage1State extends State<HomePage1> {
   var img;
   var devotionalQuote;
   bool ready = false;
+  // ignore: unused_field
   List _links = [];
   List _videoLinks = [];
   List _audioLinks = [];
   List _total = [];
   List audios = [];
+  List _liveStreamImage = [];
+  List _liveStreamText = [];
+  List _liveStreamTitle = [];
+  List _liveStreamDate = [];
 
   Future fetchDevotion() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -108,6 +112,8 @@ class _HomePage1State extends State<HomePage1> {
     var audioUrls =
         "http://157.230.150.194:3000/api/churchcontent/sermon?limit=0&offset=0";
 
+    var liveStream = "http://157.230.150.194:3000/api/churchcontent/livestream";
+
     var churchUrl = "http://157.230.150.194:3000/api/church";
 
     final churchResponse = await http.get(
@@ -115,11 +121,46 @@ class _HomePage1State extends State<HomePage1> {
       headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
     );
 
-    final churchResponseJson = jsonDecode(churchResponse.body);
-    print('$churchResponseJson' +
-        'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 1 devotional');
+    final liveResponse = await http.get(
+      Uri.parse(liveStream),
+      headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
+    );
 
-    print(churchResponseJson['image']);
+    final churchResponseJson = jsonDecode(churchResponse.body);
+    /*  print('$churchResponseJson' +
+        'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 1 devotional'); */
+
+    //print(churchResponseJson['image']);
+    List liveStreamImage = [];
+    List liveStreamText = [];
+
+    if (jsonDecode(liveResponse.body) != null) {
+      var liveResponseJson = jsonDecode(liveResponse.body);
+      print('$liveResponseJson' +
+          'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+      for (var item in liveResponseJson['data']) {
+        print(item['contentData']);
+
+        liveStreamText.add(item['contentData']);
+        liveStreamImage.add(item['audioThumbnail']);
+      }
+      PaletteGenerator paletteGenerator =
+          await PaletteGenerator.fromImageProvider(
+        NetworkImage(liveStreamImage[0]),
+
+        filters: [],
+// Images are square
+        size: Size(300, 300),
+
+// I want the dominant color of the top left section of the image
+        region: Offset.zero & Size(40, 40),
+      );
+      Color dominantColor = paletteGenerator.dominantColor?.color;
+      print(
+          dominantColor);
+    }
+
+    // print( liveResponseJson['data']);
 
     final getDevotion = await http.get(
       Uri.parse(devotionalUrl),
@@ -136,8 +177,8 @@ class _HomePage1State extends State<HomePage1> {
       headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
     );
     final responseJson = jsonDecode(getDevotion.body);
-    print('$responseJson' +
-        'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 1 devotional');
+    /*  print('$responseJson' +
+        'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 1 devotional'); */
 
     if (responseJson['reason'] == "Invalid token") {
       await prefs.clear();
@@ -148,12 +189,13 @@ class _HomePage1State extends State<HomePage1> {
       );
     }
 
+    // ignore: unused_local_variable
     final responseJson2 = jsonDecode(getaudioUrls.body);
-    print('$responseJson2' +
-        'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 3 audio');
+    /*   print('$responseJson2' +
+        'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 3 audio'); */
     var message = jsonDecode(getDevotion.body);
     var message2 = jsonDecode(getVideoUrls.body);
-    print('$message2' + 'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 2 video');
+    // print('$message2' + 'herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre  message 2 video');
     var message3 = jsonDecode(getaudioUrls.body);
 
     List videoLinks = [];
@@ -174,6 +216,8 @@ class _HomePage1State extends State<HomePage1> {
 
     if (this.mounted) {
       setState(() {
+        _liveStreamImage = liveStreamImage;
+        _liveStreamText = liveStreamText;
         churchName = churchResponseJson["name"];
         img = churchResponseJson["image"];
 
@@ -185,7 +229,7 @@ class _HomePage1State extends State<HomePage1> {
         }
       });
       setState(() {
-        print(audioLinks);
+        //  print(audioLinks);
         ready = true;
       });
     }
@@ -319,6 +363,40 @@ class _HomePage1State extends State<HomePage1> {
                             ),
                           ),
                         ),
+                  _liveStreamText.length > 0
+                      ? Column(
+                          children: [
+                            for (var i = 0; i < _liveStreamText.length; i++)
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                        image: NetworkImage(
+                                            '${_liveStreamImage[i]}'),
+                                        fit: BoxFit.cover),
+                                  ),
+                                  margin: EdgeInsets.only(top: 5),
+                                  height: 200,
+                                  width: double.infinity,
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        '${_liveStreamText[i]}',
+                                        style: TextStyle(
+                                            color: Colors.black
+                                                        .computeLuminance() <
+                                                    0.5
+                                                ? Colors.black
+                                                : Colors.white),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                          ],
+                        )
+                      : SizedBox(),
                   Padding(
                     padding:
                         const EdgeInsets.only(left: 16.0, top: 16, right: 16),

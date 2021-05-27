@@ -1,6 +1,6 @@
 
 import 'package:cornerstone/ui/main_screens/donations/donation_history.dart';
-import 'package:cornerstone/ui/main_screens/home_1.dart';
+
 import 'package:flutter/material.dart';
 
 class DonationFailure extends StatelessWidget {

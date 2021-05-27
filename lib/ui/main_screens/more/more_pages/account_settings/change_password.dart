@@ -1,4 +1,4 @@
-import 'package:cornerstone/access_pages/onboardingScreen.dart';
+
 import 'package:cornerstone/ui/widgets/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -74,6 +74,7 @@ class ChangePasswordState extends State<ChangePassword> {
     });
   }
 
+  // ignore: unused_element
   void _validate() {
     setState(() {
       _password = _pwController.text;

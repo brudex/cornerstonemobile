@@ -15,11 +15,12 @@ import 'package:video_player/video_player.dart';
 import 'package:wakelock/wakelock.dart';
 
 class PlaySingle extends StatefulWidget {
-  PlaySingle({Key key, @required this.clips, this.details, this.id}) : super(key: key);
+  PlaySingle({Key key, @required this.clips, this.details, this.id, this.playlistLink}) : super(key: key);
 
   final List clips;
   final String details;
   final int id;
+  final String playlistLink;
 
   @override
   _PlaySingleState createState() => _PlaySingleState();
@@ -168,7 +169,7 @@ showLoading(context);
 
   void _initializeAndPlay(int index, {bool clicked}) async {
     //  print("_initializeAndPlay ---------> $index");
-    final clip = _clips[0];
+    final clip = _clips == null ? widget.playlistLink: _clips[0];
 
     final controller = clip.startsWith("http")
         ? VideoPlayerController.network("$clip")
@@ -269,6 +270,7 @@ showLoading(context);
           return AlertDialog(
             content: SingleChildScrollView(child: Text("Played all videos.")),
             actions: <Widget>[
+              // ignore: deprecated_member_use
               FlatButton(
                 child: Text("Close"),
                 onPressed: () => Navigator.pop(context, true),
@@ -332,6 +334,8 @@ showLoading(context);
                   ),
                 ),
               ),
+
+              _clips != null ?
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Row(
@@ -350,7 +354,7 @@ showLoading(context);
                     ),
                   ],
                 ),
-              ),
+              ) : SizedBox(),
              
 
               /*    Expanded(
@@ -360,6 +364,7 @@ showLoading(context);
     );
   }
 
+  // ignore: unused_element
   void _onTapCard(int index) {
     _initializeAndPlay(index, clicked: true);
   }
@@ -435,6 +440,7 @@ showLoading(context);
         child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
+        // ignore: deprecated_member_use
         FlatButton(
           onPressed: () async {
             final index = _playingIndex - 1;
@@ -448,6 +454,7 @@ showLoading(context);
             color: Colors.white,
           ),
         ),
+        // ignore: deprecated_member_use
         FlatButton(
           onPressed: () async {
             if (_isPlaying) {
@@ -474,6 +481,7 @@ showLoading(context);
             color: Colors.white,
           ),
         ),
+        // ignore: deprecated_member_use
         FlatButton(
           onPressed: () async {
             final index = _playingIndex + 1;
