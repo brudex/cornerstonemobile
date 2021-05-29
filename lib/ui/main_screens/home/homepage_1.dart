@@ -9,10 +9,10 @@ import 'package:cornerstone/ui/main_screens/more/more_pages/account_settings/not
 import 'package:cornerstone/ui/widgets/widgets.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:palette_generator/palette_generator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage1 extends StatefulWidget {
   @override
@@ -88,7 +88,8 @@ class _HomePage1State extends State<HomePage1> {
   List _liveStreamImage = [];
   List _liveStreamText = [];
   List _liveStreamTitle = [];
-  List _liveStreamDate = [];
+  List _liveYoutubeLink = [];
+  List _liveSteamColor = [];
 
   Future fetchDevotion() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -133,6 +134,9 @@ class _HomePage1State extends State<HomePage1> {
     //print(churchResponseJson['image']);
     List liveStreamImage = [];
     List liveStreamText = [];
+    List liveStreamColor = [];
+    List liveStreamTitle = [];
+    List liveYoutubeLink = [];
 
     if (jsonDecode(liveResponse.body) != null) {
       var liveResponseJson = jsonDecode(liveResponse.body);
@@ -140,24 +144,13 @@ class _HomePage1State extends State<HomePage1> {
           'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
       for (var item in liveResponseJson['data']) {
         print(item['contentData']);
-
+        liveStreamTitle.add(item['title']);
         liveStreamText.add(item['contentData']);
         liveStreamImage.add(item['audioThumbnail']);
+         liveYoutubeLink.add(item['url']);
+
+
       }
-      PaletteGenerator paletteGenerator =
-          await PaletteGenerator.fromImageProvider(
-        NetworkImage(liveStreamImage[0]),
-
-        filters: [],
-// Images are square
-        size: Size(300, 300),
-
-// I want the dominant color of the top left section of the image
-        region: Offset.zero & Size(40, 40),
-      );
-      Color dominantColor = paletteGenerator.dominantColor?.color;
-      print(
-          dominantColor);
     }
 
     // print( liveResponseJson['data']);
@@ -220,10 +213,12 @@ class _HomePage1State extends State<HomePage1> {
         _liveStreamText = liveStreamText;
         churchName = churchResponseJson["name"];
         img = churchResponseJson["image"];
-
+        _liveSteamColor = liveStreamColor;
         _videoLinks = videoLinks;
         _audioLinks = audioLinks;
+        _liveStreamTitle = liveStreamTitle;
         _total = total;
+        _liveYoutubeLink = liveYoutubeLink;
         if (message['data'] != null) {
           devotionalQuote = message['data']['devotionalContent'];
         }
@@ -365,37 +360,54 @@ class _HomePage1State extends State<HomePage1> {
                         ),
                   _liveStreamText.length > 0
                       ? Column(
-                          children: [
-                            for (var i = 0; i < _liveStreamText.length; i++)
-                              Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                        image: NetworkImage(
-                                            '${_liveStreamImage[i]}'),
-                                        fit: BoxFit.cover),
-                                  ),
-                                  margin: EdgeInsets.only(top: 5),
-                                  height: 200,
-                                  width: double.infinity,
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        '${_liveStreamText[i]}',
-                                        style: TextStyle(
-                                            color: Colors.black
-                                                        .computeLuminance() <
-                                                    0.5
-                                                ? Colors.black
-                                                : Colors.white),
+                            children: [
+                              for (var i = 0; i < _liveStreamText.length; i++)
+                                InkWell( onTap: (){   launch("${_liveYoutubeLink[i]}");},
+                                          child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                            colorFilter: ColorFilter.mode(
+                        Colors.black38, BlendMode.darken),
+                                            image:
+                        NetworkImage('${_liveStreamImage[i]}'),
+                                            fit: BoxFit.cover),
                                       ),
-                                    ],
+                                      margin: EdgeInsets.only(top: 5),
+                                      height: 200,
+                                      width: double.infinity,
+                                      child: Column(
+                                        children: [
+                                          SizedBox(height: 20,),
+                                          Text(
+                                            '${_liveStreamTitle[i]}',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 18,
+                                            
+                                            ),
+                                          ),
+                                          SizedBox(height: 5),
+                                          Text(
+                                            '${_liveStreamText[i]}',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w300,
+                      
+                                          
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                          ],
-                        )
+                            ],
+                          )
                       : SizedBox(),
                   Padding(
                     padding:

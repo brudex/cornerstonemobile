@@ -46,7 +46,7 @@ dependencies:
   wakelock: ^0.5.1 # keeping screen on
   video_thumbnail: ^0.3.3
   grouped_list: ^4.0.0
-  palette_generator: ^0.3.0
+  
   
 
   # The following adds the Cupertino Icons font to your application.
