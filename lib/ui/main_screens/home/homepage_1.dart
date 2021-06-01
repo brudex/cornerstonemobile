@@ -362,7 +362,7 @@ class _HomePage1State extends State<HomePage1> {
                       ? Column(
                             children: [
                               for (var i = 0; i < _liveStreamText.length; i++)
-                                InkWell( onTap: (){   launch("${_liveYoutubeLink[i]}");},
+                                InkWell( onTap: (){   launch("${_liveStreamText[i]}");},
                                           child: Padding(
                                     padding: const EdgeInsets.all(16.0),
                                     child: Container(
@@ -389,18 +389,7 @@ class _HomePage1State extends State<HomePage1> {
                                             
                                             ),
                                           ),
-                                          SizedBox(height: 5),
-                                          Text(
-                                            '${_liveStreamText[i]}',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w300,
-                      
-                                          
-                                            ),
-                                          ),
+                                         
                                         ],
                                       ),
                                     ),
