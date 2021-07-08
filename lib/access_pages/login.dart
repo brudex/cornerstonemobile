@@ -186,7 +186,7 @@ class LoginState extends State<Login> {
                           Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Text(
-                              'Login',
+                              'User Login',
                               style:
                                   TextStyle(fontSize: 28.0, color: Colors.blue),
                               textAlign: TextAlign.left,
