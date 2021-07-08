@@ -334,7 +334,9 @@ class RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       body: SingleChildScrollView(
+
         child: SafeArea(
           child: Container(
              decoration: BoxDecoration(
@@ -344,9 +346,7 @@ class RegisterState extends State<Register> {
                   fit: BoxFit.cover, ),
               //   color: Colors.blue,
               shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.all(
-                Radius.circular(8),
-              ),
+              
             ),
           
             child: Column(
@@ -355,6 +355,18 @@ class RegisterState extends State<Register> {
               children: <Widget>[
                 Column(
                   children: [
+                     Row(
+                    children: [
+                      IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              }),
+                    ],
+                  ),
                     SizedBox(
                       height: 30,
                     ),
