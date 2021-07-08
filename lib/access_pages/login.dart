@@ -143,37 +143,25 @@ class LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  colorFilter:
-                      ColorFilter.mode(Colors.white54, BlendMode.lighten),
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                colorFilter: ColorFilter.mode(Colors.white54, BlendMode.lighten),
                   image: AssetImage('images/Background.jpg'),
-                  fit: BoxFit.cover,
-                ),
-                //   color: Colors.blue,
-                shape: BoxShape.rectangle,
+                  fit: BoxFit.cover, ),
+              //   color: Colors.blue,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.all(
+                Radius.circular(8),
               ),
             ),
-            SingleChildScrollView(
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      IconButton(
-                          icon: Icon(
-                            Icons.arrow_back,
-                            color: Colors.black,
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          }),
-                    ],
-                  ),
-                  Column(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height,
+                  child: Column(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
@@ -312,10 +300,10 @@ class LoginState extends State<Login> {
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

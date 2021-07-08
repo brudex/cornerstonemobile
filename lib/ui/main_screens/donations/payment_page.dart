@@ -67,19 +67,6 @@ class _PaymentPageState extends State<PaymentPage> {
   @override
   Widget build(BuildContext context) {
     return WebviewScaffold(
-      appBar:  AppBar(
-          elevation: 0,
-          backgroundColor: Color.fromRGBO(242, 245, 247, 1),
-         
-          leading: IconButton(
-              icon: Icon(
-                Icons.close,
-                color: Colors.black,
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              }),
-      ),
       withJavascript: true,
       // javascriptMode: JavascriptMode.unrestricted,
       url: 'http://157.230.150.194:3000${widget.paymentUrl}',

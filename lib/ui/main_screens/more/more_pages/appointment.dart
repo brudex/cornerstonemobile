@@ -78,7 +78,6 @@ class _AppointmentState extends State<Appointment> {
     var url = "http://157.230.150.194:3000/api/appointment/set";
 
     var data = {
-      "date": "$dateSelected",
       "appointmentTimeId": "$selectedTimeId",
       "appointmentReason": "${reasonController.text}",
     };
