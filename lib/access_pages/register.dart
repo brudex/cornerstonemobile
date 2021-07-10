@@ -1,4 +1,5 @@
 import 'package:cornerstone/ui/widgets/dialogs.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -359,7 +360,7 @@ class RegisterState extends State<Register> {
                     children: [
                       IconButton(
               icon: Icon(
-                Icons.arrow_back,
+                   CupertinoIcons.left_chevron,
                 color: Colors.black,
               ),
               onPressed: () {

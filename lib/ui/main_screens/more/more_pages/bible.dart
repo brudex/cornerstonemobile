@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'dart:io';
@@ -27,7 +28,7 @@ class _BibleState extends State<Bible> {
          
           leading: IconButton(
               icon: Icon(
-                Icons.close,
+                  CupertinoIcons.xmark,
                 color: Colors.black,
               ),
               onPressed: () {

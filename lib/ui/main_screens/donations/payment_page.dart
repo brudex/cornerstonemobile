@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
@@ -73,7 +74,7 @@ class _PaymentPageState extends State<PaymentPage> {
          
           leading: IconButton(
               icon: Icon(
-                Icons.close,
+                CupertinoIcons.xmark,
                 color: Colors.black,
               ),
               onPressed: () {

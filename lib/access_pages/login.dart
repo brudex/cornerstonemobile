@@ -1,5 +1,6 @@
 import 'package:cornerstone/access_pages/forgot_password.dart';
 import 'package:cornerstone/ui/widgets/dialogs.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -165,7 +166,7 @@ class LoginState extends State<Login> {
                     children: [
                       IconButton(
                           icon: Icon(
-                            Icons.arrow_back,
+                            CupertinoIcons.left_chevron,
                             color: Colors.black,
                           ),
                           onPressed: () {
