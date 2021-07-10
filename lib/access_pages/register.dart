@@ -1,4 +1,5 @@
 import 'package:cornerstone/ui/widgets/dialogs.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -334,7 +335,9 @@ class RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       body: SingleChildScrollView(
+
         child: SafeArea(
           child: Container(
              decoration: BoxDecoration(
@@ -344,9 +347,7 @@ class RegisterState extends State<Register> {
                   fit: BoxFit.cover, ),
               //   color: Colors.blue,
               shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.all(
-                Radius.circular(8),
-              ),
+              
             ),
           
             child: Column(
@@ -355,6 +356,18 @@ class RegisterState extends State<Register> {
               children: <Widget>[
                 Column(
                   children: [
+                     Row(
+                    children: [
+                      IconButton(
+              icon: Icon(
+                   CupertinoIcons.left_chevron,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              }),
+                    ],
+                  ),
                     SizedBox(
                       height: 30,
                     ),

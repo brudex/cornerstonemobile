@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
@@ -67,6 +68,19 @@ class _PaymentPageState extends State<PaymentPage> {
   @override
   Widget build(BuildContext context) {
     return WebviewScaffold(
+      appBar:  AppBar(
+          elevation: 0,
+          backgroundColor: Color.fromRGBO(242, 245, 247, 1),
+         
+          leading: IconButton(
+              icon: Icon(
+                CupertinoIcons.xmark,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              }),
+      ),
       withJavascript: true,
       // javascriptMode: JavascriptMode.unrestricted,
       url: 'http://157.230.150.194:3000${widget.paymentUrl}',
